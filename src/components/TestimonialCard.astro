@@ -1,0 +1,46 @@
+---
+interface Props {
+  quote: string;
+  author: string;
+  location: string;
+}
+
+const { quote, author, location } = Astro.props;
+---
+
+<div class="testimonial-card">
+  <div class="stars">★★★★★</div>
+  <p>"{quote}"</p>
+  <div class="testimonial-author">— {author} · {location}</div>
+</div>
+
+<style>
+  .testimonial-card {
+    padding: 24px;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    border-radius: var(--radius-lg);
+    background: rgba(255, 255, 255, 0.1);
+  }
+
+  .stars {
+    color: #fff;
+    font-size: 16px;
+    letter-spacing: 3px;
+    margin-bottom: 14px;
+  }
+
+  .testimonial-card p {
+    margin: 0 0 14px;
+    font-size: 14px;
+    line-height: 1.7;
+    font-style: italic;
+  }
+
+  .testimonial-author {
+    font-family: var(--font-display);
+    font-size: 13px;
+    opacity: 0.85;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+</style>

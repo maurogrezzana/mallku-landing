@@ -1,0 +1,206 @@
+---
+interface Props {
+  tag: string;
+  title: string;
+  description: string;
+  highlights: string[];
+  duration: string;
+  departure: string;
+  price: string;
+  priceNote: string;
+  ctaLink: string;
+}
+
+const { tag, title, description, highlights, duration, departure, price, priceNote, ctaLink } = Astro.props;
+---
+
+<div class="product-card">
+  <span class="product-tag">{tag}</span>
+  <h2>{title}</h2>
+  <p class="product-promise">{description}</p>
+
+  <div class="product-highlights">
+    <h4>Puntos destacados</h4>
+    <ul class="highlights-list">
+      {highlights.map((item) => <li>{item}</li>)}
+    </ul>
+  </div>
+
+  <div class="product-details">
+    <div class="detail-box">
+      <strong>Duración</strong>
+      <span>{duration}</span>
+    </div>
+    <div class="detail-box">
+      <strong>Salida</strong>
+      <span>{departure}</span>
+    </div>
+  </div>
+
+  <div class="product-price">
+    <div class="price-label">Precio por persona</div>
+    <div class="price-amount">{price}</div>
+    <div class="price-note">{priceNote}</div>
+  </div>
+
+  <a class="btn btn-primary btn-full" href={ctaLink} target="_blank" rel="noopener">
+    Consultar fechas y cupos
+  </a>
+</div>
+
+<style>
+  .product-card {
+    border: 1px solid var(--color-line-light);
+    border-radius: var(--radius-xl);
+    background: linear-gradient(180deg, rgba(239, 227, 214, 0.08), rgba(239, 227, 214, 0.03));
+    padding: 32px;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .product-card::before {
+    content: "";
+    position: absolute;
+    inset: -2px;
+    background: radial-gradient(500px 200px at 30% 0%, rgba(209, 107, 56, 0.18), transparent 60%);
+    opacity: 0.7;
+    pointer-events: none;
+  }
+
+  .product-card > * {
+    position: relative;
+  }
+
+  .product-tag {
+    display: inline-block;
+    font-family: var(--font-display);
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 1.5px;
+    padding: 8px 14px;
+    border-radius: 6px;
+    background: var(--color-primary);
+    color: #fff;
+    margin-bottom: 16px;
+  }
+
+  .product-card h2 {
+    margin: 0 0 14px;
+    font-size: 32px;
+  }
+
+  .product-promise {
+    font-size: 15px;
+    color: rgba(239, 227, 214, 0.75);
+    margin: 0 0 24px;
+    line-height: 1.7;
+  }
+
+  .product-highlights {
+    margin: 24px 0;
+    padding: 20px;
+    background: rgba(6, 27, 56, 0.4);
+    border-radius: var(--radius-md);
+    border: 1px solid var(--color-line-light);
+  }
+
+  .product-highlights h4 {
+    margin: 0 0 12px;
+    font-family: var(--font-display);
+    font-size: 13px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    color: var(--color-primary);
+  }
+
+  .highlights-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  .highlights-list li {
+    font-size: 14px;
+    padding-left: 24px;
+    position: relative;
+  }
+
+  .highlights-list li::before {
+    content: "◆";
+    position: absolute;
+    left: 0;
+    color: var(--color-primary);
+    font-size: 10px;
+    top: 3px;
+  }
+
+  .product-details {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 14px;
+    margin: 24px 0;
+  }
+
+  .detail-box {
+    padding: 16px;
+    background: rgba(239, 227, 214, 0.06);
+    border: 1px solid var(--color-line-light);
+    border-radius: 12px;
+    text-align: center;
+  }
+
+  .detail-box strong {
+    display: block;
+    font-family: var(--font-display);
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    color: rgba(239, 227, 214, 0.6);
+    margin-bottom: 6px;
+  }
+
+  .detail-box span {
+    font-size: 18px;
+    font-weight: 600;
+  }
+
+  .product-price {
+    margin: 28px 0;
+    padding: 24px;
+    background: linear-gradient(135deg, rgba(209, 107, 56, 0.2), rgba(182, 65, 14, 0.1));
+    border: 1px solid rgba(209, 107, 56, 0.4);
+    border-radius: 16px;
+    text-align: center;
+  }
+
+  .price-label {
+    font-family: var(--font-display);
+    font-size: 12px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    color: rgba(239, 227, 214, 0.7);
+    margin-bottom: 8px;
+  }
+
+  .price-amount {
+    font-family: var(--font-display);
+    font-size: 48px;
+    letter-spacing: 1px;
+    color: var(--color-primary);
+  }
+
+  .price-note {
+    font-size: 13px;
+    color: rgba(239, 227, 214, 0.65);
+    margin-top: 10px;
+  }
+
+  @media (max-width: 600px) {
+    .product-details {
+      grid-template-columns: 1fr;
+    }
+  }
+</style>

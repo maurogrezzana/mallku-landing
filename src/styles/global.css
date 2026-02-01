@@ -1,0 +1,195 @@
+/* ========================================
+   MALLKU - Estilos Globales
+   Basado en Manual de Marca
+   ======================================== */
+
+/* Variables CSS */
+:root {
+  /* Paleta Mallku - Manual de Marca Oficial */
+  --azul: #061B38;
+  --marron: #562E18;
+  --terracota: #D16B38;
+  --terracota-rojizo: #B6410E;
+  --terracota-claro: #bb6a3f;
+  --beige: #EFE3D6;
+
+  /* Colores semánticos */
+  --color-primary: var(--terracota);
+  --color-primary-hover: var(--terracota-rojizo);
+  --color-bg-dark: var(--azul);
+  --color-bg-light: var(--beige);
+  --color-text-light: var(--beige);
+  --color-text-dark: var(--azul);
+  --color-line-light: rgba(239, 227, 214, 0.18);
+  --color-line-dark: rgba(6, 27, 56, 0.15);
+
+  /* Tipografía */
+  --font-display: 'Anton', sans-serif;
+  --font-body: 'Noto Serif', Georgia, serif;
+
+  /* Espaciado */
+  --space-xs: 0.5rem;
+  --space-sm: 1rem;
+  --space-md: 1.5rem;
+  --space-lg: 2rem;
+  --space-xl: 3rem;
+  --space-2xl: 5rem;
+
+  /* Radios */
+  --radius-sm: 8px;
+  --radius-md: 14px;
+  --radius-lg: 18px;
+  --radius-xl: 26px;
+
+  /* Contenedor */
+  --max-width: 1200px;
+
+  /* Transiciones */
+  --transition-fast: 150ms ease;
+  --transition-normal: 200ms ease;
+}
+
+/* Reset básico */
+*, *::before, *::after {
+  box-sizing: border-box;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  margin: 0;
+  font-family: var(--font-body);
+  background: var(--color-bg-dark);
+  color: var(--color-text-light);
+  line-height: 1.6;
+}
+
+/* Tipografía */
+h1, h2, h3, h4, h5, h6 {
+  font-family: var(--font-display);
+  font-weight: 400;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  line-height: 1.1;
+}
+
+a {
+  color: inherit;
+  text-decoration: none;
+}
+
+img {
+  max-width: 100%;
+  height: auto;
+  display: block;
+}
+
+/* Utilidades */
+.wrap {
+  max-width: var(--max-width);
+  margin: 0 auto;
+  padding: 0 var(--space-md);
+}
+
+.text-center {
+  text-align: center;
+}
+
+.section-title {
+  font-size: clamp(28px, 4vw, 36px);
+  margin: 0 0 var(--space-sm);
+}
+
+.section-subtitle {
+  font-family: var(--font-body);
+  font-size: 16px;
+  text-transform: none;
+  letter-spacing: normal;
+  opacity: 0.85;
+  margin: 0 0 var(--space-xl);
+}
+
+/* Botones */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  padding: 16px 28px;
+  border-radius: var(--radius-md);
+  font-family: var(--font-display);
+  font-weight: 400;
+  font-size: 15px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  border: 1px solid var(--color-line-light);
+  background: rgba(239, 227, 214, 0.08);
+  cursor: pointer;
+  transition: all var(--transition-normal);
+  color: var(--color-text-light);
+}
+
+.btn:hover {
+  background: rgba(239, 227, 214, 0.14);
+  transform: translateY(-2px);
+}
+
+.btn-primary {
+  background: var(--color-primary);
+  border-color: var(--color-primary);
+  color: #fff;
+}
+
+.btn-primary:hover {
+  background: var(--color-primary-hover);
+  border-color: var(--color-primary-hover);
+}
+
+.btn-full {
+  width: 100%;
+}
+
+/* Secciones */
+.section {
+  padding: var(--space-2xl) 0;
+}
+
+.section-dark {
+  background: var(--color-bg-dark);
+  color: var(--color-text-light);
+}
+
+.section-light {
+  background: var(--color-bg-light);
+  color: var(--color-text-dark);
+}
+
+.section-terracota {
+  background: var(--terracota);
+  color: #fff;
+}
+
+/* Grid responsive */
+.grid-2 {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: var(--space-lg);
+}
+
+.grid-3 {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: var(--space-lg);
+}
+
+@media (max-width: 980px) {
+  .grid-2, .grid-3 {
+    grid-template-columns: 1fr;
+  }
+
+  .section {
+    padding: var(--space-xl) 0;
+  }
+}

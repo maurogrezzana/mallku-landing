@@ -1,0 +1,43 @@
+---
+interface Props {
+  icon: string;
+  title: string;
+  description: string;
+}
+
+const { icon, title, description } = Astro.props;
+---
+
+<div class="why-card">
+  <div class="why-icon">{icon}</div>
+  <h3>{title}</h3>
+  <p>{description}</p>
+</div>
+
+<style>
+  .why-card {
+    padding: 28px;
+    border: 1px solid var(--color-line-dark);
+    border-radius: var(--radius-lg);
+    background: #fff;
+    text-align: left;
+  }
+
+  .why-icon {
+    font-size: 36px;
+    margin-bottom: 16px;
+  }
+
+  .why-card h3 {
+    margin: 0 0 10px;
+    font-size: 20px;
+    color: var(--azul);
+  }
+
+  .why-card p {
+    margin: 0;
+    font-size: 14px;
+    color: var(--marron);
+    line-height: 1.7;
+  }
+</style>

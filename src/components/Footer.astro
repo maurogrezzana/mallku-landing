@@ -1,0 +1,54 @@
+---
+import { siteConfig, whatsappLinks } from '../data/site';
+---
+
+<footer class="footer">
+  <div class="wrap">
+    <div class="footer-contact">
+      <a href={whatsappLinks.general} target="_blank" rel="noopener">
+        WhatsApp: {siteConfig.contact.whatsappDisplay}
+      </a>
+      <a href={`mailto:${siteConfig.contact.email}`}>
+        {siteConfig.contact.email}
+      </a>
+      <a href={siteConfig.contact.instagramUrl} target="_blank" rel="noopener">
+        {siteConfig.contact.instagram}
+      </a>
+    </div>
+    <div class="footer-note">
+      &copy; <span id="year"></span> {siteConfig.name} &middot; {siteConfig.contact.location}
+    </div>
+  </div>
+</footer>
+
+<style>
+  .footer {
+    padding: 48px 0;
+    background: var(--color-bg-dark);
+    border-top: 1px solid var(--color-line-light);
+    text-align: center;
+  }
+
+  .footer-contact {
+    display: flex;
+    gap: 28px;
+    justify-content: center;
+    margin-bottom: 20px;
+    flex-wrap: wrap;
+  }
+
+  .footer-contact a {
+    font-size: 14px;
+    color: rgba(239, 227, 214, 0.75);
+    transition: color var(--transition-normal);
+  }
+
+  .footer-contact a:hover {
+    color: var(--color-primary);
+  }
+
+  .footer-note {
+    font-size: 13px;
+    color: rgba(239, 227, 214, 0.5);
+  }
+</style>

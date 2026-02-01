@@ -1,0 +1,378 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import Header from '../components/Header.astro';
+import Footer from '../components/Footer.astro';
+import WhatsAppFloat from '../components/WhatsAppFloat.astro';
+import { whatsappLinks } from '../data/site';
+---
+
+<BaseLayout
+  title="Nosotros"
+  description="Conocé la historia de Mallku, nuestra misión de difundir la arqueología del NOA y el equipo de guías especializados que hace posible cada experiencia."
+>
+  <WhatsAppFloat />
+  <Header />
+
+  <main>
+    <!-- HERO NOSOTROS -->
+    <section class="hero-nosotros">
+      <div class="wrap text-center">
+        <h1>Sobre <span class="accent">Mallku</span></h1>
+        <p class="hero-lead">
+          Turismo arqueológico con alma. Conectamos viajeros curiosos con la historia profunda del Noroeste Argentino.
+        </p>
+      </div>
+    </section>
+
+    <!-- SIGNIFICADO -->
+    <section class="section section-light">
+      <div class="wrap">
+        <div class="content-grid">
+          <div class="content-text">
+            <h2>¿Qué significa Mallku?</h2>
+            <p>
+              <strong>Mallku</strong> (también escrito Mallqu o Mallco) es una palabra del aymara y quechua que significa literalmente <em>"cóndor"</em>, pero no se refiere solo al ave.
+            </p>
+            <p>
+              En las culturas andinas, el Mallku es una <strong>figura sagrada</strong>: un guardián de los cerros, un símbolo de sabiduría, altura, liderazgo espiritual y conexión con los ancestros.
+            </p>
+            <p>
+              El Mallku no es solo quien vuela sobre los Andes, sino quien <strong>observa desde lo alto, protege el territorio y mantiene la memoria viva</strong> de los pueblos.
+            </p>
+            <p>
+              Ese es nuestro espíritu: ser guardianes de la memoria arqueológica del NOA, compartiendo su riqueza con quienes quieran descubrirla.
+            </p>
+          </div>
+          <div class="content-image">
+            <div class="image-placeholder">
+              <span>🦅</span>
+              <p>El Cóndor Andino<br/>Guardián de los cerros</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- HISTORIA -->
+    <section class="section section-dark">
+      <div class="wrap">
+        <div class="content-grid reverse">
+          <div class="content-text">
+            <h2>Nuestra Historia</h2>
+            <p>
+              Mallku nace con el objetivo de <strong>difundir la arqueología de Tucumán</strong> por medio del turismo, como una propuesta que combina exploración, cultura ancestral y conexión con el territorio.
+            </p>
+            <p>
+              Somos una empresa de excursiones arqueológicas ubicada en Tucumán, Argentina, que invita a viajeros curiosos a descubrir la riqueza cultural del pasado y el presente: <strong>ciudades milenarias, cultura andina, senderos, caminos y misterios en paisajes ancestrales</strong>.
+            </p>
+            <p>
+              Espacios que guardan memorias y secretos históricos...
+            </p>
+            <p class="highlight-text">
+              "Viajá con nosotros al pasado, viví tu presente. Tucumán como nunca lo viste."
+            </p>
+            <p>
+              Nuestra identidad fusiona lo moderno con lo ancestral: una propuesta actual y moderna, pero que respira historia.
+            </p>
+          </div>
+          <div class="content-image">
+            <div class="image-placeholder dark">
+              <span>🏛️</span>
+              <p>Ciudad Sagrada de Quilmes<br/>Último bastión calchaquí</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- MISIÓN Y VISIÓN -->
+    <section class="section section-terracota">
+      <div class="wrap">
+        <div class="mission-grid">
+          <div class="mission-card">
+            <h3>Misión</h3>
+            <p>
+              Ofrecer experiencias arqueológicas auténticas, educativas y transformadoras, que conecten a las personas con el patrimonio indígena del norte argentino.
+            </p>
+            <p>
+              Diseñamos excursiones a sitios históricos y paisajes sagrados, guiadas por profesionales apasionados, para <strong>valorar el pasado, cuidar el presente y proyectar un turismo con sentido</strong>.
+            </p>
+          </div>
+          <div class="mission-card">
+            <h3>Visión</h3>
+            <p>
+              Ser la marca referente en turismo arqueológico de Tucumán, promoviendo un modelo de exploración consciente, cultural y respetuoso de las raíces ancestrales y el entorno natural.
+            </p>
+            <p>
+              <strong>Inspirar a viajeros del mundo a reconectar con la historia viva</strong> que habita en el suelo tucumano.
+            </p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- VALORES -->
+    <section class="section section-light">
+      <div class="wrap text-center">
+        <h2 class="section-title">Nuestros Valores</h2>
+        <p class="section-subtitle">Los principios que guían cada excursión que diseñamos</p>
+
+        <div class="values-grid">
+          <div class="value-card">
+            <div class="value-icon">🙏</div>
+            <h4>Respeto por las culturas originarias</h4>
+            <p>Valoramos el legado de los pueblos ancestrales, sus saberes y cosmovisiones, difundiendo su historia con responsabilidad, sensibilidad y rigor.</p>
+          </div>
+
+          <div class="value-card">
+            <div class="value-icon">🏔️</div>
+            <h4>Conexión con el territorio</h4>
+            <p>Promovemos una relación profunda con los paisajes, cerros y sitios sagrados, entendiendo que la tierra guarda memorias vivas.</p>
+          </div>
+
+          <div class="value-card">
+            <div class="value-icon">🌱</div>
+            <h4>Turismo consciente</h4>
+            <p>Ofrecemos experiencias que invitan a reflexionar, aprender y reconectar con lo esencial. Apostamos por un turismo que no consume sino que se involucra.</p>
+          </div>
+
+          <div class="value-card">
+            <div class="value-icon">📚</div>
+            <h4>Divulgación accesible</h4>
+            <p>Apostamos por la divulgación de la historia, haciendo accesible la arqueología para todos. Traducimos el conocimiento en un lenguaje claro.</p>
+          </div>
+
+          <div class="value-card">
+            <div class="value-icon">🛡️</div>
+            <h4>Preservación del patrimonio</h4>
+            <p>Trabajamos con ética, preservando los sitios arqueológicos y el equilibrio natural de los espacios que visitamos.</p>
+          </div>
+
+          <div class="value-card">
+            <div class="value-icon">🧭</div>
+            <h4>Espíritu explorador</h4>
+            <p>Fomentamos la curiosidad y el aprendizaje como motor de búsqueda, el deseo de explorar la historia en el presente.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- CTA -->
+    <section class="section section-dark">
+      <div class="wrap">
+        <div class="cta-box-dark">
+          <h2>¿Querés conocer el NOA con nosotros?</h2>
+          <p>Escribinos y te contamos todo sobre nuestras próximas salidas.</p>
+          <a class="btn btn-primary" href={whatsappLinks.fechas} target="_blank" rel="noopener">
+            Consultar por WhatsApp
+          </a>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <Footer />
+</BaseLayout>
+
+<style>
+  .hero-nosotros {
+    padding: 80px 0 60px;
+    background:
+      radial-gradient(ellipse 80% 50% at 50% 0%, rgba(209, 107, 56, 0.15), transparent),
+      var(--color-bg-dark);
+  }
+
+  .hero-nosotros h1 {
+    margin: 0 0 20px;
+    font-size: clamp(40px, 6vw, 56px);
+  }
+
+  .hero-nosotros .accent {
+    color: var(--color-primary);
+  }
+
+  .hero-lead {
+    font-size: 18px;
+    color: rgba(239, 227, 214, 0.8);
+    max-width: 60ch;
+    margin: 0 auto;
+  }
+
+  /* Content Grid */
+  .content-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: var(--space-2xl);
+    align-items: center;
+  }
+
+  .content-grid.reverse {
+    direction: rtl;
+  }
+
+  .content-grid.reverse > * {
+    direction: ltr;
+  }
+
+  .content-text h2 {
+    margin: 0 0 var(--space-md);
+    font-size: 32px;
+  }
+
+  .section-light .content-text h2 {
+    color: var(--azul);
+  }
+
+  .content-text p {
+    margin: 0 0 var(--space-sm);
+    line-height: 1.8;
+  }
+
+  .section-light .content-text p {
+    color: var(--marron);
+  }
+
+  .highlight-text {
+    font-style: italic;
+    font-size: 18px;
+    color: var(--color-primary) !important;
+    padding: var(--space-md);
+    border-left: 3px solid var(--color-primary);
+    margin: var(--space-md) 0 !important;
+  }
+
+  .image-placeholder {
+    aspect-ratio: 4/3;
+    background: linear-gradient(135deg, rgba(209, 107, 56, 0.2), rgba(6, 27, 56, 0.1));
+    border: 2px dashed var(--color-primary);
+    border-radius: var(--radius-xl);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+  }
+
+  .image-placeholder.dark {
+    background: linear-gradient(135deg, rgba(239, 227, 214, 0.1), rgba(209, 107, 56, 0.1));
+    border-color: var(--color-line-light);
+  }
+
+  .image-placeholder span {
+    font-size: 64px;
+    margin-bottom: var(--space-sm);
+  }
+
+  .image-placeholder p {
+    font-size: 14px;
+    opacity: 0.7;
+    margin: 0;
+  }
+
+  .section-light .image-placeholder p {
+    color: var(--marron);
+  }
+
+  /* Mission Grid */
+  .mission-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: var(--space-lg);
+  }
+
+  .mission-card {
+    padding: var(--space-xl);
+    background: rgba(255, 255, 255, 0.1);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    border-radius: var(--radius-xl);
+  }
+
+  .mission-card h3 {
+    margin: 0 0 var(--space-md);
+    font-size: 28px;
+  }
+
+  .mission-card p {
+    margin: 0 0 var(--space-sm);
+    line-height: 1.7;
+  }
+
+  .mission-card p:last-child {
+    margin-bottom: 0;
+  }
+
+  /* Values Grid */
+  .values-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: var(--space-lg);
+    margin-top: var(--space-xl);
+  }
+
+  .value-card {
+    padding: var(--space-lg);
+    background: #fff;
+    border: 1px solid var(--color-line-dark);
+    border-radius: var(--radius-lg);
+    text-align: left;
+  }
+
+  .value-icon {
+    font-size: 32px;
+    margin-bottom: var(--space-sm);
+  }
+
+  .value-card h4 {
+    margin: 0 0 var(--space-xs);
+    font-size: 16px;
+    color: var(--azul);
+  }
+
+  .value-card p {
+    margin: 0;
+    font-size: 14px;
+    color: var(--marron);
+    line-height: 1.6;
+  }
+
+  /* CTA Dark */
+  .cta-box-dark {
+    max-width: 700px;
+    margin: 0 auto;
+    padding: var(--space-2xl);
+    border: 1px solid var(--color-line-light);
+    border-radius: var(--radius-xl);
+    background: rgba(209, 107, 56, 0.1);
+    text-align: center;
+  }
+
+  .cta-box-dark h2 {
+    margin: 0 0 var(--space-sm);
+    font-size: 32px;
+  }
+
+  .cta-box-dark p {
+    margin: 0 0 var(--space-lg);
+    opacity: 0.8;
+  }
+
+  @media (max-width: 980px) {
+    .content-grid,
+    .content-grid.reverse {
+      grid-template-columns: 1fr;
+      direction: ltr;
+    }
+
+    .content-image {
+      order: -1;
+    }
+
+    .mission-grid {
+      grid-template-columns: 1fr;
+    }
+
+    .values-grid {
+      grid-template-columns: 1fr;
+    }
+  }
+</style>
