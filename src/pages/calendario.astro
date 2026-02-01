@@ -1,0 +1,421 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import Header from '../components/Header.astro';
+import Footer from '../components/Footer.astro';
+import WhatsAppFloat from '../components/WhatsAppFloat.astro';
+import { fechasSalidas, type FechaSalida } from '../data/fechas';
+
+// Group dates by month
+function agruparPorMes(fechas: FechaSalida[]) {
+  const grupos: { [key: string]: { nombre: string; fechas: FechaSalida[] } } = {};
+
+  fechas.forEach(f => {
+    const fecha = new Date(f.fecha);
+    const key = `${fecha.getFullYear()}-${fecha.getMonth()}`;
+    const nombreMes = fecha.toLocaleDateString('es-AR', { month: 'long', year: 'numeric' });
+
+    if (!grupos[key]) {
+      grupos[key] = { nombre: nombreMes.charAt(0).toUpperCase() + nombreMes.slice(1), fechas: [] };
+    }
+    grupos[key].fechas.push(f);
+  });
+
+  return Object.values(grupos);
+}
+
+const mesesConFechas = agruparPorMes(fechasSalidas);
+
+// Format individual date
+function formatearFecha(fechaStr: string) {
+  const fecha = new Date(fechaStr);
+  return {
+    dia: fecha.getDate(),
+    diaSemana: fecha.toLocaleDateString('es-AR', { weekday: 'long' }),
+    mesCorto: fecha.toLocaleDateString('es-AR', { month: 'short' })
+  };
+}
+
+// Generate WhatsApp link with date
+function generarWhatsAppLink(salida: FechaSalida) {
+  const fecha = new Date(salida.fecha);
+  const fechaTexto = fecha.toLocaleDateString('es-AR', { day: 'numeric', month: 'long' });
+  const mensaje = `Hola, quiero reservar para ${salida.excursionNombre} del ${fechaTexto}`;
+  return `https://wa.me/5493815702549?text=${encodeURIComponent(mensaje)}`;
+}
+---
+
+<BaseLayout
+  title="Calendario de Salidas"
+  description="Próximas fechas de excursiones arqueológicas en Tucumán. Quilmes, Tafí del Valle, menhires. Consultá disponibilidad y reservá tu lugar."
+>
+  <WhatsAppFloat />
+  <Header />
+
+  <main>
+    <!-- HERO -->
+    <section class="hero-calendario">
+      <div class="wrap text-center">
+        <h1>Calendario de <span class="accent">Salidas</span></h1>
+        <p class="hero-lead">
+          Consultá las próximas fechas disponibles y asegurá tu lugar.
+          Grupos reducidos, cupos limitados.
+        </p>
+      </div>
+    </section>
+
+    <!-- LEYENDA -->
+    <section class="leyenda-section">
+      <div class="wrap">
+        <div class="leyenda">
+          <div class="leyenda-item">
+            <span class="estado-dot disponible"></span>
+            <span>Disponible</span>
+          </div>
+          <div class="leyenda-item">
+            <span class="estado-dot pocos-cupos"></span>
+            <span>Pocos cupos</span>
+          </div>
+          <div class="leyenda-item">
+            <span class="estado-dot completo"></span>
+            <span>Completo</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- CALENDARIO POR MES -->
+    {mesesConFechas.map((mes) => (
+      <section class="section section-dark">
+        <div class="wrap">
+          <h2 class="mes-titulo">{mes.nombre}</h2>
+          <div class="fechas-grid">
+            {mes.fechas.map((salida) => {
+              const { dia, diaSemana, mesCorto } = formatearFecha(salida.fecha);
+              const whatsappLink = generarWhatsAppLink(salida);
+
+              return (
+                <div class={`fecha-card ${salida.estado}`}>
+                  <div class="fecha-header">
+                    <div class="fecha-dia">
+                      <span class="dia-numero">{dia}</span>
+                      <span class="dia-semana">{diaSemana}</span>
+                    </div>
+                    <span class={`estado-badge ${salida.estado}`}>
+                      {salida.estado === 'disponible' && `${salida.cuposDisponibles} cupos`}
+                      {salida.estado === 'pocos-cupos' && `¡Solo ${salida.cuposDisponibles}!`}
+                      {salida.estado === 'completo' && 'Completo'}
+                    </span>
+                  </div>
+
+                  <div class="fecha-content">
+                    <h3>{salida.excursionNombre}</h3>
+                    <div class="fecha-precio">{salida.precio}</div>
+                  </div>
+
+                  <div class="fecha-footer">
+                    {salida.estado !== 'completo' ? (
+                      <a href={whatsappLink} target="_blank" rel="noopener" class="btn btn-primary btn-full">
+                        Reservar
+                      </a>
+                    ) : (
+                      <button class="btn btn-disabled btn-full" disabled>
+                        Sin cupos
+                      </button>
+                    )}
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+        </div>
+      </section>
+    ))}
+
+    <!-- INFO -->
+    <section class="section section-light">
+      <div class="wrap">
+        <div class="info-box">
+          <h3>Sobre las reservas</h3>
+          <div class="info-grid">
+            <div class="info-item">
+              <span class="info-icon">💬</span>
+              <div>
+                <strong>Reservá por WhatsApp</strong>
+                <p>Escribinos y te confirmamos disponibilidad al instante.</p>
+              </div>
+            </div>
+            <div class="info-item">
+              <span class="info-icon">💳</span>
+              <div>
+                <strong>Seña del 30-50%</strong>
+                <p>Para confirmar tu lugar. El saldo se abona 48hs antes.</p>
+              </div>
+            </div>
+            <div class="info-item">
+              <span class="info-icon">🔄</span>
+              <div>
+                <strong>Reprogramación flexible</strong>
+                <p>Con más de 7 días de anticipación, podés cambiar de fecha sin cargo.</p>
+              </div>
+            </div>
+            <div class="info-item">
+              <span class="info-icon">👥</span>
+              <div>
+                <strong>Grupos reducidos</strong>
+                <p>Máximo 8 personas por salida para garantizar calidad.</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- CTA -->
+    <section class="section section-terracota">
+      <div class="wrap text-center">
+        <h2 class="section-title">¿No encontrás la fecha que buscás?</h2>
+        <p class="section-subtitle" style="color: rgba(255,255,255,0.85);">
+          Escribinos y te avisamos cuando abramos nuevas fechas.
+        </p>
+        <a class="btn" href="https://wa.me/5493815702549?text=Hola%2C%20quiero%20que%20me%20avisen%20sobre%20nuevas%20fechas" target="_blank" rel="noopener" style="background: #fff; color: var(--terracota);">
+          Avisarme de nuevas fechas
+        </a>
+      </div>
+    </section>
+  </main>
+
+  <Footer />
+</BaseLayout>
+
+<style>
+  .hero-calendario {
+    padding: 80px 0 40px;
+    background:
+      radial-gradient(ellipse 80% 50% at 50% 0%, rgba(209, 107, 56, 0.15), transparent),
+      var(--color-bg-dark);
+  }
+
+  .hero-calendario h1 {
+    margin: 0 0 20px;
+    font-size: clamp(40px, 6vw, 56px);
+  }
+
+  .hero-calendario .accent {
+    color: var(--color-primary);
+  }
+
+  .hero-lead {
+    font-size: 18px;
+    color: rgba(239, 227, 214, 0.8);
+    max-width: 55ch;
+    margin: 0 auto;
+  }
+
+  /* Leyenda */
+  .leyenda-section {
+    padding: 20px 0;
+    background: var(--color-bg-dark);
+    border-bottom: 1px solid var(--color-line-light);
+  }
+
+  .leyenda {
+    display: flex;
+    justify-content: center;
+    gap: 32px;
+    flex-wrap: wrap;
+  }
+
+  .leyenda-item {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 14px;
+    color: rgba(239, 227, 214, 0.8);
+  }
+
+  .estado-dot {
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+  }
+
+  .estado-dot.disponible {
+    background: #22c55e;
+  }
+
+  .estado-dot.pocos-cupos {
+    background: #f59e0b;
+  }
+
+  .estado-dot.completo {
+    background: #6b7280;
+  }
+
+  /* Mes */
+  .mes-titulo {
+    font-size: 28px;
+    margin: 0 0 var(--space-lg);
+    padding-bottom: var(--space-sm);
+    border-bottom: 2px solid var(--color-primary);
+    display: inline-block;
+  }
+
+  /* Fechas Grid */
+  .fechas-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: var(--space-md);
+  }
+
+  .fecha-card {
+    background: rgba(239, 227, 214, 0.05);
+    border: 1px solid var(--color-line-light);
+    border-radius: var(--radius-xl);
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+  }
+
+  .fecha-card:not(.completo):hover {
+    transform: translateY(-4px);
+    box-shadow: 0 12px 40px rgba(0, 0, 0, 0.25);
+  }
+
+  .fecha-card.completo {
+    opacity: 0.6;
+  }
+
+  .fecha-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 16px;
+  }
+
+  .fecha-dia {
+    display: flex;
+    flex-direction: column;
+  }
+
+  .dia-numero {
+    font-family: var(--font-display);
+    font-size: 36px;
+    line-height: 1;
+    color: var(--color-primary);
+  }
+
+  .dia-semana {
+    font-size: 13px;
+    text-transform: capitalize;
+    color: rgba(239, 227, 214, 0.7);
+  }
+
+  .estado-badge {
+    padding: 4px 10px;
+    border-radius: 20px;
+    font-size: 11px;
+    font-weight: 600;
+    text-transform: uppercase;
+  }
+
+  .estado-badge.disponible {
+    background: rgba(34, 197, 94, 0.2);
+    color: #22c55e;
+  }
+
+  .estado-badge.pocos-cupos {
+    background: rgba(245, 158, 11, 0.2);
+    color: #f59e0b;
+  }
+
+  .estado-badge.completo {
+    background: rgba(107, 114, 128, 0.2);
+    color: #9ca3af;
+  }
+
+  .fecha-content {
+    flex-grow: 1;
+    margin-bottom: 16px;
+  }
+
+  .fecha-content h3 {
+    margin: 0 0 8px;
+    font-size: 16px;
+    line-height: 1.3;
+  }
+
+  .fecha-precio {
+    font-family: var(--font-display);
+    font-size: 22px;
+    color: var(--color-primary);
+  }
+
+  .btn-disabled {
+    background: #6b7280;
+    cursor: not-allowed;
+    opacity: 0.7;
+  }
+
+  /* Info Box */
+  .info-box {
+    max-width: 900px;
+    margin: 0 auto;
+    padding: var(--space-xl);
+    background: #fff;
+    border: 2px solid var(--color-primary);
+    border-radius: var(--radius-xl);
+  }
+
+  .info-box h3 {
+    margin: 0 0 var(--space-lg);
+    font-size: 24px;
+    color: var(--azul);
+    text-align: center;
+  }
+
+  .info-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: var(--space-lg);
+  }
+
+  .info-item {
+    display: flex;
+    gap: 16px;
+  }
+
+  .info-icon {
+    font-size: 28px;
+    flex-shrink: 0;
+  }
+
+  .info-item strong {
+    display: block;
+    margin-bottom: 4px;
+    color: var(--azul);
+  }
+
+  .info-item p {
+    margin: 0;
+    font-size: 14px;
+    color: var(--marron);
+    line-height: 1.5;
+  }
+
+  @media (max-width: 1100px) {
+    .fechas-grid {
+      grid-template-columns: repeat(2, 1fr);
+    }
+  }
+
+  @media (max-width: 700px) {
+    .fechas-grid {
+      grid-template-columns: 1fr;
+    }
+
+    .info-grid {
+      grid-template-columns: 1fr;
+    }
+  }
+</style>

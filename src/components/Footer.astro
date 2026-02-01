@@ -1,54 +1,179 @@
 ---
 import { siteConfig, whatsappLinks } from '../data/site';
+
+const navLinks = [
+  { href: '/excursiones', label: 'Excursiones' },
+  { href: '/calendario', label: 'Calendario' },
+  { href: '/blog', label: 'Blog' },
+  { href: '/galeria', label: 'Galería' },
+  { href: '/nosotros', label: 'Nosotros' },
+  { href: '/contacto', label: 'Contacto' },
+];
 ---
 
 <footer class="footer">
   <div class="wrap">
-    <div class="footer-contact">
-      <a href={whatsappLinks.general} target="_blank" rel="noopener">
-        WhatsApp: {siteConfig.contact.whatsappDisplay}
-      </a>
-      <a href={`mailto:${siteConfig.contact.email}`}>
-        {siteConfig.contact.email}
-      </a>
-      <a href={siteConfig.contact.instagramUrl} target="_blank" rel="noopener">
-        {siteConfig.contact.instagram}
-      </a>
+    <div class="footer-grid">
+      <!-- Brand -->
+      <div class="footer-brand">
+        <a href="/" class="footer-logo">
+          <img src="/images/logos/logo-blanco.png" alt="Mallku" />
+        </a>
+        <p>Turismo arqueológico con alma. Experiencias que conectan viajeros curiosos con la historia profunda del NOA.</p>
+      </div>
+
+      <!-- Navigation -->
+      <div class="footer-nav">
+        <h4>Navegación</h4>
+        <ul>
+          {navLinks.map((link) => (
+            <li><a href={link.href}>{link.label}</a></li>
+          ))}
+        </ul>
+      </div>
+
+      <!-- Contact -->
+      <div class="footer-contact-info">
+        <h4>Contacto</h4>
+        <ul>
+          <li>
+            <a href={whatsappLinks.general} target="_blank" rel="noopener">
+              WhatsApp: {siteConfig.contact.whatsappDisplay}
+            </a>
+          </li>
+          <li>
+            <a href={`mailto:${siteConfig.contact.email}`}>
+              {siteConfig.contact.email}
+            </a>
+          </li>
+          <li>
+            <a href={siteConfig.contact.instagramUrl} target="_blank" rel="noopener">
+              {siteConfig.contact.instagram}
+            </a>
+          </li>
+        </ul>
+        <p class="location">{siteConfig.contact.location}</p>
+      </div>
     </div>
-    <div class="footer-note">
-      &copy; <span id="year"></span> {siteConfig.name} &middot; {siteConfig.contact.location}
+
+    <div class="footer-bottom">
+      <p>&copy; <span id="footer-year"></span> {siteConfig.name}. Todos los derechos reservados.</p>
     </div>
   </div>
 </footer>
 
+<script>
+  const yearSpan = document.getElementById('footer-year');
+  if (yearSpan) {
+    yearSpan.textContent = new Date().getFullYear().toString();
+  }
+</script>
+
 <style>
   .footer {
-    padding: 48px 0;
+    padding: 60px 0 40px;
     background: var(--color-bg-dark);
     border-top: 1px solid var(--color-line-light);
-    text-align: center;
   }
 
-  .footer-contact {
-    display: flex;
-    gap: 28px;
-    justify-content: center;
-    margin-bottom: 20px;
-    flex-wrap: wrap;
+  .footer-grid {
+    display: grid;
+    grid-template-columns: 1.5fr 1fr 1fr;
+    gap: var(--space-2xl);
+    margin-bottom: var(--space-xl);
   }
 
-  .footer-contact a {
+  .footer-logo {
+    display: inline-block;
+    margin-bottom: var(--space-md);
+  }
+
+  .footer-logo img {
+    height: 60px;
+    width: auto;
+  }
+
+  .footer-brand p {
+    font-size: 14px;
+    color: rgba(239, 227, 214, 0.7);
+    line-height: 1.6;
+    max-width: 300px;
+  }
+
+  .footer-nav h4,
+  .footer-contact-info h4 {
+    font-family: var(--font-display);
+    font-size: 13px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    color: var(--color-primary);
+    margin: 0 0 var(--space-md);
+  }
+
+  .footer-nav ul,
+  .footer-contact-info ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+  }
+
+  .footer-nav li,
+  .footer-contact-info li {
+    margin-bottom: 10px;
+  }
+
+  .footer-nav a,
+  .footer-contact-info a {
     font-size: 14px;
     color: rgba(239, 227, 214, 0.75);
     transition: color var(--transition-normal);
   }
 
-  .footer-contact a:hover {
+  .footer-nav a:hover,
+  .footer-contact-info a:hover {
     color: var(--color-primary);
   }
 
-  .footer-note {
+  .location {
+    margin-top: var(--space-md);
     font-size: 13px;
     color: rgba(239, 227, 214, 0.5);
+  }
+
+  .footer-bottom {
+    padding-top: var(--space-lg);
+    border-top: 1px solid var(--color-line-light);
+    text-align: center;
+  }
+
+  .footer-bottom p {
+    font-size: 13px;
+    color: rgba(239, 227, 214, 0.5);
+    margin: 0;
+  }
+
+  @media (max-width: 800px) {
+    .footer-grid {
+      grid-template-columns: 1fr;
+      gap: var(--space-xl);
+      text-align: center;
+    }
+
+    .footer-brand p {
+      max-width: none;
+    }
+
+    .footer-nav ul,
+    .footer-contact-info ul {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 8px 20px;
+    }
+
+    .footer-nav li,
+    .footer-contact-info li {
+      margin-bottom: 0;
+    }
   }
 </style>

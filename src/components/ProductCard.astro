@@ -9,43 +9,61 @@ interface Props {
   price: string;
   priceNote: string;
   ctaLink: string;
+  image?: string;
+  slug?: string;
 }
 
-const { tag, title, description, highlights, duration, departure, price, priceNote, ctaLink } = Astro.props;
+const { tag, title, description, highlights, duration, departure, price, priceNote, ctaLink, image, slug } = Astro.props;
+
+// Placeholder icons for when no image is provided
+const placeholderIcon = slug === 'tucuman-colonial' ? '🏚️' : '🏛️';
 ---
 
 <div class="product-card">
-  <span class="product-tag">{tag}</span>
-  <h2>{title}</h2>
-  <p class="product-promise">{description}</p>
-
-  <div class="product-highlights">
-    <h4>Puntos destacados</h4>
-    <ul class="highlights-list">
-      {highlights.map((item) => <li>{item}</li>)}
-    </ul>
+  <!-- Image Section -->
+  <div class="product-image">
+    {image ? (
+      <img src={image} alt={title} loading="lazy" />
+    ) : (
+      <div class="image-placeholder">
+        <span class="placeholder-icon">{placeholderIcon}</span>
+      </div>
+    )}
+    <span class="product-tag">{tag}</span>
   </div>
 
-  <div class="product-details">
-    <div class="detail-box">
-      <strong>Duración</strong>
-      <span>{duration}</span>
+  <div class="product-content">
+    <h2>{title}</h2>
+    <p class="product-promise">{description}</p>
+
+    <div class="product-highlights">
+      <h4>Puntos destacados</h4>
+      <ul class="highlights-list">
+        {highlights.map((item) => <li>{item}</li>)}
+      </ul>
     </div>
-    <div class="detail-box">
-      <strong>Salida</strong>
-      <span>{departure}</span>
+
+    <div class="product-details">
+      <div class="detail-box">
+        <strong>Duración</strong>
+        <span>{duration}</span>
+      </div>
+      <div class="detail-box">
+        <strong>Salida</strong>
+        <span>{departure}</span>
+      </div>
     </div>
-  </div>
 
-  <div class="product-price">
-    <div class="price-label">Precio por persona</div>
-    <div class="price-amount">{price}</div>
-    <div class="price-note">{priceNote}</div>
-  </div>
+    <div class="product-price">
+      <div class="price-label">Precio por persona</div>
+      <div class="price-amount">{price}</div>
+      <div class="price-note">{priceNote}</div>
+    </div>
 
-  <a class="btn btn-primary btn-full" href={ctaLink} target="_blank" rel="noopener">
-    Consultar fechas y cupos
-  </a>
+    <a class="btn btn-primary btn-full" href={ctaLink} target="_blank" rel="noopener">
+      Consultar fechas y cupos
+    </a>
+  </div>
 </div>
 
 <style>
@@ -53,9 +71,14 @@ const { tag, title, description, highlights, duration, departure, price, priceNo
     border: 1px solid var(--color-line-light);
     border-radius: var(--radius-xl);
     background: linear-gradient(180deg, rgba(239, 227, 214, 0.08), rgba(239, 227, 214, 0.03));
-    padding: 32px;
     position: relative;
     overflow: hidden;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+  }
+
+  .product-card:hover {
+    transform: translateY(-8px);
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.4);
   }
 
   .product-card::before {
@@ -67,11 +90,47 @@ const { tag, title, description, highlights, duration, departure, price, priceNo
     pointer-events: none;
   }
 
-  .product-card > * {
+  /* Image Section */
+  .product-image {
     position: relative;
+    height: 220px;
+    overflow: hidden;
+  }
+
+  .product-image img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.5s ease;
+  }
+
+  .product-card:hover .product-image img {
+    transform: scale(1.08);
+  }
+
+  .image-placeholder {
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(135deg, rgba(209, 107, 56, 0.3), rgba(6, 27, 56, 0.5));
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .placeholder-icon {
+    font-size: 72px;
+    opacity: 0.7;
+    transition: transform 0.3s ease;
+  }
+
+  .product-card:hover .placeholder-icon {
+    transform: scale(1.1);
   }
 
   .product-tag {
+    position: absolute;
+    top: 16px;
+    left: 16px;
     display: inline-block;
     font-family: var(--font-display);
     font-size: 11px;
@@ -81,12 +140,18 @@ const { tag, title, description, highlights, duration, departure, price, priceNo
     border-radius: 6px;
     background: var(--color-primary);
     color: #fff;
-    margin-bottom: 16px;
+    z-index: 2;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
   }
 
-  .product-card h2 {
+  .product-content {
+    padding: 28px 32px 32px;
+    position: relative;
+  }
+
+  .product-content h2 {
     margin: 0 0 14px;
-    font-size: 32px;
+    font-size: 28px;
   }
 
   .product-promise {
@@ -201,6 +266,14 @@ const { tag, title, description, highlights, duration, departure, price, priceNo
   @media (max-width: 600px) {
     .product-details {
       grid-template-columns: 1fr;
+    }
+
+    .product-image {
+      height: 180px;
+    }
+
+    .product-content {
+      padding: 24px;
     }
   }
 </style>

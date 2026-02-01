@@ -4,8 +4,10 @@ import { whatsappLinks } from '../data/site';
 const navLinks = [
   { href: '/', label: 'Inicio' },
   { href: '/excursiones', label: 'Excursiones' },
-  { href: '/galeria', label: 'Galería' },
+  { href: '/calendario', label: 'Calendario' },
+  { href: '/blog', label: 'Blog' },
   { href: '/nosotros', label: 'Nosotros' },
+  { href: '/contacto', label: 'Contacto' },
 ];
 
 const currentPath = Astro.url.pathname;
@@ -107,9 +109,9 @@ const currentPath = Astro.url.pathname;
   }
 
   .nav-link {
-    padding: 10px 16px;
+    padding: 10px 12px;
     font-family: var(--font-display);
-    font-size: 14px;
+    font-size: 13px;
     text-transform: uppercase;
     letter-spacing: 0.5px;
     color: rgba(239, 227, 214, 0.75);

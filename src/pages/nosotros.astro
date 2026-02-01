@@ -3,6 +3,7 @@ import BaseLayout from '../layouts/BaseLayout.astro';
 import Header from '../components/Header.astro';
 import Footer from '../components/Footer.astro';
 import WhatsAppFloat from '../components/WhatsAppFloat.astro';
+import InteractiveMap from '../components/InteractiveMap.astro';
 import { whatsappLinks } from '../data/site';
 ---
 
@@ -157,10 +158,21 @@ import { whatsappLinks } from '../data/site';
       </div>
     </section>
 
-    <!-- CTA -->
+    <!-- MAPA -->
     <section class="section section-dark">
       <div class="wrap">
-        <div class="cta-box-dark">
+        <h2 class="section-title text-center">Nuestros destinos</h2>
+        <p class="section-subtitle text-center">Los sitios arqueológicos que visitamos en nuestras excursiones</p>
+        <div style="margin-top: var(--space-xl);">
+          <InteractiveMap />
+        </div>
+      </div>
+    </section>
+
+    <!-- CTA -->
+    <section class="section section-light">
+      <div class="wrap">
+        <div class="cta-box-light">
           <h2>¿Querés conocer el NOA con nosotros?</h2>
           <p>Escribinos y te contamos todo sobre nuestras próximas salidas.</p>
           <a class="btn btn-primary" href={whatsappLinks.fechas} target="_blank" rel="noopener">
@@ -335,25 +347,26 @@ import { whatsappLinks } from '../data/site';
     line-height: 1.6;
   }
 
-  /* CTA Dark */
-  .cta-box-dark {
+  /* CTA Light */
+  .cta-box-light {
     max-width: 700px;
     margin: 0 auto;
     padding: var(--space-2xl);
-    border: 1px solid var(--color-line-light);
+    border: 2px solid var(--color-primary);
     border-radius: var(--radius-xl);
-    background: rgba(209, 107, 56, 0.1);
+    background: #fff;
     text-align: center;
   }
 
-  .cta-box-dark h2 {
+  .cta-box-light h2 {
     margin: 0 0 var(--space-sm);
     font-size: 32px;
+    color: var(--azul);
   }
 
-  .cta-box-dark p {
+  .cta-box-light p {
     margin: 0 0 var(--space-lg);
-    opacity: 0.8;
+    color: var(--marron);
   }
 
   @media (max-width: 980px) {

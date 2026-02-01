@@ -19,6 +19,7 @@ const badges = [
 
 const products = [
   {
+    slug: 'arqueologia-en-los-valles',
     tag: 'Más vendido',
     title: 'Arqueología en los Valles',
     description: 'Recorrer mil años de historia andina en un día: desde los monolitos sagrados de la cultura Tafí hasta la ciudad fortificada de Quilmes, último bastión de la resistencia calchaquí. Arqueología, paisaje de altura y memoria viva de los pueblos originarios del NOA.',
@@ -35,6 +36,7 @@ const products = [
     ctaLink: whatsappLinks.valles
   },
   {
+    slug: 'tucuman-colonial',
     tag: 'Ideal familias',
     title: 'Tucumán Colonial',
     description: 'Entender cómo nació Tucumán: desde su primera fundación en plena selva hasta el sistema de estancias jesuitas que moldeó el valle. Un viaje por las decisiones, fracasos y adaptaciones que dieron forma a la provincia.',
@@ -198,27 +200,64 @@ const faqs = [
 <style>
   /* Hero Section */
   .hero {
-    padding: 80px 0 60px;
+    min-height: 85vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
     background:
-      radial-gradient(ellipse 80% 50% at 50% 0%, rgba(209, 107, 56, 0.15), transparent),
+      linear-gradient(
+        to bottom,
+        rgba(6, 27, 56, 0.65) 0%,
+        rgba(6, 27, 56, 0.75) 50%,
+        rgba(6, 27, 56, 0.9) 100%
+      ),
+      linear-gradient(135deg, rgba(209, 107, 56, 0.3), rgba(86, 46, 24, 0.4)),
       var(--color-bg-dark);
+    /* Cuando tengas la imagen real, descomentar la siguiente línea:
+    background-image: linear-gradient(...), url('/images/hero/hero-quilmes.jpg');
+    background-size: cover;
+    background-position: center;
+    */
+  }
+
+  .hero::before {
+    content: "";
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    height: 120px;
+    background: linear-gradient(to top, var(--color-bg-dark), transparent);
+    pointer-events: none;
+  }
+
+  .hero .wrap {
+    position: relative;
+    z-index: 1;
+    padding-top: 40px;
+    padding-bottom: 60px;
   }
 
   .hero h1 {
-    margin: 0 0 20px;
-    font-size: clamp(40px, 6vw, 64px);
+    margin: 0 0 24px;
+    font-size: clamp(42px, 7vw, 72px);
     line-height: 1.05;
+    text-shadow: 0 2px 20px rgba(0, 0, 0, 0.3);
   }
 
   .hero h1 .accent {
     color: var(--color-primary);
+    text-shadow: 0 2px 30px rgba(209, 107, 56, 0.4);
   }
 
   .hero-lead {
-    font-size: 18px;
-    color: rgba(239, 227, 214, 0.8);
-    max-width: 65ch;
-    margin: 0 auto 36px;
+    font-size: 19px;
+    color: rgba(239, 227, 214, 0.9);
+    max-width: 60ch;
+    margin: 0 auto 40px;
+    line-height: 1.7;
+    text-shadow: 0 1px 10px rgba(0, 0, 0, 0.2);
   }
 
   .badges {
@@ -268,7 +307,12 @@ const faqs = [
 
   @media (max-width: 600px) {
     .hero {
-      padding: 60px 0 40px;
+      min-height: 70vh;
+    }
+
+    .hero .wrap {
+      padding-top: 20px;
+      padding-bottom: 40px;
     }
 
     .cta-box {

@@ -1,0 +1,294 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import Header from '../components/Header.astro';
+import Footer from '../components/Footer.astro';
+import WhatsAppFloat from '../components/WhatsAppFloat.astro';
+import ContactForm from '../components/ContactForm.astro';
+import { siteConfig, whatsappLinks } from '../data/site';
+
+const contacto = {
+  whatsapp: siteConfig.contact.whatsappDisplay,
+  email: siteConfig.contact.email,
+  instagram: siteConfig.contact.instagramUrl
+};
+---
+
+<BaseLayout
+  title="Contacto"
+  description="Contactá a Mallku Excursiones. Escribinos por WhatsApp o email para consultar fechas, reservar tu lugar o resolver cualquier duda."
+>
+  <WhatsAppFloat />
+  <Header />
+
+  <main>
+    <!-- HERO -->
+    <section class="hero-contacto">
+      <div class="wrap text-center">
+        <h1>Hablemos</h1>
+        <p class="hero-lead">
+          ¿Tenés dudas sobre nuestras excursiones? ¿Querés consultar fechas o hacer una reserva?
+          Estamos acá para ayudarte.
+        </p>
+      </div>
+    </section>
+
+    <!-- CONTACTO PRINCIPAL -->
+    <section class="section section-light">
+      <div class="wrap">
+        <div class="contacto-grid">
+          <!-- INFO -->
+          <div class="contacto-info">
+            <h2>Contacto directo</h2>
+            <p class="info-intro">
+              La forma más rápida de comunicarte con nosotros es por WhatsApp.
+              Te respondemos en el día.
+            </p>
+
+            <div class="info-items">
+              <a href={whatsappLinks.fechas} target="_blank" rel="noopener" class="info-item whatsapp">
+                <span class="info-icon">📱</span>
+                <div>
+                  <strong>WhatsApp</strong>
+                  <span>{contacto.whatsapp}</span>
+                </div>
+              </a>
+
+              <a href={`mailto:${contacto.email}`} class="info-item">
+                <span class="info-icon">📧</span>
+                <div>
+                  <strong>Email</strong>
+                  <span>{contacto.email}</span>
+                </div>
+              </a>
+
+              <a href={contacto.instagram} target="_blank" rel="noopener" class="info-item">
+                <span class="info-icon">📷</span>
+                <div>
+                  <strong>Instagram</strong>
+                  <span>@mallkuexcursiones</span>
+                </div>
+              </a>
+            </div>
+
+            <div class="horario-box">
+              <h4>Horario de atención</h4>
+              <p>Lunes a viernes: 9:00 - 20:00</p>
+              <p>Sábados: 10:00 - 14:00</p>
+              <p class="nota">Los mensajes fuera de horario se responden al siguiente día hábil.</p>
+            </div>
+          </div>
+
+          <!-- FORM -->
+          <div class="contacto-form">
+            <h2>Envianos un mensaje</h2>
+            <p class="form-intro">
+              Completá el formulario y te responderemos a la brevedad.
+            </p>
+            <ContactForm />
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- PREGUNTAS RÁPIDAS -->
+    <section class="section section-dark">
+      <div class="wrap text-center">
+        <h2 class="section-title">Preguntas rápidas</h2>
+        <p class="section-subtitle">Las consultas más frecuentes que recibimos</p>
+
+        <div class="quick-grid">
+          <a href={`${whatsappLinks.fechas}&text=${encodeURIComponent('Hola, quiero saber las fechas disponibles para la excursión a Quilmes')}`} target="_blank" rel="noopener" class="quick-card">
+            <span>📅</span>
+            <p>¿Cuáles son las próximas fechas?</p>
+          </a>
+          <a href={`${whatsappLinks.fechas}&text=${encodeURIComponent('Hola, quiero reservar lugar en la excursión')}`} target="_blank" rel="noopener" class="quick-card">
+            <span>🎫</span>
+            <p>Quiero reservar mi lugar</p>
+          </a>
+          <a href={`${whatsappLinks.fechas}&text=${encodeURIComponent('Hola, somos un grupo de X personas. ¿Hacen salidas privadas?')}`} target="_blank" rel="noopener" class="quick-card">
+            <span>👥</span>
+            <p>Consulta para grupos</p>
+          </a>
+          <a href={`${whatsappLinks.fechas}&text=${encodeURIComponent('Hola, tengo una duda sobre la excursión')}`} target="_blank" rel="noopener" class="quick-card">
+            <span>❓</span>
+            <p>Tengo otra consulta</p>
+          </a>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <Footer />
+</BaseLayout>
+
+<style>
+  .hero-contacto {
+    padding: 80px 0 60px;
+    background:
+      radial-gradient(ellipse 80% 50% at 50% 0%, rgba(209, 107, 56, 0.15), transparent),
+      var(--color-bg-dark);
+  }
+
+  .hero-contacto h1 {
+    margin: 0 0 20px;
+    font-size: clamp(40px, 6vw, 56px);
+  }
+
+  .hero-lead {
+    font-size: 18px;
+    color: rgba(239, 227, 214, 0.8);
+    max-width: 55ch;
+    margin: 0 auto;
+  }
+
+  /* Contacto Grid */
+  .contacto-grid {
+    display: grid;
+    grid-template-columns: 1fr 1.2fr;
+    gap: var(--space-2xl);
+    align-items: start;
+  }
+
+  .contacto-info h2,
+  .contacto-form h2 {
+    margin: 0 0 var(--space-sm);
+    font-size: 28px;
+    color: var(--azul);
+  }
+
+  .info-intro,
+  .form-intro {
+    margin: 0 0 var(--space-lg);
+    color: var(--marron);
+    line-height: 1.6;
+  }
+
+  /* Info Items */
+  .info-items {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    margin-bottom: var(--space-xl);
+  }
+
+  .info-item {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    padding: 16px 20px;
+    background: #fff;
+    border: 1px solid var(--color-line-dark);
+    border-radius: var(--radius-lg);
+    transition: border-color 0.2s ease, transform 0.2s ease;
+  }
+
+  .info-item:hover {
+    border-color: var(--color-primary);
+    transform: translateX(4px);
+  }
+
+  .info-item.whatsapp {
+    background: linear-gradient(135deg, rgba(37, 211, 102, 0.1), rgba(37, 211, 102, 0.05));
+    border-color: #25d366;
+  }
+
+  .info-icon {
+    font-size: 24px;
+  }
+
+  .info-item strong {
+    display: block;
+    font-family: var(--font-display);
+    font-size: 13px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    color: var(--azul);
+    margin-bottom: 2px;
+  }
+
+  .info-item span {
+    font-size: 15px;
+    color: var(--marron);
+  }
+
+  /* Horario Box */
+  .horario-box {
+    padding: 20px;
+    background: rgba(239, 227, 214, 0.5);
+    border-radius: var(--radius-lg);
+  }
+
+  .horario-box h4 {
+    margin: 0 0 12px;
+    font-size: 14px;
+    color: var(--azul);
+  }
+
+  .horario-box p {
+    margin: 0 0 4px;
+    font-size: 14px;
+    color: var(--marron);
+  }
+
+  .horario-box .nota {
+    margin-top: 12px;
+    font-size: 13px;
+    opacity: 0.7;
+    font-style: italic;
+  }
+
+  /* Quick Grid */
+  .quick-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: var(--space-md);
+    margin-top: var(--space-xl);
+  }
+
+  .quick-card {
+    padding: 24px;
+    background: rgba(239, 227, 214, 0.05);
+    border: 1px solid var(--color-line-light);
+    border-radius: var(--radius-xl);
+    text-align: center;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+  }
+
+  .quick-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 12px 40px rgba(0, 0, 0, 0.25);
+    border-color: var(--color-primary);
+  }
+
+  .quick-card span {
+    font-size: 32px;
+    display: block;
+    margin-bottom: 12px;
+  }
+
+  .quick-card p {
+    margin: 0;
+    font-size: 14px;
+    line-height: 1.4;
+  }
+
+  .quick-card:hover p {
+    color: var(--color-primary);
+  }
+
+  @media (max-width: 980px) {
+    .contacto-grid {
+      grid-template-columns: 1fr;
+    }
+
+    .quick-grid {
+      grid-template-columns: repeat(2, 1fr);
+    }
+  }
+
+  @media (max-width: 600px) {
+    .quick-grid {
+      grid-template-columns: 1fr;
+    }
+  }
+</style>

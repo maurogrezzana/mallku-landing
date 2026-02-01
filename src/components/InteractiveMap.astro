@@ -1,0 +1,249 @@
+---
+interface Punto {
+  lat: number;
+  lng: number;
+  nombre: string;
+  descripcion: string;
+  tipo: 'salida' | 'destino';
+}
+
+const puntos: Punto[] = [
+  {
+    lat: -26.8241,
+    lng: -65.2226,
+    nombre: 'San Miguel de Tucumán',
+    descripcion: 'Punto de salida de todas las excursiones',
+    tipo: 'salida'
+  },
+  {
+    lat: -26.8614,
+    lng: -65.7139,
+    nombre: 'Tafí del Valle',
+    descripcion: 'Valle de altura a 2.000 msnm',
+    tipo: 'destino'
+  },
+  {
+    lat: -26.8667,
+    lng: -65.7500,
+    nombre: 'Parque de los Menhires',
+    descripcion: 'Monolitos de la cultura Tafí (300 AC - 800 DC)',
+    tipo: 'destino'
+  },
+  {
+    lat: -26.4572,
+    lng: -66.0428,
+    nombre: 'Ciudad Sagrada de Quilmes',
+    descripcion: 'Último bastión de la resistencia calchaquí',
+    tipo: 'destino'
+  },
+  {
+    lat: -26.7333,
+    lng: -65.4833,
+    nombre: 'Ruinas de Ibatín',
+    descripcion: 'Primera fundación de Tucumán (1565-1685)',
+    tipo: 'destino'
+  },
+  {
+    lat: -26.7847,
+    lng: -65.6639,
+    nombre: 'Abra del Infiernillo',
+    descripcion: 'Paso de montaña a 3.042 msnm',
+    tipo: 'destino'
+  }
+];
+---
+
+<div class="map-container">
+  <div id="mapa-excursiones" class="mapa"></div>
+  <div class="map-legend">
+    <div class="legend-item">
+      <span class="legend-dot salida"></span>
+      <span>Punto de salida</span>
+    </div>
+    <div class="legend-item">
+      <span class="legend-dot destino"></span>
+      <span>Destinos</span>
+    </div>
+  </div>
+</div>
+
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" crossorigin="" />
+
+<style>
+  .map-container {
+    position: relative;
+    border-radius: var(--radius-xl);
+    overflow: hidden;
+    border: 2px solid var(--color-line-light);
+  }
+
+  .mapa {
+    height: 450px;
+    width: 100%;
+    background: var(--color-bg-dark);
+  }
+
+  .map-legend {
+    position: absolute;
+    bottom: 16px;
+    left: 16px;
+    background: rgba(6, 27, 56, 0.95);
+    padding: 12px 16px;
+    border-radius: var(--radius-md);
+    display: flex;
+    gap: 20px;
+    z-index: 1000;
+  }
+
+  .legend-item {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 12px;
+    color: var(--crema);
+  }
+
+  .legend-dot {
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+  }
+
+  .legend-dot.salida {
+    background: #22c55e;
+  }
+
+  .legend-dot.destino {
+    background: var(--color-primary);
+  }
+
+  /* Custom popup styles */
+  :global(.leaflet-popup-content-wrapper) {
+    background: var(--color-bg-dark);
+    color: var(--crema);
+    border-radius: 12px;
+    box-shadow: 0 8px 30px rgba(0, 0, 0, 0.3);
+  }
+
+  :global(.leaflet-popup-content) {
+    margin: 12px 16px;
+  }
+
+  :global(.leaflet-popup-content h4) {
+    margin: 0 0 4px;
+    font-family: var(--font-display);
+    font-size: 14px;
+    color: var(--color-primary);
+  }
+
+  :global(.leaflet-popup-content p) {
+    margin: 0;
+    font-size: 12px;
+    opacity: 0.8;
+  }
+
+  :global(.leaflet-popup-tip) {
+    background: var(--color-bg-dark);
+  }
+
+  :global(.leaflet-container) {
+    font-family: var(--font-body);
+  }
+
+  @media (max-width: 600px) {
+    .mapa {
+      height: 350px;
+    }
+
+    .map-legend {
+      flex-direction: column;
+      gap: 8px;
+    }
+  }
+</style>
+
+<script>
+  import L from 'leaflet';
+
+  // Fix for default marker icons in Leaflet with bundlers
+  delete (L.Icon.Default.prototype as any)._getIconUrl;
+  L.Icon.Default.mergeOptions({
+    iconRetinaUrl: 'https://unpkg.com/leaflet@1.9.4/dist/images/marker-icon-2x.png',
+    iconUrl: 'https://unpkg.com/leaflet@1.9.4/dist/images/marker-icon.png',
+    shadowUrl: 'https://unpkg.com/leaflet@1.9.4/dist/images/marker-shadow.png',
+  });
+
+  // Define custom icons
+  const iconSalida = L.divIcon({
+    className: 'custom-marker salida',
+    html: '<div style="background: #22c55e; width: 20px; height: 20px; border-radius: 50%; border: 3px solid #fff; box-shadow: 0 2px 8px rgba(0,0,0,0.3);"></div>',
+    iconSize: [20, 20],
+    iconAnchor: [10, 10],
+    popupAnchor: [0, -10]
+  });
+
+  const iconDestino = L.divIcon({
+    className: 'custom-marker destino',
+    html: '<div style="background: #D16B38; width: 16px; height: 16px; border-radius: 50%; border: 2px solid #fff; box-shadow: 0 2px 8px rgba(0,0,0,0.3);"></div>',
+    iconSize: [16, 16],
+    iconAnchor: [8, 8],
+    popupAnchor: [0, -8]
+  });
+
+  // Points data (matching the Astro data)
+  const puntos = [
+    { lat: -26.8241, lng: -65.2226, nombre: 'San Miguel de Tucumán', descripcion: 'Punto de salida de todas las excursiones', tipo: 'salida' },
+    { lat: -26.8614, lng: -65.7139, nombre: 'Tafí del Valle', descripcion: 'Valle de altura a 2.000 msnm', tipo: 'destino' },
+    { lat: -26.8667, lng: -65.7500, nombre: 'Parque de los Menhires', descripcion: 'Monolitos de la cultura Tafí (300 AC - 800 DC)', tipo: 'destino' },
+    { lat: -26.4572, lng: -66.0428, nombre: 'Ciudad Sagrada de Quilmes', descripcion: 'Último bastión de la resistencia calchaquí', tipo: 'destino' },
+    { lat: -26.7333, lng: -65.4833, nombre: 'Ruinas de Ibatín', descripcion: 'Primera fundación de Tucumán (1565-1685)', tipo: 'destino' },
+    { lat: -26.7847, lng: -65.6639, nombre: 'Abra del Infiernillo', descripcion: 'Paso de montaña a 3.042 msnm', tipo: 'destino' }
+  ];
+
+  // Initialize map
+  const mapElement = document.getElementById('mapa-excursiones');
+  if (mapElement) {
+    const map = L.map('mapa-excursiones').setView([-26.7, -65.7], 9);
+
+    // Add tile layer (OpenStreetMap)
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+      attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>',
+      maxZoom: 18
+    }).addTo(map);
+
+    // Add markers
+    puntos.forEach(punto => {
+      const icon = punto.tipo === 'salida' ? iconSalida : iconDestino;
+      const marker = L.marker([punto.lat, punto.lng], { icon }).addTo(map);
+      marker.bindPopup(`<h4>${punto.nombre}</h4><p>${punto.descripcion}</p>`);
+    });
+
+    // Draw route lines (approximate)
+    const rutaValles = [
+      [-26.8241, -65.2226], // Tucumán
+      [-26.8614, -65.7139], // Tafí
+      [-26.7847, -65.6639], // Infiernillo
+      [-26.4572, -66.0428]  // Quilmes
+    ];
+
+    const rutaColonial = [
+      [-26.8241, -65.2226], // Tucumán
+      [-26.7333, -65.4833], // Ibatín
+      [-26.8614, -65.7139]  // Tafí
+    ];
+
+    L.polyline(rutaValles as L.LatLngExpression[], {
+      color: '#D16B38',
+      weight: 3,
+      opacity: 0.6,
+      dashArray: '10, 10'
+    }).addTo(map);
+
+    L.polyline(rutaColonial as L.LatLngExpression[], {
+      color: '#22c55e',
+      weight: 3,
+      opacity: 0.6,
+      dashArray: '5, 10'
+    }).addTo(map);
+  }
+</script>
