@@ -144,7 +144,7 @@ export async function sendLeadNotification(lead: Lead, adminEmail: string): Prom
 
   try {
     const { error } = await resend.emails.send({
-      from: 'Mallku CRM <crm@mallku.com.ar>',
+      from: 'Mallku CRM <onboarding@resend.dev>',
       to: adminEmail,
       subject: `🦅 Nuevo contacto: ${lead.nombre}`,
       html: getLeadNotificationHtml(lead),
@@ -170,7 +170,7 @@ export async function sendLeadConfirmation(lead: Lead): Promise<boolean> {
 
   try {
     const { error } = await resend.emails.send({
-      from: 'Mallku <hola@mallku.com.ar>',
+      from: 'Mallku <onboarding@resend.dev>',
       to: lead.email,
       subject: '¡Gracias por contactarnos! - Mallku',
       html: getLeadConfirmationHtml(lead),
