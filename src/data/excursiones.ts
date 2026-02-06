@@ -21,6 +21,8 @@ export interface Excursion {
   dificultad: string;
   grupoMax: string;
   whatsappLink: string;
+  imagen: string;
+  imagenes: string[];
 }
 
 export const excursiones: Excursion[] = [
@@ -80,7 +82,23 @@ export const excursiones: Excursion[] = [
     priceNote: 'Todo incluido · Grupos reducidos',
     dificultad: 'Media (caminatas cortas en altura)',
     grupoMax: '6-8 personas',
-    whatsappLink: 'https://wa.me/5493815702549?text=Hola%2C%20quiero%20info%20sobre%20Arqueolog%C3%ADa%20en%20los%20Valles'
+    whatsappLink: 'https://wa.me/5493815702549?text=Hola%2C%20quiero%20info%20sobre%20Arqueolog%C3%ADa%20en%20los%20Valles',
+    imagen: '/images/Quilmes 1.jpg',
+    imagenes: [
+      '/images/Quilmes 1.jpg',
+      '/images/Quilmes 2.jpg',
+      '/images/quilmes 3.jpg',
+      '/images/quilmes 4.jpg',
+      '/images/quilmes 5.jpg',
+      '/images/Quilmes 6.jpg',
+      '/images/Quilmes 7.jpg',
+      '/images/menhires 1.jpg',
+      '/images/menhires 2.jpg',
+      '/images/menhires 3.jpg',
+      '/images/Menhires 4.jpg',
+      '/images/Tafi del Valle.jpg',
+      '/images/Infiernillo.jpg',
+    ]
   },
   {
     slug: 'tucuman-colonial',
@@ -136,7 +154,22 @@ export const excursiones: Excursion[] = [
     priceNote: 'Todo incluido · Apto todas las edades',
     dificultad: 'Baja (apto para todas las edades)',
     grupoMax: '6-8 personas',
-    whatsappLink: 'https://wa.me/5493815702549?text=Hola%2C%20quiero%20info%20sobre%20Tucum%C3%A1n%20Colonial'
+    whatsappLink: 'https://wa.me/5493815702549?text=Hola%2C%20quiero%20info%20sobre%20Tucum%C3%A1n%20Colonial',
+    imagen: '/images/Ibatin 1.jpg',
+    imagenes: [
+      '/images/Ibatin 1.jpg',
+      '/images/ibatin 2.jpg',
+      '/images/Ibatin 3.jpg',
+      '/images/Ibatin 4.jpg',
+      '/images/Ibatin 5.jpg',
+      '/images/Museo jesuita 1.jpg',
+      '/images/museo jesuita 2.jpg',
+      '/images/museo jesuita 3.jpg',
+      '/images/reduccion lules 1.jpg',
+      '/images/reduccion lules 2.jpg',
+      '/images/reduccion lules 3.jpg',
+      '/images/reduccion lules 4.jpg',
+    ]
   }
 ];
 

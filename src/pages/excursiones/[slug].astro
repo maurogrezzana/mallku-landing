@@ -28,7 +28,7 @@ const { excursion } = Astro.props;
 
   <main>
     <!-- HERO -->
-    <section class="hero-excursion">
+    <section class="hero-excursion" style={`background-image: linear-gradient(to bottom, rgba(6,27,56,0.5), rgba(6,27,56,0.8)), url('${excursion.imagen}');`}>
       <div class="wrap">
         <span class="tag">{excursion.tag}</span>
         <h1>{excursion.titulo}</h1>
@@ -102,8 +102,22 @@ const { excursion } = Astro.props;
       </div>
     </section>
 
-    <!-- ITINERARIO -->
+    <!-- GALERÍA DE FOTOS -->
     <section class="section section-dark">
+      <div class="wrap">
+        <h2 class="section-title text-center">Fotos de la excursión</h2>
+        <div class="fotos-grid">
+          {excursion.imagenes.slice(0, 8).map((img, i) => (
+            <div class={`foto-item ${i === 0 ? 'foto-grande' : ''}`}>
+              <img src={img} alt={`${excursion.titulo} - foto ${i + 1}`} loading="lazy" />
+            </div>
+          ))}
+        </div>
+      </div>
+    </section>
+
+    <!-- ITINERARIO -->
+    <section class="section section-dark" style="padding-top: 0;">
       <div class="wrap">
         <h2 class="section-title text-center">Itinerario del día</h2>
         <div class="itinerario">
@@ -186,9 +200,8 @@ const { excursion } = Astro.props;
   /* Hero Excursion */
   .hero-excursion {
     padding: 80px 0 60px;
-    background:
-      radial-gradient(ellipse 80% 50% at 50% 0%, rgba(209, 107, 56, 0.2), transparent),
-      var(--color-bg-dark);
+    background-size: cover;
+    background-position: center;
   }
 
   .tag {
@@ -246,6 +259,50 @@ const { excursion } = Astro.props;
 
   .meta-item span:not(.meta-icon) {
     font-size: 15px;
+  }
+
+  /* Fotos Grid */
+  .fotos-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: var(--space-sm);
+    margin-top: var(--space-xl);
+  }
+
+  .foto-item {
+    border-radius: var(--radius-md);
+    overflow: hidden;
+    aspect-ratio: 4/3;
+  }
+
+  .foto-item.foto-grande {
+    grid-column: span 2;
+    grid-row: span 2;
+    aspect-ratio: auto;
+  }
+
+  .foto-item img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.4s ease;
+    cursor: pointer;
+  }
+
+  .foto-item:hover img {
+    transform: scale(1.05);
+  }
+
+  @media (max-width: 600px) {
+    .fotos-grid {
+      grid-template-columns: repeat(2, 1fr);
+    }
+
+    .foto-item.foto-grande {
+      grid-column: span 2;
+      grid-row: span 1;
+      aspect-ratio: 16/9;
+    }
   }
 
   /* Content Layout */

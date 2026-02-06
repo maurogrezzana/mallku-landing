@@ -1,18 +1,15 @@
 ---
 interface Props {
-  formspreeId?: string;
+  apiUrl?: string;
 }
 
-// Replace with your actual Formspree form ID when you create one
-const { formspreeId = 'YOUR_FORM_ID' } = Astro.props;
-const formAction = `https://formspree.io/f/${formspreeId}`;
+const { apiUrl = 'https://mallku-api.vercel.app' } = Astro.props;
 ---
 
 <form
-  action={formAction}
-  method="POST"
   class="contact-form"
   id="contact-form"
+  data-api-url={apiUrl}
 >
   <div class="form-row">
     <div class="form-group">
@@ -53,7 +50,8 @@ const formAction = `https://formspree.io/f/${formspreeId}`;
         <option value="">Seleccioná una opción</option>
         <option value="arqueologia-valles">Arqueología en los Valles</option>
         <option value="tucuman-colonial">Tucumán Colonial</option>
-        <option value="ambas">Me interesan ambas</option>
+        <option value="mallku-experience-4x4">Mallku Experience 4x4</option>
+        <option value="ambas">Me interesan varias</option>
         <option value="otra">Otra consulta</option>
       </select>
     </div>
@@ -72,7 +70,7 @@ const formAction = `https://formspree.io/f/${formspreeId}`;
 
   <input type="text" name="_gotcha" style="display:none" />
 
-  <button type="submit" class="btn btn-primary btn-full">
+  <button type="submit" class="btn btn-primary btn-full" id="submit-btn">
     Enviar consulta
   </button>
 
@@ -82,13 +80,13 @@ const formAction = `https://formspree.io/f/${formspreeId}`;
 </form>
 
 <div id="form-success" class="form-message success" style="display: none;">
-  <span class="message-icon">✓</span>
+  <span class="message-icon">&#10003;</span>
   <h4>¡Mensaje enviado!</h4>
   <p>Gracias por contactarnos. Te responderemos pronto.</p>
 </div>
 
 <div id="form-error" class="form-message error" style="display: none;">
-  <span class="message-icon">✗</span>
+  <span class="message-icon">&#10007;</span>
   <h4>Error al enviar</h4>
   <p>Por favor, intentá de nuevo o escribinos por WhatsApp.</p>
 </div>
@@ -168,6 +166,12 @@ const formAction = `https://formspree.io/f/${formspreeId}`;
     margin: 0;
   }
 
+  /* Submit button loading state */
+  .btn-loading {
+    opacity: 0.7;
+    pointer-events: none;
+  }
+
   /* Success/Error Messages */
   .form-message {
     text-align: center;
@@ -225,25 +229,48 @@ const formAction = `https://formspree.io/f/${formspreeId}`;
 </style>
 
 <script>
-  // Handle form submission with fetch for better UX
   const form = document.getElementById('contact-form') as HTMLFormElement;
   const successMessage = document.getElementById('form-success');
   const errorMessage = document.getElementById('form-error');
+  const submitBtn = document.getElementById('submit-btn') as HTMLButtonElement;
 
   if (form) {
+    const apiUrl = form.dataset.apiUrl || '';
+
     form.addEventListener('submit', async (e) => {
       e.preventDefault();
 
+      // Honeypot check
+      const honeypot = form.querySelector('input[name="_gotcha"]') as HTMLInputElement;
+      if (honeypot && honeypot.value) return;
+
+      // Disable button and show loading
+      const originalText = submitBtn.textContent;
+      submitBtn.textContent = 'Enviando...';
+      submitBtn.classList.add('btn-loading');
+
       const formData = new FormData(form);
-      const action = form.getAttribute('action') || '';
+
+      const payload = {
+        name: formData.get('nombre') as string,
+        email: formData.get('email') as string,
+        phone: (formData.get('telefono') as string) || undefined,
+        excursion_interest: (formData.get('excursion') as string) || undefined,
+        message: formData.get('mensaje') as string,
+        source: 'website_contact',
+        referrer: document.referrer || undefined,
+        utm_source: new URLSearchParams(window.location.search).get('utm_source') || undefined,
+        utm_medium: new URLSearchParams(window.location.search).get('utm_medium') || undefined,
+        utm_campaign: new URLSearchParams(window.location.search).get('utm_campaign') || undefined,
+      };
 
       try {
-        const response = await fetch(action, {
+        const response = await fetch(`${apiUrl}/api/v1/leads`, {
           method: 'POST',
-          body: formData,
           headers: {
-            'Accept': 'application/json'
-          }
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify(payload),
         });
 
         if (response.ok) {
@@ -255,6 +282,9 @@ const formAction = `https://formspree.io/f/${formspreeId}`;
       } catch (error) {
         form.style.display = 'none';
         if (errorMessage) errorMessage.style.display = 'block';
+      } finally {
+        submitBtn.textContent = originalText;
+        submitBtn.classList.remove('btn-loading');
       }
     });
   }

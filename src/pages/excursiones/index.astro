@@ -33,9 +33,7 @@ import { excursiones } from '../../data/excursiones';
             <a href={`/excursiones/${exc.slug}`} class="excursion-card">
               <div class="excursion-image">
                 <span class="excursion-tag">{exc.tag}</span>
-                <div class="image-placeholder">
-                  {exc.slug === 'arqueologia-en-los-valles' ? '🏛️' : '🏚️'}
-                </div>
+                <img src={exc.imagen} alt={exc.titulo} loading="lazy" />
               </div>
               <div class="excursion-content">
                 <h2>{exc.titulo}</h2>
@@ -71,8 +69,25 @@ import { excursiones } from '../../data/excursiones';
       </div>
     </section>
 
-    <!-- INFO -->
+    <!-- EXPERIENCIA 4X4 BANNER -->
     <section class="section section-light">
+      <div class="wrap">
+        <a href="/experiencias/mallku-experience-4x4" class="banner-4x4">
+          <div class="banner-img">
+            <img src="/images/ANS 10.jpg" alt="Mallku Experience 4x4" loading="lazy" />
+          </div>
+          <div class="banner-content">
+            <span class="banner-tag">Experiencia Premium</span>
+            <h2>Mallku Experience 4x4</h2>
+            <p>4 días explorando la Puna catamarqueña en vehículo 4x4. Campo de Piedra Pómez, Volcán Galán, sitios arqueológicos milenarios.</p>
+            <span class="banner-cta">Ver itinerario completo →</span>
+          </div>
+        </a>
+      </div>
+    </section>
+
+    <!-- INFO -->
+    <section class="section section-dark">
       <div class="wrap text-center">
         <h2 class="section-title">¿Qué incluyen todas nuestras excursiones?</h2>
         <div class="incluye-grid">
@@ -156,17 +171,19 @@ import { excursiones } from '../../data/excursiones';
 
   .excursion-image {
     position: relative;
-    background: linear-gradient(135deg, rgba(209, 107, 56, 0.3), rgba(6, 27, 56, 0.5));
+    overflow: hidden;
   }
 
-  .image-placeholder {
+  .excursion-image img {
+    width: 100%;
     height: 100%;
     min-height: 300px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 80px;
-    opacity: 0.6;
+    object-fit: cover;
+    transition: transform 0.5s ease;
+  }
+
+  .excursion-card:hover .excursion-image img {
+    transform: scale(1.05);
   }
 
   .excursion-tag {
@@ -293,13 +310,81 @@ import { excursiones } from '../../data/excursiones';
     color: var(--marron);
   }
 
+  /* Banner 4x4 */
+  .banner-4x4 {
+    display: grid;
+    grid-template-columns: 400px 1fr;
+    border-radius: var(--radius-xl);
+    overflow: hidden;
+    border: 2px solid var(--color-primary);
+    transition: transform var(--transition-normal), box-shadow var(--transition-normal);
+  }
+
+  .banner-4x4:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 20px 60px rgba(209, 107, 56, 0.2);
+  }
+
+  .banner-img {
+    overflow: hidden;
+  }
+
+  .banner-img img {
+    width: 100%;
+    height: 100%;
+    min-height: 250px;
+    object-fit: cover;
+    transition: transform 0.5s ease;
+  }
+
+  .banner-4x4:hover .banner-img img {
+    transform: scale(1.05);
+  }
+
+  .banner-content {
+    padding: var(--space-xl);
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+  }
+
+  .banner-tag {
+    display: inline-block;
+    width: fit-content;
+    padding: 6px 14px;
+    background: var(--color-primary);
+    color: #fff;
+    font-family: var(--font-display);
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    border-radius: 6px;
+    margin-bottom: var(--space-sm);
+  }
+
+  .banner-content h2 {
+    margin: 0 0 var(--space-sm);
+    font-size: 28px;
+    color: var(--azul);
+  }
+
+  .banner-content p {
+    margin: 0 0 var(--space-md);
+    color: var(--marron);
+    line-height: 1.6;
+  }
+
+  .banner-cta {
+    font-family: var(--font-display);
+    font-size: 14px;
+    text-transform: uppercase;
+    color: var(--color-primary);
+    font-weight: 600;
+  }
+
   @media (max-width: 900px) {
     .excursion-card {
       grid-template-columns: 1fr;
-    }
-
-    .image-placeholder {
-      min-height: 200px;
     }
 
     .excursion-meta {
@@ -308,6 +393,10 @@ import { excursiones } from '../../data/excursiones';
 
     .incluye-grid {
       grid-template-columns: repeat(2, 1fr);
+    }
+
+    .banner-4x4 {
+      grid-template-columns: 1fr;
     }
   }
 

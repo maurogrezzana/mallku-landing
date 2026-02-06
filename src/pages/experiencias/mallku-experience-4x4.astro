@@ -103,6 +103,15 @@ const experiencia = getExperienciaBySlug('mallku-experience-4x4')!;
                     <li>{sitio}</li>
                   ))}
                 </ul>
+                {dia.imagenes && dia.imagenes.length > 0 && (
+                  <div class="dia-fotos">
+                    {dia.imagenes.slice(0, 4).map((img, i) => (
+                      <div class="dia-foto">
+                        <img src={img} alt={`${dia.titulo} - foto ${i + 1}`} loading="lazy" />
+                      </div>
+                    ))}
+                  </div>
+                )}
                 {dia.noche && (
                   <p class="dia-noche">Noche en: <strong>{dia.noche}</strong></p>
                 )}
@@ -233,8 +242,8 @@ const experiencia = getExperienciaBySlug('mallku-experience-4x4')!;
     align-items: center;
     justify-content: center;
     background:
-      linear-gradient(135deg, rgba(6, 27, 56, 0.85), rgba(86, 46, 24, 0.75)),
-      url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><defs><pattern id="grain" width="100" height="100" patternUnits="userSpaceOnUse"><circle cx="25" cy="25" r="1" fill="white" opacity="0.03"/><circle cx="75" cy="75" r="1" fill="white" opacity="0.03"/><circle cx="50" cy="10" r="0.5" fill="white" opacity="0.05"/></pattern></defs><rect width="100" height="100" fill="url(%23grain)"/></svg>');
+      linear-gradient(to bottom, rgba(6, 27, 56, 0.5), rgba(6, 27, 56, 0.8)),
+      url('/images/ANS 10.jpg');
     background-size: cover;
     background-position: center;
   }
@@ -453,6 +462,30 @@ const experiencia = getExperienciaBySlug('mallku-experience-4x4')!;
     font-size: 8px;
     top: 50%;
     transform: translateY(-50%);
+  }
+
+  .dia-fotos {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: var(--space-sm);
+    margin: var(--space-md) 0;
+  }
+
+  .dia-foto {
+    border-radius: var(--radius-md);
+    overflow: hidden;
+    aspect-ratio: 4/3;
+  }
+
+  .dia-foto img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.3s ease;
+  }
+
+  .dia-foto:hover img {
+    transform: scale(1.08);
   }
 
   .dia-noche {
@@ -714,6 +747,10 @@ const experiencia = getExperienciaBySlug('mallku-experience-4x4')!;
 
     .sitios-lista {
       grid-template-columns: 1fr;
+    }
+
+    .dia-fotos {
+      grid-template-columns: repeat(2, 1fr);
     }
   }
 

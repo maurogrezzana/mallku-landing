@@ -7,6 +7,7 @@ export interface DiaItinerario {
   precio: string;
   noche?: string;
   extra?: string;
+  imagenes?: string[];
 }
 
 export interface ExperienciaMultiDia {
@@ -31,6 +32,8 @@ export interface ExperienciaMultiDia {
   noIncluye: string[];
   recomendaciones: string[];
   whatsappLink: string;
+  imagen: string;
+  imagenes: string[];
 }
 
 export const experiencias: ExperienciaMultiDia[] = [
@@ -75,7 +78,17 @@ export const experiencias: ExperienciaMultiDia[] = [
           'Campo de Piedra Pómez (40 min libres)'
         ],
         precio: '$425.000',
-        noche: 'Antofagasta de la Sierra'
+        noche: 'Antofagasta de la Sierra',
+        imagenes: [
+          '/images/ANS.jpg',
+          '/images/ANS 2.jpg',
+          '/images/ANS 3.jpg',
+          '/images/ANS 4.jpg',
+          '/images/ANS 5.jpg',
+          '/images/Dunas.JPG',
+          '/images/Campo las tobas 1.jpg',
+          '/images/Campo las tobas 2.jpg',
+        ]
       },
       {
         dia: 2,
@@ -91,7 +104,21 @@ export const experiencias: ExperienciaMultiDia[] = [
           'Sitio Arqueológico Peñas Coloradas'
         ],
         precio: '$330.000',
-        noche: 'Antofagasta de la Sierra'
+        noche: 'Antofagasta de la Sierra',
+        imagenes: [
+          '/images/Confluencia 1.JPG',
+          '/images/Confluencia 2.jpg',
+          '/images/Confluencia 3.JPG',
+          '/images/Confluencia 4.JPG',
+          '/images/Confluencia 5.JPG',
+          '/images/Confluencia 6.JPG',
+          '/images/Pucara los Negros 1.jpg',
+          '/images/Pucara los Negros 2.jpg',
+          '/images/Pucara los Negros 3.jpg',
+          '/images/Pucara los negros 4.jpg',
+          '/images/Quebrada seca 1.jpg',
+          '/images/Quebrada seca 2.jpg',
+        ]
       },
       {
         dia: 3,
@@ -116,7 +143,26 @@ export const experiencias: ExperienciaMultiDia[] = [
         ],
         precio: '$360.000',
         noche: 'Antofagasta de la Sierra',
-        extra: 'Cena de despedida incluida (asado autóctono o trucha)'
+        extra: 'Cena de despedida incluida (asado autóctono o trucha)',
+        imagenes: [
+          '/images/real grande.jpg',
+          '/images/Real Grande 2.jpg',
+          '/images/Real Grande 3.jpg',
+          '/images/Real Grande 4.jpg',
+          '/images/Real Grande 5.jpg',
+          '/images/Real Grande 6.jpg',
+          '/images/Real Grande 7.jpg',
+          '/images/Real Grande 8.jpg',
+          '/images/Real Grande 9.jpg',
+          '/images/real grande 10.jpg',
+          '/images/Real Grande 11.jpg',
+          '/images/Real Grande 12.jpg',
+          '/images/Real Grande 13.jpg',
+          '/images/Real Grande 14.jpg',
+          '/images/Real Grande 15.jpg',
+          '/images/Real Grande 16.jpg',
+          '/images/Real Grande 17.jpg',
+        ]
       },
       {
         dia: 4,
@@ -127,7 +173,15 @@ export const experiencias: ExperienciaMultiDia[] = [
           'Almuerzo en Belén',
           'Ruinas de Shincal (turno tarde)'
         ],
-        precio: '$410.000'
+        precio: '$410.000',
+        imagenes: [
+          '/images/4x4.png',
+          '/images/4x4 2.png',
+          '/images/4x4 3.png',
+          '/images/4x4 4.png',
+          '/images/4x4 5.jpg',
+          '/images/Rancho el tuichy.jpg',
+        ]
       }
     ],
     incluye: [
@@ -156,7 +210,31 @@ export const experiencias: ExperienciaMultiDia[] = [
       'Medicación para altura si tenés antecedentes',
       'Cámara de fotos con batería extra (el frío las agota rápido)'
     ],
-    whatsappLink: 'https://wa.me/5493815702549?text=Hola%2C%20quiero%20info%20sobre%20Mallku%20Experience%204x4'
+    whatsappLink: 'https://wa.me/5493815702549?text=Hola%2C%20quiero%20info%20sobre%20Mallku%20Experience%204x4',
+    imagen: '/images/4x4.png',
+    imagenes: [
+      '/images/4x4.png',
+      '/images/4x4 2.png',
+      '/images/4x4 3.png',
+      '/images/4x4 4.png',
+      '/images/4x4 5.jpg',
+      '/images/ANS 6.jpg',
+      '/images/ANS 7.jpg',
+      '/images/ANS 8.jpg',
+      '/images/ANS 9.jpg',
+      '/images/ANS 10.jpg',
+      '/images/ANS 11.jpg',
+      '/images/ANS 12.jpg',
+      '/images/ANS 13.jpg',
+      '/images/ANS 14.jpg',
+      '/images/ANS 15.jpg',
+      '/images/ANS 16.jpg',
+      '/images/ANS 17.jpg',
+      '/images/ANS 18.jpg',
+      '/images/ANS 19.jpg',
+      '/images/ANS 20.jpg',
+      '/images/ANS 21.jpg',
+    ]
   }
 ];
 
