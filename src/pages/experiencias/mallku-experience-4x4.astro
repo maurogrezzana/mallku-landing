@@ -1,11 +1,14 @@
 ---
+import { Image, getImage } from 'astro:assets';
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import Header from '../../components/Header.astro';
 import Footer from '../../components/Footer.astro';
 import WhatsAppFloat from '../../components/WhatsAppFloat.astro';
 import { getExperienciaBySlug } from '../../data/experiencias';
+import { resolveImage } from '../../utils/images';
 
 const experiencia = getExperienciaBySlug('mallku-experience-4x4')!;
+const heroBg = await getImage({ src: resolveImage('/images/ANS 10.jpg'), width: 1600 });
 ---
 
 <BaseLayout
@@ -17,7 +20,7 @@ const experiencia = getExperienciaBySlug('mallku-experience-4x4')!;
 
   <main>
     <!-- HERO -->
-    <section class="hero">
+    <section class="hero" style={`background: linear-gradient(to bottom, rgba(6,27,56,0.5), rgba(6,27,56,0.8)), url('${heroBg.src}'); background-size: cover; background-position: center;`}>
       <div class="hero-overlay"></div>
       <div class="wrap hero-content">
         <span class="tag">{experiencia.tag}</span>
@@ -105,9 +108,9 @@ const experiencia = getExperienciaBySlug('mallku-experience-4x4')!;
                 </ul>
                 {dia.imagenes && dia.imagenes.length > 0 && (
                   <div class="dia-fotos">
-                    {dia.imagenes.slice(0, 4).map((img, i) => (
+                    {dia.imagenes.slice(0, 3).map((img, i) => (
                       <div class="dia-foto">
-                        <img src={img} alt={`${dia.titulo} - foto ${i + 1}`} loading="lazy" />
+                        <Image src={resolveImage(img)} alt={`${dia.titulo} - foto ${i + 1}`} loading="lazy" />
                       </div>
                     ))}
                   </div>
@@ -241,11 +244,6 @@ const experiencia = getExperienciaBySlug('mallku-experience-4x4')!;
     display: flex;
     align-items: center;
     justify-content: center;
-    background:
-      linear-gradient(to bottom, rgba(6, 27, 56, 0.5), rgba(6, 27, 56, 0.8)),
-      url('/images/ANS 10.jpg');
-    background-size: cover;
-    background-position: center;
   }
 
   .hero-overlay {
@@ -466,15 +464,15 @@ const experiencia = getExperienciaBySlug('mallku-experience-4x4')!;
 
   .dia-fotos {
     display: grid;
-    grid-template-columns: repeat(4, 1fr);
-    gap: var(--space-sm);
+    grid-template-columns: repeat(3, 1fr);
+    gap: var(--space-md);
     margin: var(--space-md) 0;
   }
 
   .dia-foto {
     border-radius: var(--radius-md);
     overflow: hidden;
-    aspect-ratio: 4/3;
+    aspect-ratio: 3/2;
   }
 
   .dia-foto img {

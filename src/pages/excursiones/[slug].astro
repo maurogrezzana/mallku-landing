@@ -1,9 +1,11 @@
 ---
+import { Image, getImage } from 'astro:assets';
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import Header from '../../components/Header.astro';
 import Footer from '../../components/Footer.astro';
 import WhatsAppFloat from '../../components/WhatsAppFloat.astro';
 import { excursiones, type Excursion } from '../../data/excursiones';
+import { resolveImage } from '../../utils/images';
 
 export function getStaticPaths() {
   return excursiones.map((excursion) => ({
@@ -17,6 +19,8 @@ interface Props {
 }
 
 const { excursion } = Astro.props;
+const heroBg = await getImage({ src: resolveImage(excursion.imagen), width: 1600 });
+const resolvedFotos = excursion.imagenes.slice(0, 7).map(img => resolveImage(img));
 ---
 
 <BaseLayout
@@ -28,7 +32,7 @@ const { excursion } = Astro.props;
 
   <main>
     <!-- HERO -->
-    <section class="hero-excursion" style={`background-image: linear-gradient(to bottom, rgba(6,27,56,0.5), rgba(6,27,56,0.8)), url('${excursion.imagen}');`}>
+    <section class="hero-excursion" style={`background-image: linear-gradient(to bottom, rgba(6,27,56,0.5), rgba(6,27,56,0.8)), url('${heroBg.src}');`}>
       <div class="wrap">
         <span class="tag">{excursion.tag}</span>
         <h1>{excursion.titulo}</h1>
@@ -107,9 +111,9 @@ const { excursion } = Astro.props;
       <div class="wrap">
         <h2 class="section-title text-center">Fotos de la excursión</h2>
         <div class="fotos-grid">
-          {excursion.imagenes.slice(0, 8).map((img, i) => (
+          {resolvedFotos.map((img, i) => (
             <div class={`foto-item ${i === 0 ? 'foto-grande' : ''}`}>
-              <img src={img} alt={`${excursion.titulo} - foto ${i + 1}`} loading="lazy" />
+              <Image src={img} alt={`${excursion.titulo} - foto ${i + 1}`} loading="lazy" />
             </div>
           ))}
         </div>
@@ -264,15 +268,15 @@ const { excursion } = Astro.props;
   /* Fotos Grid */
   .fotos-grid {
     display: grid;
-    grid-template-columns: repeat(4, 1fr);
-    gap: var(--space-sm);
+    grid-template-columns: repeat(3, 1fr);
+    gap: var(--space-md);
     margin-top: var(--space-xl);
   }
 
   .foto-item {
     border-radius: var(--radius-md);
     overflow: hidden;
-    aspect-ratio: 4/3;
+    aspect-ratio: 3/2;
   }
 
   .foto-item.foto-grande {

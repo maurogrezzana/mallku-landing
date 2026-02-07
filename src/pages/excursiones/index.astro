@@ -1,9 +1,13 @@
 ---
+import { Image } from 'astro:assets';
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import Header from '../../components/Header.astro';
 import Footer from '../../components/Footer.astro';
 import WhatsAppFloat from '../../components/WhatsAppFloat.astro';
 import { excursiones } from '../../data/excursiones';
+import { resolveImage } from '../../utils/images';
+
+const ans10Img = resolveImage('/images/ANS 10.jpg');
 ---
 
 <BaseLayout
@@ -33,7 +37,7 @@ import { excursiones } from '../../data/excursiones';
             <a href={`/excursiones/${exc.slug}`} class="excursion-card">
               <div class="excursion-image">
                 <span class="excursion-tag">{exc.tag}</span>
-                <img src={exc.imagen} alt={exc.titulo} loading="lazy" />
+                <Image src={resolveImage(exc.imagen)} alt={exc.titulo} loading="lazy" />
               </div>
               <div class="excursion-content">
                 <h2>{exc.titulo}</h2>
@@ -74,7 +78,7 @@ import { excursiones } from '../../data/excursiones';
       <div class="wrap">
         <a href="/experiencias/mallku-experience-4x4" class="banner-4x4">
           <div class="banner-img">
-            <img src="/images/ANS 10.jpg" alt="Mallku Experience 4x4" loading="lazy" />
+            <Image src={ans10Img} alt="Mallku Experience 4x4" loading="lazy" />
           </div>
           <div class="banner-content">
             <span class="banner-tag">Experiencia Premium</span>
@@ -156,7 +160,7 @@ import { excursiones } from '../../data/excursiones';
 
   .excursion-card {
     display: grid;
-    grid-template-columns: 400px 1fr;
+    grid-template-columns: 1fr 1fr;
     background: rgba(239, 227, 214, 0.05);
     border: 1px solid var(--color-line-light);
     border-radius: var(--radius-xl);
@@ -313,7 +317,7 @@ import { excursiones } from '../../data/excursiones';
   /* Banner 4x4 */
   .banner-4x4 {
     display: grid;
-    grid-template-columns: 400px 1fr;
+    grid-template-columns: 1fr 1fr;
     border-radius: var(--radius-xl);
     overflow: hidden;
     border: 2px solid var(--color-primary);

@@ -1,4 +1,7 @@
 ---
+import { Image } from 'astro:assets';
+import type { ImageMetadata } from 'astro';
+
 interface Props {
   tag: string;
   title: string;
@@ -9,7 +12,7 @@ interface Props {
   price: string;
   priceNote: string;
   ctaLink: string;
-  image?: string;
+  image?: ImageMetadata;
   slug?: string;
 }
 
@@ -23,7 +26,7 @@ const placeholderIcon = slug === 'tucuman-colonial' ? '🏚️' : '🏛️';
   <!-- Image Section -->
   <div class="product-image">
     {image ? (
-      <img src={image} alt={title} loading="lazy" />
+      <Image src={image} alt={title} loading="lazy" />
     ) : (
       <div class="image-placeholder">
         <span class="placeholder-icon">{placeholderIcon}</span>
@@ -93,7 +96,7 @@ const placeholderIcon = slug === 'tucuman-colonial' ? '🏚️' : '🏛️';
   /* Image Section */
   .product-image {
     position: relative;
-    height: 220px;
+    height: 300px;
     overflow: hidden;
   }
 
@@ -269,7 +272,7 @@ const placeholderIcon = slug === 'tucuman-colonial' ? '🏚️' : '🏛️';
     }
 
     .product-image {
-      height: 180px;
+      height: 220px;
     }
 
     .product-content {

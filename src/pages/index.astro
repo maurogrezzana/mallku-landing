@@ -1,4 +1,5 @@
 ---
+import { Image, getImage } from 'astro:assets';
 import BaseLayout from '../layouts/BaseLayout.astro';
 import Header from '../components/Header.astro';
 import Footer from '../components/Footer.astro';
@@ -9,6 +10,15 @@ import FAQItem from '../components/FAQItem.astro';
 import WhyCard from '../components/WhyCard.astro';
 import Badge from '../components/Badge.astro';
 import { whatsappLinks } from '../data/site';
+import { galeriaHomeItems } from '../data/galeria-home';
+import { resolveImage } from '../utils/images';
+
+const heroBg = await getImage({ src: resolveImage('/images/Quilmes 1.jpg'), width: 1600 });
+const ans10Img = resolveImage('/images/ANS 10.jpg');
+const resolvedGaleria = galeriaHomeItems.map(item => ({
+  ...item,
+  resolved: resolveImage(item.src),
+}));
 
 const badges = [
   'Guías arqueólogos',
@@ -34,7 +44,7 @@ const products = [
     price: '$120.000',
     priceNote: 'Todo incluido · Grupos reducidos',
     ctaLink: whatsappLinks.valles,
-    image: '/images/Quilmes 1.jpg'
+    image: resolveImage('/images/Quilmes 1.jpg')
   },
   {
     slug: 'tucuman-colonial',
@@ -52,7 +62,7 @@ const products = [
     price: '$100.000',
     priceNote: 'Todo incluido · Apto todas las edades',
     ctaLink: whatsappLinks.colonial,
-    image: '/images/Ibatin 1.jpg'
+    image: resolveImage('/images/Ibatin 1.jpg')
   }
 ];
 
@@ -126,7 +136,7 @@ const faqs = [
 
   <main>
     <!-- HERO -->
-    <section class="hero">
+    <section class="hero" style={`background: linear-gradient(to bottom, rgba(6,27,56,0.55) 0%, rgba(6,27,56,0.65) 50%, rgba(6,27,56,0.85) 100%), url('${heroBg.src}'); background-size: cover; background-position: center;`}>
       <div class="wrap text-center">
         <h1>Turismo <span class="accent">Arqueológico</span><br/>en el Noroeste Argentino</h1>
         <p class="hero-lead">
@@ -153,7 +163,7 @@ const faqs = [
       <div class="wrap">
         <div class="exp-layout">
           <div class="exp-image">
-            <img src="/images/ANS 10.jpg" alt="Mallku Experience 4x4" loading="lazy" />
+            <Image src={ans10Img} alt="Mallku Experience 4x4" loading="lazy" />
             <span class="exp-tag">Experiencia Premium</span>
           </div>
           <div class="exp-content">
@@ -186,6 +196,33 @@ const faqs = [
 
         <div class="grid-3">
           {whyCards.map((card) => <WhyCard {...card} />)}
+        </div>
+      </div>
+    </section>
+
+    <!-- GALERÍA -->
+    <section class="section section-light galeria-home">
+      <div class="wrap text-center">
+        <h2 class="section-title" style="color: var(--azul);">Los paisajes que vas a <span class="accent-dark">descubrir</span></h2>
+        <p class="section-subtitle" style="color: var(--marron);">
+          Sitios arqueológicos, valles andinos y la inmensidad de la Puna catamarqueña.
+        </p>
+      </div>
+      <div class="wrap">
+        <div class="galeria-home-grid">
+          {resolvedGaleria.map((item, i) => (
+            <div class={`gh-item gh-item-${i + 1}`}>
+              <Image src={item.resolved} alt={item.alt} loading="lazy" />
+              <div class="gh-overlay">
+                <span class="gh-cat">{item.categoria}</span>
+              </div>
+            </div>
+          ))}
+        </div>
+        <div class="galeria-home-cta">
+          <a class="btn btn-primary" href="/galeria">
+            Ver galería completa
+          </a>
         </div>
       </div>
     </section>
@@ -237,16 +274,6 @@ const faqs = [
     align-items: center;
     justify-content: center;
     position: relative;
-    background:
-      linear-gradient(
-        to bottom,
-        rgba(6, 27, 56, 0.55) 0%,
-        rgba(6, 27, 56, 0.65) 50%,
-        rgba(6, 27, 56, 0.85) 100%
-      ),
-      url('/images/Quilmes 1.jpg');
-    background-size: cover;
-    background-position: center;
   }
 
   .hero::before {
@@ -311,7 +338,8 @@ const faqs = [
 
   .exp-image img {
     width: 100%;
-    height: 400px;
+    height: 100%;
+    min-height: 400px;
     object-fit: cover;
     display: block;
   }
@@ -403,6 +431,114 @@ const faqs = [
 
     .exp-image img {
       height: 280px;
+    }
+  }
+
+  /* Gallery Home Section */
+  .galeria-home-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    grid-template-rows: auto auto auto;
+    gap: var(--space-sm);
+    margin-top: var(--space-xl);
+  }
+
+  .gh-item {
+    position: relative;
+    border-radius: var(--radius-lg);
+    overflow: hidden;
+    cursor: pointer;
+  }
+
+  .gh-item img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.5s ease;
+    display: block;
+  }
+
+  .gh-item:hover img {
+    transform: scale(1.06);
+  }
+
+  .gh-overlay {
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(to top, rgba(6, 27, 56, 0.6) 0%, transparent 50%);
+    opacity: 0;
+    transition: opacity 0.3s ease;
+    display: flex;
+    align-items: flex-end;
+    padding: var(--space-md);
+  }
+
+  .gh-item:hover .gh-overlay {
+    opacity: 1;
+  }
+
+  .gh-cat {
+    font-family: var(--font-display);
+    font-size: 12px;
+    text-transform: uppercase;
+    letter-spacing: 1.5px;
+    color: #fff;
+  }
+
+  .gh-item-1 {
+    grid-column: span 2;
+    grid-row: span 2;
+    aspect-ratio: 1 / 1;
+  }
+
+  .gh-item-2,
+  .gh-item-3,
+  .gh-item-4,
+  .gh-item-5,
+  .gh-item-6,
+  .gh-item-7 {
+    aspect-ratio: 4 / 3;
+  }
+
+  .gh-item-8 {
+    grid-column: span 2;
+    aspect-ratio: 16 / 9;
+  }
+
+  .galeria-home-cta {
+    text-align: center;
+    margin-top: var(--space-xl);
+  }
+
+  @media (max-width: 900px) {
+    .galeria-home-grid {
+      grid-template-columns: repeat(2, 1fr);
+    }
+
+    .gh-item-1 {
+      grid-column: span 2;
+      grid-row: span 1;
+      aspect-ratio: 16 / 9;
+    }
+
+    .gh-item-8 {
+      grid-column: span 2;
+      aspect-ratio: 16 / 9;
+    }
+  }
+
+  @media (max-width: 480px) {
+    .galeria-home-grid {
+      grid-template-columns: 1fr;
+    }
+
+    .gh-item-1,
+    .gh-item-8 {
+      grid-column: span 1;
+    }
+
+    .gh-item {
+      aspect-ratio: 16 / 9;
     }
   }
 
