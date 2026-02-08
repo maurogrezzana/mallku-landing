@@ -5,6 +5,7 @@ import Footer from '../../components/Footer.astro';
 import WhatsAppFloat from '../../components/WhatsAppFloat.astro';
 import BlogCard from '../../components/BlogCard.astro';
 import { posts } from '../../data/posts';
+import { resolveImage } from '../../utils/images';
 
 // Sort posts by date (newest first)
 const sortedPosts = [...posts].sort((a, b) =>
@@ -57,6 +58,7 @@ const categorias = [...new Set(posts.map(p => p.categoria))];
               fecha={post.fecha}
               categoria={post.categoria}
               tiempoLectura={post.tiempoLectura}
+              image={resolveImage(post.imagen)}
             />
           ))}
         </div>
@@ -122,7 +124,7 @@ const categorias = [...new Set(posts.map(p => p.categoria))];
     padding: 10px 20px;
     background: transparent;
     border: 1px solid var(--color-line-light);
-    border-radius: 30px;
+    border-radius: 0;
     color: var(--crema);
     font-family: var(--font-display);
     font-size: 13px;

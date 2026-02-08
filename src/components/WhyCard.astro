@@ -9,27 +9,34 @@ const { icon, title, description } = Astro.props;
 ---
 
 <div class="why-card">
-  <div class="why-icon">{icon}</div>
+  <div class="why-icon" set:html={icon} />
   <h3>{title}</h3>
   <p>{description}</p>
 </div>
 
 <style>
   .why-card {
-    padding: 28px;
+    padding: 32px;
     border: 1px solid var(--color-line-dark);
-    border-radius: var(--radius-lg);
     background: #fff;
     text-align: left;
   }
 
   .why-icon {
-    font-size: 36px;
-    margin-bottom: 16px;
+    margin-bottom: 20px;
+    color: var(--terracota);
+  }
+
+  .why-icon :global(svg) {
+    width: 36px;
+    height: 36px;
+    stroke: currentColor;
+    stroke-width: 1.5;
+    fill: none;
   }
 
   .why-card h3 {
-    margin: 0 0 10px;
+    margin: 0 0 12px;
     font-size: 20px;
     color: var(--azul);
   }

@@ -6,6 +6,7 @@ import Footer from '../../components/Footer.astro';
 import WhatsAppFloat from '../../components/WhatsAppFloat.astro';
 import { excursiones, type Excursion } from '../../data/excursiones';
 import { resolveImage } from '../../utils/images';
+import { siteConfig } from '../../data/site';
 
 export function getStaticPaths() {
   return excursiones.map((excursion) => ({
@@ -21,11 +22,57 @@ interface Props {
 const { excursion } = Astro.props;
 const heroBg = await getImage({ src: resolveImage(excursion.imagen), width: 1600 });
 const resolvedFotos = excursion.imagenes.slice(0, 7).map(img => resolveImage(img));
+
+// Schema.org TouristTrip structured data
+const structuredData = {
+  "@context": "https://schema.org",
+  "@type": "TouristTrip",
+  "name": excursion.titulo,
+  "description": excursion.descripcion,
+  "touristType": "Turismo arqueológico",
+  "image": `${siteConfig.url}${excursion.imagen}`,
+  "url": `${siteConfig.url}/excursiones/${excursion.slug}`,
+  "itinerary": {
+    "@type": "ItemList",
+    "itemListElement": excursion.itinerario.map((item, i) => ({
+      "@type": "ListItem",
+      "position": i + 1,
+      "name": item.actividad,
+      "description": item.descripcion
+    }))
+  },
+  "offers": {
+    "@type": "Offer",
+    "price": excursion.precio.replace(/[^0-9]/g, ''),
+    "priceCurrency": "ARS",
+    "availability": "https://schema.org/InStock"
+  },
+  "provider": {
+    "@type": "TourOperator",
+    "name": siteConfig.name,
+    "url": siteConfig.url,
+    "telephone": siteConfig.contact.whatsapp,
+    "address": {
+      "@type": "PostalAddress",
+      "addressLocality": "San Miguel de Tucumán",
+      "addressRegion": "Tucumán",
+      "addressCountry": "AR"
+    }
+  },
+  "duration": excursion.duracion,
+  "maximumAttendeeCapacity": excursion.grupoMax.replace(/[^0-9]/g, '').slice(-1) || "8",
+  "includesAttraction": excursion.highlights.map(h => ({
+    "@type": "TouristAttraction",
+    "name": h
+  }))
+};
 ---
 
 <BaseLayout
   title={excursion.titulo}
   description={excursion.descripcion}
+  ogImage={excursion.imagen}
+  structuredData={structuredData}
 >
   <WhatsAppFloat />
   <Header />
@@ -40,28 +87,28 @@ const resolvedFotos = excursion.imagenes.slice(0, 7).map(img => resolveImage(img
 
         <div class="hero-meta">
           <div class="meta-item">
-            <span class="meta-icon">⏱️</span>
+            <span class="meta-icon"><svg viewBox="0 0 24 24"><path d="M11.99 2C6.47 2 2 6.48 2 12s4.47 10 9.99 10C17.52 22 22 17.52 22 12S17.52 2 11.99 2zM12 20c-4.42 0-8-3.58-8-8s3.58-8 8-8 8 3.58 8 8-3.58 8-8 8zm.5-13H11v6l5.25 3.15.75-1.23-4.5-2.67z"/></svg></span>
             <div>
               <strong>Duración</strong>
               <span>{excursion.duracion}</span>
             </div>
           </div>
           <div class="meta-item">
-            <span class="meta-icon">🚀</span>
+            <span class="meta-icon"><svg viewBox="0 0 24 24"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z"/></svg></span>
             <div>
               <strong>Salida</strong>
               <span>{excursion.salida}</span>
             </div>
           </div>
           <div class="meta-item">
-            <span class="meta-icon">📊</span>
+            <span class="meta-icon"><svg viewBox="0 0 24 24"><path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zM9 17H7v-7h2v7zm4 0h-2V7h2v10zm4 0h-2v-4h2v4z"/></svg></span>
             <div>
               <strong>Dificultad</strong>
               <span>{excursion.dificultad}</span>
             </div>
           </div>
           <div class="meta-item">
-            <span class="meta-icon">👥</span>
+            <span class="meta-icon"><svg viewBox="0 0 24 24"><path d="M16 11c1.66 0 2.99-1.34 2.99-3S17.66 5 16 5s-3 1.34-3 3 1.34 3 3 3zm-8 0c1.66 0 2.99-1.34 2.99-3S9.66 5 8 5 5 6.34 5 8s1.34 3 3 3zm0 2c-2.33 0-7 1.17-7 3.5V19h14v-2.5c0-2.33-4.67-3.5-7-3.5zm8 0c-.29 0-.62.02-.97.05 1.16.84 1.97 1.97 1.97 3.45V19h6v-2.5c0-2.33-4.67-3.5-7-3.5z"/></svg></span>
             <div>
               <strong>Grupo máximo</strong>
               <span>{excursion.grupoMax}</span>
@@ -76,12 +123,12 @@ const resolvedFotos = excursion.imagenes.slice(0, 7).map(img => resolveImage(img
       <div class="wrap">
         <div class="content-layout">
           <div class="content-main">
-            <h2>Sobre esta excursión</h2>
+            <h2>La experiencia</h2>
             {excursion.descripcionLarga.map((parrafo) => (
               <p>{parrafo}</p>
             ))}
 
-            <h3>Puntos destacados</h3>
+            <h3>¿Qué vas a descubrir?</h3>
             <ul class="highlights">
               {excursion.highlights.map((item) => (
                 <li>{item}</li>
@@ -97,9 +144,9 @@ const resolvedFotos = excursion.imagenes.slice(0, 7).map(img => resolveImage(img
                 <span class="price-note">{excursion.priceNote}</span>
               </div>
               <a class="btn btn-primary btn-full" href={excursion.whatsappLink} target="_blank" rel="noopener">
-                Reservar ahora
+                Consultar disponibilidad
               </a>
-              <p class="price-info">Consultá fechas disponibles y asegurá tu lugar</p>
+              <p class="price-info">Escribinos y te confirmamos fechas y cupos</p>
             </div>
           </aside>
         </div>
@@ -109,7 +156,7 @@ const resolvedFotos = excursion.imagenes.slice(0, 7).map(img => resolveImage(img
     <!-- GALERÍA DE FOTOS -->
     <section class="section section-dark">
       <div class="wrap">
-        <h2 class="section-title text-center">Fotos de la excursión</h2>
+        <h2 class="section-title text-center">Imágenes del recorrido</h2>
         <div class="fotos-grid">
           {resolvedFotos.map((img, i) => (
             <div class={`foto-item ${i === 0 ? 'foto-grande' : ''}`}>
@@ -123,7 +170,7 @@ const resolvedFotos = excursion.imagenes.slice(0, 7).map(img => resolveImage(img
     <!-- ITINERARIO -->
     <section class="section section-dark" style="padding-top: 0;">
       <div class="wrap">
-        <h2 class="section-title text-center">Itinerario del día</h2>
+        <h2 class="section-title text-center">Tu día, paso a paso</h2>
         <div class="itinerario">
           {excursion.itinerario.map((item, index) => (
             <div class="itinerario-item">
@@ -147,7 +194,7 @@ const resolvedFotos = excursion.imagenes.slice(0, 7).map(img => resolveImage(img
       <div class="wrap">
         <div class="incluye-grid">
           <div class="incluye-card">
-            <h3>✅ ¿Qué incluye?</h3>
+            <h3>Incluido en tu excursión</h3>
             <ul>
               {excursion.incluye.map((item) => (
                 <li>{item}</li>
@@ -155,7 +202,7 @@ const resolvedFotos = excursion.imagenes.slice(0, 7).map(img => resolveImage(img
             </ul>
           </div>
           <div class="incluye-card no-incluye">
-            <h3>❌ No incluye</h3>
+            <h3>No incluido</h3>
             <ul>
               {excursion.noIncluye.map((item) => (
                 <li>{item}</li>
@@ -169,12 +216,12 @@ const resolvedFotos = excursion.imagenes.slice(0, 7).map(img => resolveImage(img
     <!-- RECOMENDACIONES -->
     <section class="section section-terracota">
       <div class="wrap">
-        <h2 class="section-title text-center">Recomendaciones</h2>
-        <p class="section-subtitle text-center" style="color: rgba(255,255,255,0.85);">Para disfrutar al máximo tu experiencia</p>
+        <h2 class="section-title text-center">Preparate para la experiencia</h2>
+        <p class="section-subtitle text-center" style="color: rgba(255,255,255,0.85);">Lo que recomendamos para disfrutar al máximo</p>
         <div class="recomendaciones-grid">
           {excursion.recomendaciones.map((rec) => (
             <div class="recomendacion-item">
-              <span>👉</span>
+              <svg class="rec-icon" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z" fill="currentColor"/></svg>
               <p>{rec}</p>
             </div>
           ))}
@@ -186,7 +233,7 @@ const resolvedFotos = excursion.imagenes.slice(0, 7).map(img => resolveImage(img
     <section class="section section-dark">
       <div class="wrap text-center">
         <h2 class="section-title">¿Listo para vivir esta experiencia?</h2>
-        <p class="section-subtitle">Escribinos por WhatsApp y reservá tu lugar en la próxima salida.</p>
+        <p class="section-subtitle">Escribinos y te contamos todo sobre la próxima salida.</p>
         <a class="btn btn-primary" href={excursion.whatsappLink} target="_blank" rel="noopener">
           Consultar disponibilidad
         </a>
@@ -217,7 +264,7 @@ const resolvedFotos = excursion.imagenes.slice(0, 7).map(img => resolveImage(img
     font-size: 12px;
     text-transform: uppercase;
     letter-spacing: 1px;
-    border-radius: 6px;
+    border-radius: 0;
     margin-bottom: var(--space-md);
   }
 
@@ -249,7 +296,14 @@ const resolvedFotos = excursion.imagenes.slice(0, 7).map(img => resolveImage(img
   }
 
   .meta-icon {
-    font-size: 24px;
+    display: flex;
+    align-items: center;
+  }
+
+  .meta-icon svg {
+    width: 22px;
+    height: 22px;
+    fill: var(--color-primary);
   }
 
   .meta-item strong {
@@ -508,8 +562,12 @@ const resolvedFotos = excursion.imagenes.slice(0, 7).map(img => resolveImage(img
     border-radius: var(--radius-md);
   }
 
-  .recomendacion-item span {
+  .rec-icon {
+    width: 20px;
+    height: 20px;
     flex-shrink: 0;
+    margin-top: 2px;
+    opacity: 0.85;
   }
 
   .recomendacion-item p {

@@ -1,0 +1,177 @@
+---
+interface Props {
+  apiUrl?: string;
+}
+
+const { apiUrl = 'https://mallku-api.vercel.app' } = Astro.props;
+---
+
+<div class="lead-capture" id="lead-capture" data-api-url={apiUrl}>
+  <div class="lead-content">
+    <h3>Recibí las próximas fechas</h3>
+    <p>Dejá tu email y te avisamos cuando abramos nuevas salidas.</p>
+  </div>
+  <form class="lead-form" id="lead-form">
+    <div class="lead-inputs">
+      <input
+        type="email"
+        name="email"
+        placeholder="Tu email"
+        required
+        autocomplete="email"
+      />
+      <button type="submit" class="btn btn-primary">
+        <span class="btn-text">Avisarme</span>
+        <span class="btn-loading" style="display:none;">Enviando...</span>
+      </button>
+    </div>
+    <p class="lead-msg" id="lead-msg" style="display:none;"></p>
+  </form>
+</div>
+
+<style>
+  .lead-capture {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--space-xl);
+    padding: var(--space-xl);
+    background: rgba(209, 107, 56, 0.08);
+    border: 1px solid rgba(209, 107, 56, 0.2);
+  }
+
+  .lead-content h3 {
+    margin: 0 0 8px;
+    font-size: 20px;
+    color: var(--color-text-light);
+  }
+
+  .lead-content p {
+    margin: 0;
+    font-size: 14px;
+    color: rgba(239, 227, 214, 0.7);
+  }
+
+  .lead-form {
+    flex-shrink: 0;
+  }
+
+  .lead-inputs {
+    display: flex;
+    gap: 12px;
+  }
+
+  .lead-inputs input {
+    padding: 14px 20px;
+    border: 1px solid var(--color-line-light);
+    background: rgba(239, 227, 214, 0.06);
+    color: var(--color-text-light);
+    font-family: var(--font-body);
+    font-size: 14px;
+    width: 260px;
+    outline: none;
+    transition: border-color 0.2s ease;
+  }
+
+  .lead-inputs input::placeholder {
+    color: rgba(239, 227, 214, 0.4);
+  }
+
+  .lead-inputs input:focus {
+    border-color: var(--color-primary);
+  }
+
+  .lead-inputs .btn {
+    white-space: nowrap;
+    padding: 14px 24px;
+  }
+
+  .lead-msg {
+    margin: 10px 0 0;
+    font-size: 13px;
+    text-align: right;
+  }
+
+  .lead-msg.success {
+    color: #22c55e;
+  }
+
+  .lead-msg.error {
+    color: #ef4444;
+  }
+
+  @media (max-width: 768px) {
+    .lead-capture {
+      flex-direction: column;
+      text-align: center;
+    }
+
+    .lead-inputs {
+      flex-direction: column;
+    }
+
+    .lead-inputs input {
+      width: 100%;
+    }
+
+    .lead-msg {
+      text-align: center;
+    }
+  }
+</style>
+
+<script>
+  const form = document.getElementById('lead-form') as HTMLFormElement;
+  const container = document.getElementById('lead-capture') as HTMLElement;
+  const msg = document.getElementById('lead-msg') as HTMLElement;
+
+  if (form && container) {
+    const apiUrl = container.dataset.apiUrl;
+
+    form.addEventListener('submit', async (e) => {
+      e.preventDefault();
+
+      const emailInput = form.querySelector('input[name="email"]') as HTMLInputElement;
+      const btnText = form.querySelector('.btn-text') as HTMLElement;
+      const btnLoading = form.querySelector('.btn-loading') as HTMLElement;
+      const submitBtn = form.querySelector('button') as HTMLButtonElement;
+
+      if (!emailInput.value) return;
+
+      btnText.style.display = 'none';
+      btnLoading.style.display = 'inline';
+      submitBtn.disabled = true;
+
+      try {
+        const res = await fetch(`${apiUrl}/api/v1/leads`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            name: '',
+            email: emailInput.value,
+            message: 'Quiero recibir las próximas fechas de salida',
+            source: 'website_lead_capture',
+            referrer: window.location.href
+          })
+        });
+
+        if (res.ok) {
+          msg.textContent = 'Te avisaremos cuando haya nuevas fechas.';
+          msg.className = 'lead-msg success';
+          msg.style.display = 'block';
+          emailInput.value = '';
+        } else {
+          throw new Error('Error');
+        }
+      } catch {
+        msg.textContent = 'No pudimos registrar tu email. Intentá de nuevo.';
+        msg.className = 'lead-msg error';
+        msg.style.display = 'block';
+      } finally {
+        btnText.style.display = 'inline';
+        btnLoading.style.display = 'none';
+        submitBtn.disabled = false;
+      }
+    });
+  }
+</script>

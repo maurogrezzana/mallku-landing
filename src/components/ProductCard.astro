@@ -57,14 +57,12 @@ const placeholderIcon = slug === 'tucuman-colonial' ? '🏚️' : '🏛️';
       </div>
     </div>
 
-    <div class="product-price">
-      <div class="price-label">Precio por persona</div>
-      <div class="price-amount">{price}</div>
-      <div class="price-note">{priceNote}</div>
+    <div class="product-incluye">
+      <span>Todo incluido · Grupos reducidos</span>
     </div>
 
     <a class="btn btn-primary btn-full" href={ctaLink} target="_blank" rel="noopener">
-      Consultar fechas y cupos
+      Consultar disponibilidad
     </a>
   </div>
 </div>
@@ -140,7 +138,7 @@ const placeholderIcon = slug === 'tucuman-colonial' ? '🏚️' : '🏛️';
     text-transform: uppercase;
     letter-spacing: 1.5px;
     padding: 8px 14px;
-    border-radius: 6px;
+    border-radius: 0;
     background: var(--color-primary);
     color: #fff;
     z-index: 2;
@@ -216,7 +214,7 @@ const placeholderIcon = slug === 'tucuman-colonial' ? '🏚️' : '🏛️';
     padding: 16px;
     background: rgba(239, 227, 214, 0.06);
     border: 1px solid var(--color-line-light);
-    border-radius: 12px;
+    border-radius: 0;
     text-align: center;
   }
 
@@ -235,35 +233,19 @@ const placeholderIcon = slug === 'tucuman-colonial' ? '🏚️' : '🏛️';
     font-weight: 600;
   }
 
-  .product-price {
+  .product-incluye {
     margin: 28px 0;
-    padding: 24px;
-    background: linear-gradient(135deg, rgba(209, 107, 56, 0.2), rgba(182, 65, 14, 0.1));
-    border: 1px solid rgba(209, 107, 56, 0.4);
-    border-radius: 16px;
+    padding: 16px 24px;
+    border: 1px solid var(--color-line-light);
     text-align: center;
   }
 
-  .price-label {
+  .product-incluye span {
     font-family: var(--font-display);
     font-size: 12px;
     text-transform: uppercase;
-    letter-spacing: 1px;
+    letter-spacing: 1.5px;
     color: rgba(239, 227, 214, 0.7);
-    margin-bottom: 8px;
-  }
-
-  .price-amount {
-    font-family: var(--font-display);
-    font-size: 48px;
-    letter-spacing: 1px;
-    color: var(--color-primary);
-  }
-
-  .price-note {
-    font-size: 13px;
-    color: rgba(239, 227, 214, 0.65);
-    margin-top: 10px;
   }
 
   @media (max-width: 600px) {

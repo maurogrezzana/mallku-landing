@@ -8,41 +8,76 @@ const { question, answer } = Astro.props;
 ---
 
 <details>
-  <summary>{question}</summary>
+  <summary>
+    <span class="faq-question">{question}</span>
+    <svg class="faq-chevron" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+      <path d="M7 10l5 5 5-5" stroke="currentColor" stroke-width="1.5" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+    </svg>
+  </summary>
   <p>{answer}</p>
 </details>
 
 <style>
   details {
     border: 1px solid var(--color-line-light);
-    border-radius: var(--radius-lg);
-    background: rgba(239, 227, 214, 0.05);
-    padding: 20px;
+    background: rgba(239, 227, 214, 0.04);
+    padding: 0;
+    overflow: hidden;
+    transition: background 0.2s ease, border-color 0.2s ease;
   }
 
   details[open] {
-    background: rgba(209, 107, 56, 0.1);
-    border-color: rgba(209, 107, 56, 0.3);
+    background: rgba(209, 107, 56, 0.08);
+    border-color: rgba(209, 107, 56, 0.25);
   }
 
   summary {
     cursor: pointer;
-    font-family: var(--font-display);
-    font-weight: 400;
-    font-size: 16px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    padding: 22px 24px;
     list-style: none;
-    text-transform: uppercase;
-    letter-spacing: 0.3px;
+    transition: background 0.15s ease;
+  }
+
+  summary:hover {
+    background: rgba(239, 227, 214, 0.06);
   }
 
   summary::-webkit-details-marker {
     display: none;
   }
 
+  .faq-question {
+    font-family: var(--font-body);
+    font-weight: 600;
+    font-size: 15px;
+    text-transform: none;
+    letter-spacing: normal;
+    line-height: 1.4;
+  }
+
+  .faq-chevron {
+    width: 20px;
+    height: 20px;
+    flex-shrink: 0;
+    color: var(--color-primary);
+    opacity: 0.7;
+    transition: transform 0.25s ease, opacity 0.25s ease;
+  }
+
+  details[open] .faq-chevron {
+    transform: rotate(180deg);
+    opacity: 1;
+  }
+
   details p {
-    margin: 14px 0 0;
+    margin: 0;
+    padding: 0 24px 22px;
     font-size: 14px;
-    color: rgba(239, 227, 214, 0.8);
-    line-height: 1.7;
+    color: rgba(239, 227, 214, 0.75);
+    line-height: 1.75;
   }
 </style>

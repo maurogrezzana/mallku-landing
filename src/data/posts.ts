@@ -7,6 +7,7 @@ export interface Post {
   categoria: string;
   autor: string;
   tiempoLectura: string;
+  imagen: string;
 }
 
 export const posts: Post[] = [
@@ -25,7 +26,8 @@ export const posts: Post[] = [
     fecha: '2024-02-15',
     categoria: 'Historia',
     autor: 'Equipo Mallku',
-    tiempoLectura: '6 min'
+    tiempoLectura: '6 min',
+    imagen: '/images/Quilmes 1.jpg'
   },
   {
     slug: 'menhires-tafi-misterios-piedra',
@@ -42,7 +44,8 @@ export const posts: Post[] = [
     fecha: '2024-01-28',
     categoria: 'Arqueología',
     autor: 'Equipo Mallku',
-    tiempoLectura: '5 min'
+    tiempoLectura: '5 min',
+    imagen: '/images/menhires 1.jpg'
   },
   {
     slug: 'ibatin-ciudad-perdida-tucuman',
@@ -59,7 +62,8 @@ export const posts: Post[] = [
     fecha: '2024-01-10',
     categoria: 'Historia',
     autor: 'Equipo Mallku',
-    tiempoLectura: '5 min'
+    tiempoLectura: '5 min',
+    imagen: '/images/Ibatin 1.jpg'
   },
   {
     slug: 'guia-preparar-excursion-arqueologica',
@@ -78,7 +82,8 @@ export const posts: Post[] = [
     fecha: '2024-02-01',
     categoria: 'Guías',
     autor: 'Equipo Mallku',
-    tiempoLectura: '4 min'
+    tiempoLectura: '4 min',
+    imagen: '/images/Tafi del Valle.jpg'
   }
 ];
 

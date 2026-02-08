@@ -6,14 +6,40 @@ import Footer from '../../components/Footer.astro';
 import WhatsAppFloat from '../../components/WhatsAppFloat.astro';
 import { getExperienciaBySlug } from '../../data/experiencias';
 import { resolveImage } from '../../utils/images';
+import { siteConfig } from '../../data/site';
 
 const experiencia = getExperienciaBySlug('mallku-experience-4x4')!;
 const heroBg = await getImage({ src: resolveImage('/images/ANS 10.jpg'), width: 1600 });
+
+const structuredData = {
+  "@context": "https://schema.org",
+  "@type": "TouristTrip",
+  "name": experiencia.titulo,
+  "description": experiencia.descripcion,
+  "touristType": "Turismo arqueológico",
+  "image": `${siteConfig.url}/images/ANS 10.jpg`,
+  "url": `${siteConfig.url}/experiencias/mallku-experience-4x4`,
+  "offers": {
+    "@type": "Offer",
+    "price": experiencia.precioTotal.replace(/[^0-9]/g, ''),
+    "priceCurrency": "ARS",
+    "availability": "https://schema.org/InStock"
+  },
+  "provider": {
+    "@type": "TourOperator",
+    "name": siteConfig.name,
+    "url": siteConfig.url
+  },
+  "duration": `P${experiencia.dias}D`,
+  "maximumAttendeeCapacity": experiencia.grupoMax.replace(/[^0-9]/g, '').slice(-1) || "8"
+};
 ---
 
 <BaseLayout
   title={`${experiencia.titulo} | Mallku Excursiones`}
   description={experiencia.descripcion}
+  ogImage="/images/ANS 10.jpg"
+  structuredData={structuredData}
 >
   <WhatsAppFloat />
   <Header />
@@ -222,9 +248,9 @@ const heroBg = await getImage({ src: resolveImage('/images/ANS 10.jpg'), width: 
     <section class="section section-dark cta-final">
       <div class="wrap text-center">
         <h2 class="section-title">¿Listo para la aventura?</h2>
-        <p class="section-subtitle">Escribinos por WhatsApp para consultar fechas y reservar tu lugar.</p>
+        <p class="section-subtitle">Escribinos por WhatsApp para consultar fechas y disponibilidad.</p>
         <a class="btn btn-primary btn-lg" href={experiencia.whatsappLink} target="_blank" rel="noopener">
-          Quiero reservar
+          Consultar disponibilidad
         </a>
         <p class="cta-back">
           <a href="/excursiones">← Ver excursiones de un día</a>
@@ -268,7 +294,7 @@ const heroBg = await getImage({ src: resolveImage('/images/ANS 10.jpg'), width: 
     font-size: 12px;
     text-transform: uppercase;
     letter-spacing: 2px;
-    border-radius: 6px;
+    border-radius: 0;
     margin-bottom: var(--space-lg);
   }
 
@@ -295,7 +321,7 @@ const heroBg = await getImage({ src: resolveImage('/images/ANS 10.jpg'), width: 
     padding: 8px 16px;
     background: rgba(239, 227, 214, 0.15);
     border: 1px solid rgba(239, 227, 214, 0.3);
-    border-radius: 20px;
+    border-radius: 0;
     font-size: 13px;
     color: var(--beige);
   }

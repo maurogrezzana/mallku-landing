@@ -60,10 +60,7 @@ const ans10Img = resolveImage('/images/ANS 10.jpg');
                 </div>
 
                 <div class="excursion-footer">
-                  <div class="excursion-precio">
-                    <span class="precio-label">Desde</span>
-                    <span class="precio-valor">{exc.precio}</span>
-                  </div>
+                  <span class="footer-incluye">Todo incluido · Grupos reducidos</span>
                   <span class="ver-mas">Ver detalles →</span>
                 </div>
               </div>
@@ -93,30 +90,30 @@ const ans10Img = resolveImage('/images/ANS 10.jpg');
     <!-- INFO -->
     <section class="section section-dark">
       <div class="wrap text-center">
-        <h2 class="section-title">¿Qué incluyen todas nuestras excursiones?</h2>
+        <h2 class="section-title">Todo incluido en cada salida</h2>
         <div class="incluye-grid">
           <div class="incluye-item">
-            <span>🚐</span>
+            <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M18.92 6.01C18.72 5.42 18.16 5 17.5 5h-11c-.66 0-1.21.42-1.42 1.01L3 12v8c0 .55.45 1 1 1h1c.55 0 1-.45 1-1v-1h12v1c0 .55.45 1 1 1h1c.55 0 1-.45 1-1v-8l-2.08-5.99zM6.5 16c-.83 0-1.5-.67-1.5-1.5S5.67 13 6.5 13s1.5.67 1.5 1.5S7.33 16 6.5 16zm11 0c-.83 0-1.5-.67-1.5-1.5s.67-1.5 1.5-1.5 1.5.67 1.5 1.5-.67 1.5-1.5 1.5zM5 11l1.5-4.5h11L19 11H5z"/></svg>
             <p>Transporte cómodo ida y vuelta</p>
           </div>
           <div class="incluye-item">
-            <span>🎓</span>
+            <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M12 3L1 9l11 6 9-4.91V17h2V9M5 13.18v4L12 21l7-3.82v-4L12 17l-7-3.82z"/></svg>
             <p>Guía arqueólogo especializado</p>
           </div>
           <div class="incluye-item">
-            <span>🎫</span>
+            <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M22 10V6c0-1.11-.9-2-2-2H4c-1.1 0-1.99.89-1.99 2v4c1.1 0 1.99.9 1.99 2s-.89 2-2 2v4c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2v-4c-1.1 0-2-.9-2-2s.9-2 2-2zm-9 7.5h-2v-2h2v2zm0-4.5h-2v-2h2v2zm0-4.5h-2v-2h2v2z"/></svg>
             <p>Todas las entradas incluidas</p>
           </div>
           <div class="incluye-item">
-            <span>🍽️</span>
+            <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M11 9H9V2H7v7H5V2H3v7c0 2.12 1.66 3.84 3.75 3.97V22h2.5v-9.03C11.34 12.84 13 11.12 13 9V2h-2v7zm5-3v8h2.5v8H21V2c-2.76 0-5 2.24-5 4z"/></svg>
             <p>Almuerzo completo con bebida</p>
           </div>
           <div class="incluye-item">
-            <span>🛡️</span>
+            <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M12 1L3 5v6c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V5l-9-4zm0 10.99h7c-.53 4.12-3.28 7.79-7 8.94V12H5V6.3l7-3.11v8.8z"/></svg>
             <p>Seguro de responsabilidad civil</p>
           </div>
           <div class="incluye-item">
-            <span>💧</span>
+            <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M12 2c-5.33 4.55-8 8.48-8 11.8 0 4.98 3.8 8.2 8 8.2s8-3.22 8-8.2c0-3.32-2.67-7.25-8-11.8zm0 18c-3.35 0-6-2.57-6-6.2 0-2.34 1.95-5.44 6-9.14 4.05 3.7 6 6.79 6 9.14 0 3.63-2.65 6.2-6 6.2z"/></svg>
             <p>Agua mineral durante el recorrido</p>
           </div>
         </div>
@@ -201,7 +198,7 @@ const ans10Img = resolveImage('/images/ANS 10.jpg');
     font-size: 11px;
     text-transform: uppercase;
     letter-spacing: 1px;
-    border-radius: 6px;
+    border-radius: 0;
   }
 
   .excursion-content {
@@ -264,20 +261,12 @@ const ans10Img = resolveImage('/images/ANS 10.jpg');
     border-top: 1px solid var(--color-line-light);
   }
 
-  .excursion-precio {
-    display: flex;
-    flex-direction: column;
-  }
-
-  .precio-label {
-    font-size: 12px;
-    opacity: 0.6;
-  }
-
-  .precio-valor {
+  .footer-incluye {
     font-family: var(--font-display);
-    font-size: 28px;
-    color: var(--color-primary);
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    color: rgba(239, 227, 214, 0.5);
   }
 
   .ver-mas {
@@ -298,12 +287,13 @@ const ans10Img = resolveImage('/images/ANS 10.jpg');
   .incluye-item {
     padding: var(--space-lg);
     background: #fff;
-    border-radius: var(--radius-lg);
     border: 1px solid var(--color-line-dark);
   }
 
-  .incluye-item span {
-    font-size: 32px;
+  .incluye-item svg {
+    width: 28px;
+    height: 28px;
+    fill: var(--terracota);
     display: block;
     margin-bottom: var(--space-sm);
   }
@@ -362,7 +352,7 @@ const ans10Img = resolveImage('/images/ANS 10.jpg');
     font-size: 11px;
     text-transform: uppercase;
     letter-spacing: 1px;
-    border-radius: 6px;
+    border-radius: 0;
     margin-bottom: var(--space-sm);
   }
 

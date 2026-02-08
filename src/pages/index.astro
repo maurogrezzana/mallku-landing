@@ -9,7 +9,8 @@ import TestimonialCard from '../components/TestimonialCard.astro';
 import FAQItem from '../components/FAQItem.astro';
 import WhyCard from '../components/WhyCard.astro';
 import Badge from '../components/Badge.astro';
-import { whatsappLinks } from '../data/site';
+import LeadCapture from '../components/LeadCapture.astro';
+import { whatsappLinks, siteConfig } from '../data/site';
 import { galeriaHomeItems } from '../data/galeria-home';
 import { resolveImage } from '../utils/images';
 
@@ -21,10 +22,9 @@ const resolvedGaleria = galeriaHomeItems.map(item => ({
 }));
 
 const badges = [
-  'Guías arqueólogos',
-  'Grupos reducidos',
-  'Turismo consciente',
-  'Tucumán · Catamarca · Salta'
+  'Turismo arqueológico',
+  'Patrimonio cultural',
+  'Interpretación científica'
 ];
 
 const products = [
@@ -68,17 +68,17 @@ const products = [
 
 const whyCards = [
   {
-    icon: '🎓',
+    icon: '<svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M12 3L1 9l11 6 9-4.91V17h2V9M5 13.18v4L12 21l7-3.82v-4L12 17l-7-3.82z"/></svg>',
     title: 'Guías especializados',
     description: 'No son guías turísticos generales. Son arqueólogos con formación académica que interpretan los sitios con rigor científico y narrativa accesible.'
   },
   {
-    icon: '👥',
+    icon: '<svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M16 11c1.66 0 2.99-1.34 2.99-3S17.66 5 16 5s-3 1.34-3 3 1.34 3 3 3zm-8 0c1.66 0 2.99-1.34 2.99-3S9.66 5 8 5 5 6.34 5 8s1.34 3 3 3zm0 2c-2.33 0-7 1.17-7 3.5V19h14v-2.5c0-2.33-4.67-3.5-7-3.5zm8 0c-.29 0-.62.02-.97.05 1.16.84 1.97 1.97 1.97 3.45V19h6v-2.5c0-2.33-4.67-3.5-7-3.5z"/></svg>',
     title: 'Grupos reducidos',
     description: 'Máximo 6-8 personas por salida. Atención personalizada, ritmo tranquilo, preguntas sin apuro. No es turismo masivo.'
   },
   {
-    icon: '🏛️',
+    icon: '<svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 17.93c-3.95-.49-7-3.85-7-7.93 0-.62.08-1.21.21-1.79L9 15v1c0 1.1.9 2 2 2v1.93zm6.9-2.54c-.26-.81-1-1.39-1.9-1.39h-1v-3c0-.55-.45-1-1-1H8v-2h2c.55 0 1-.45 1-1V7h2c1.1 0 2-.9 2-2v-.41c2.93 1.19 5 4.06 5 7.41 0 2.08-.8 3.97-2.1 5.39z"/></svg>',
     title: 'Contenido único',
     description: 'Interpretación profunda de cada sitio. No repetimos información de carteles: conectamos arqueología, historia, paisaje y cosmovisión andina.'
   }
@@ -116,8 +116,8 @@ const faqs = [
     answer: 'Máximo 6-8 personas. Son grupos muy reducidos para garantizar atención personalizada y experiencia de calidad.'
   },
   {
-    question: '¿Cómo reservo?',
-    answer: 'Escribinos por WhatsApp y te enviamos fechas disponibles. Reservás con una seña del 30-50% y el saldo lo completás 48hs antes de la salida.'
+    question: '¿Cómo consulto disponibilidad?',
+    answer: 'Escribinos por WhatsApp y te enviamos fechas disponibles. Confirmás tu lugar con una seña del 30-50% y el saldo lo completás 48hs antes de la salida.'
   },
   {
     question: '¿Puedo cancelar o reprogramar?',
@@ -128,9 +128,56 @@ const faqs = [
     answer: 'Si hay pronóstico de tormenta fuerte o condiciones peligrosas, reprogramamos sin cargo. Tu seguridad es prioridad.'
   }
 ];
+
+// Schema.org LocalBusiness + TourOperator
+const homeStructuredData = {
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": ["LocalBusiness", "TouristInformationCenter"],
+      "@id": siteConfig.url,
+      "name": siteConfig.name,
+      "description": siteConfig.description,
+      "url": siteConfig.url,
+      "telephone": siteConfig.contact.whatsapp,
+      "email": siteConfig.contact.email,
+      "address": {
+        "@type": "PostalAddress",
+        "addressLocality": "San Miguel de Tucumán",
+        "addressRegion": "Tucumán",
+        "addressCountry": "AR"
+      },
+      "geo": {
+        "@type": "GeoCoordinates",
+        "latitude": -26.8241,
+        "longitude": -65.2226
+      },
+      "image": `${siteConfig.url}/images/og-image.jpg`,
+      "priceRange": "$$",
+      "aggregateRating": {
+        "@type": "AggregateRating",
+        "ratingValue": "5",
+        "reviewCount": "500",
+        "bestRating": "5"
+      },
+      "sameAs": [
+        siteConfig.contact.instagramUrl
+      ]
+    },
+    {
+      "@type": "WebSite",
+      "@id": `${siteConfig.url}/#website`,
+      "url": siteConfig.url,
+      "name": siteConfig.name,
+      "description": siteConfig.description,
+      "publisher": { "@id": siteConfig.url },
+      "inLanguage": "es-AR"
+    }
+  ]
+};
 ---
 
-<BaseLayout>
+<BaseLayout structuredData={homeStructuredData}>
   <WhatsAppFloat />
   <Header />
 
@@ -140,9 +187,20 @@ const faqs = [
       <div class="wrap text-center">
         <h1>Turismo <span class="accent">Arqueológico</span><br/>en el Noroeste Argentino</h1>
         <p class="hero-lead">
-          Experiencias arqueológicas con guías especializados, grupos reducidos y contenido científico riguroso.
-          Descubrí la historia profunda del NOA con interpretación profesional y respeto por el patrimonio.
+          Descubrí la historia profunda del Noroeste Argentino con interpretación profesional,
+          contenido científico riguroso y respeto por el patrimonio.
         </p>
+        <div class="hero-authority">
+          <span>Guía profesional en arqueología</span>
+          <span class="authority-sep">·</span>
+          <span>Grupos reducidos</span>
+          <span class="authority-sep">·</span>
+          <span>Tucumán · Catamarca · Salta</span>
+        </div>
+        <div class="hero-ctas">
+          <a class="btn btn-primary" href="#excursiones">Explorar excursiones</a>
+          <a class="btn btn-outline" href="/nosotros">Conocé nuestra historia</a>
+        </div>
         <div class="badges">
           {badges.map((text) => <Badge text={text} />)}
         </div>
@@ -150,7 +208,7 @@ const faqs = [
     </section>
 
     <!-- PRODUCTS -->
-    <section class="section section-dark">
+    <section id="excursiones" class="section section-dark">
       <div class="wrap">
         <div class="grid-2">
           {products.map((product) => <ProductCard {...product} />)}
@@ -175,11 +233,6 @@ const faqs = [
               <span>Vehículo 4x4</span>
               <span>Hasta 3.957 msnm</span>
             </div>
-            <div class="exp-precio">
-              <span class="exp-precio-label">Desde</span>
-              <span class="exp-precio-valor">$1.525.000</span>
-              <span class="exp-precio-nota">por persona · excursiones completas</span>
-            </div>
             <a class="btn btn-primary" href="/experiencias/mallku-experience-4x4">
               Ver itinerario completo
             </a>
@@ -187,6 +240,11 @@ const faqs = [
         </div>
       </div>
     </section>
+
+    <!-- SEPARADOR -->
+    <div class="section-dark" style="padding: var(--space-lg) 0 0;">
+      <div class="section-divider"><span>◆</span></div>
+    </div>
 
     <!-- WHY MALLKU -->
     <section class="section section-dark">
@@ -196,6 +254,33 @@ const faqs = [
 
         <div class="grid-3">
           {whyCards.map((card) => <WhyCard {...card} />)}
+        </div>
+      </div>
+    </section>
+
+    <!-- CIFRAS -->
+    <section class="cifras-section">
+      <div class="wrap">
+        <div class="cifras-grid">
+          <div class="cifra-item">
+            <span class="cifra-numero">+500</span>
+            <span class="cifra-label">Viajeros acompañados</span>
+          </div>
+          <div class="cifra-sep"></div>
+          <div class="cifra-item">
+            <span class="cifra-numero">+200</span>
+            <span class="cifra-label">Excursiones realizadas</span>
+          </div>
+          <div class="cifra-sep"></div>
+          <div class="cifra-item">
+            <span class="cifra-numero">6</span>
+            <span class="cifra-label">Sitios arqueológicos</span>
+          </div>
+          <div class="cifra-sep"></div>
+          <div class="cifra-item">
+            <span class="cifra-numero">100%</span>
+            <span class="cifra-label">Interpretación profesional</span>
+          </div>
         </div>
       </div>
     </section>
@@ -227,6 +312,11 @@ const faqs = [
       </div>
     </section>
 
+    <!-- SEPARADOR -->
+    <div class="section-dark" style="padding: var(--space-lg) 0 0;">
+      <div class="section-divider"><span>◆</span></div>
+    </div>
+
     <!-- TESTIMONIALS -->
     <section class="section section-terracota">
       <div class="wrap text-center">
@@ -238,10 +328,18 @@ const faqs = [
       </div>
     </section>
 
+    <!-- LEAD CAPTURE -->
+    <section class="section section-dark" style="padding-top: 0;">
+      <div class="wrap">
+        <LeadCapture />
+      </div>
+    </section>
+
     <!-- FAQ -->
-    <section class="section section-dark">
+    <section class="section section-dark" style="padding-top: 0;">
       <div class="wrap text-center">
-        <h2 class="section-title">Preguntas frecuentes</h2>
+        <h2 class="section-title">Antes de viajar</h2>
+        <p class="section-subtitle">Todo lo que necesitás saber antes de tu primera excursión.</p>
 
         <div class="faq-grid">
           {faqs.map((faq) => <FAQItem {...faq} />)}
@@ -296,8 +394,12 @@ const faqs = [
 
   .hero h1 {
     margin: 0 0 24px;
+    font-family: var(--font-heading);
     font-size: clamp(42px, 7vw, 72px);
+    font-weight: 700;
     line-height: 1.05;
+    text-transform: none;
+    letter-spacing: -0.02em;
     text-shadow: 0 2px 20px rgba(0, 0, 0, 0.3);
   }
 
@@ -313,6 +415,31 @@ const faqs = [
     margin: 0 auto 40px;
     line-height: 1.7;
     text-shadow: 0 1px 10px rgba(0, 0, 0, 0.2);
+  }
+
+  .hero-ctas {
+    display: flex;
+    gap: 16px;
+    justify-content: center;
+    flex-wrap: wrap;
+    margin-bottom: 36px;
+  }
+
+  .hero-authority {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+    margin-bottom: 32px;
+    font-family: var(--font-display);
+    font-size: 12px;
+    text-transform: uppercase;
+    letter-spacing: 1.5px;
+    color: rgba(239, 227, 214, 0.7);
+  }
+
+  .authority-sep {
+    opacity: 0.4;
   }
 
   .badges {
@@ -355,7 +482,7 @@ const faqs = [
     font-size: 11px;
     text-transform: uppercase;
     letter-spacing: 1.5px;
-    border-radius: 6px;
+    border-radius: 0;
   }
 
   .exp-content h2 {
@@ -392,36 +519,9 @@ const faqs = [
     padding: 6px 14px;
     background: rgba(6, 27, 56, 0.08);
     border: 1px solid var(--color-line-dark);
-    border-radius: 20px;
+    border-radius: 0;
     font-size: 13px;
     color: var(--azul);
-  }
-
-  .exp-precio {
-    margin-bottom: var(--space-lg);
-  }
-
-  .exp-precio-label {
-    display: block;
-    font-size: 12px;
-    text-transform: uppercase;
-    letter-spacing: 1px;
-    color: var(--marron);
-    opacity: 0.7;
-  }
-
-  .exp-precio-valor {
-    display: block;
-    font-family: var(--font-display);
-    font-size: 36px;
-    color: var(--color-primary);
-  }
-
-  .exp-precio-nota {
-    display: block;
-    font-size: 13px;
-    color: var(--marron);
-    opacity: 0.7;
   }
 
   @media (max-width: 900px) {
@@ -431,6 +531,63 @@ const faqs = [
 
     .exp-image img {
       height: 280px;
+    }
+  }
+
+  /* Cifras Section */
+  .cifras-section {
+    padding: var(--space-xl) 0;
+    background: var(--color-bg-light);
+    border-top: 1px solid var(--color-line-dark);
+    border-bottom: 1px solid var(--color-line-dark);
+  }
+
+  .cifras-grid {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: var(--space-xl);
+  }
+
+  .cifra-item {
+    text-align: center;
+  }
+
+  .cifra-numero {
+    display: block;
+    font-family: var(--font-heading);
+    font-size: clamp(36px, 5vw, 48px);
+    font-weight: 700;
+    color: var(--terracota);
+    line-height: 1;
+    margin-bottom: 8px;
+  }
+
+  .cifra-label {
+    display: block;
+    font-family: var(--font-display);
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 1.5px;
+    color: var(--marron);
+    opacity: 0.7;
+  }
+
+  .cifra-sep {
+    width: 1px;
+    height: 48px;
+    background: var(--color-line-dark);
+  }
+
+  @media (max-width: 700px) {
+    .cifras-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: var(--space-lg);
+    }
+
+    .cifra-sep {
+      display: none;
     }
   }
 
@@ -445,7 +602,6 @@ const faqs = [
 
   .gh-item {
     position: relative;
-    border-radius: var(--radius-lg);
     overflow: hidden;
     cursor: pointer;
   }

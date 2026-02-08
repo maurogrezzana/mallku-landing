@@ -1,4 +1,7 @@
 ---
+import { Image } from 'astro:assets';
+import type { ImageMetadata } from 'astro';
+
 interface Props {
   slug: string;
   titulo: string;
@@ -6,9 +9,10 @@ interface Props {
   fecha: string;
   categoria: string;
   tiempoLectura: string;
+  image?: ImageMetadata;
 }
 
-const { slug, titulo, excerpt, fecha, categoria, tiempoLectura } = Astro.props;
+const { slug, titulo, excerpt, fecha, categoria, tiempoLectura, image } = Astro.props;
 
 // Format date
 const fechaFormateada = new Date(fecha).toLocaleDateString('es-AR', {
@@ -20,6 +24,7 @@ const fechaFormateada = new Date(fecha).toLocaleDateString('es-AR', {
 
 <a href={`/blog/${slug}`} class="blog-card">
   <div class="blog-image">
+    {image && <Image src={image} alt={titulo} loading="lazy" />}
     <span class="categoria-tag">{categoria}</span>
   </div>
   <div class="blog-content">
@@ -50,24 +55,32 @@ const fechaFormateada = new Date(fecha).toLocaleDateString('es-AR', {
   }
 
   .blog-image {
-    height: 180px;
-    background: linear-gradient(135deg, rgba(209, 107, 56, 0.25), rgba(6, 27, 56, 0.4));
     position: relative;
-    display: flex;
-    align-items: flex-start;
-    padding: 16px;
+    height: 240px;
+    overflow: hidden;
+  }
+
+  .blog-image :global(img) {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
   }
 
   .categoria-tag {
-    display: inline-block;
-    padding: 6px 12px;
+    position: absolute;
+    top: 16px;
+    left: 16px;
+    padding: 6px 14px;
     background: var(--color-primary);
     color: #fff;
     font-family: var(--font-display);
-    font-size: 10px;
+    font-size: 11px;
     text-transform: uppercase;
     letter-spacing: 1px;
-    border-radius: 4px;
+    z-index: 2;
   }
 
   .blog-content {
