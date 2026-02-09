@@ -9,14 +9,12 @@ interface Props {
   highlights: string[];
   duration: string;
   departure: string;
-  price: string;
-  priceNote: string;
   ctaLink: string;
   image?: ImageMetadata;
   slug?: string;
 }
 
-const { tag, title, description, highlights, duration, departure, price, priceNote, ctaLink, image, slug } = Astro.props;
+const { tag, title, description, highlights, duration, departure, ctaLink, image, slug } = Astro.props;
 
 // Placeholder icons for when no image is provided
 const placeholderIcon = slug === 'tucuman-colonial' ? '🏚️' : '🏛️';

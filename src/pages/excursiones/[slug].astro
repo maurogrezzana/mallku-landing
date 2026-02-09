@@ -43,8 +43,6 @@ const structuredData = {
   },
   "offers": {
     "@type": "Offer",
-    "price": excursion.precio.replace(/[^0-9]/g, ''),
-    "priceCurrency": "ARS",
     "availability": "https://schema.org/InStock"
   },
   "provider": {
@@ -137,16 +135,11 @@ const structuredData = {
           </div>
 
           <aside class="content-sidebar">
-            <div class="price-card">
-              <div class="price-header">
-                <span class="price-label">Precio por persona</span>
-                <span class="price-valor">{excursion.precio}</span>
-                <span class="price-note">{excursion.priceNote}</span>
-              </div>
+            <div class="cta-card">
+              <p class="cta-card-text">Escribinos y te confirmamos fechas y cupos</p>
               <a class="btn btn-primary btn-full" href={excursion.whatsappLink} target="_blank" rel="noopener">
                 Consultar disponibilidad
               </a>
-              <p class="price-info">Escribinos y te confirmamos fechas y cupos</p>
             </div>
           </aside>
         </div>
@@ -410,8 +403,8 @@ const structuredData = {
     color: var(--color-primary);
   }
 
-  /* Price Card */
-  .price-card {
+  /* CTA Card */
+  .cta-card {
     position: sticky;
     top: 120px;
     padding: var(--space-xl);
@@ -419,43 +412,14 @@ const structuredData = {
     border: 2px solid var(--color-primary);
     border-radius: var(--radius-xl);
     box-shadow: 0 10px 40px rgba(0, 0, 0, 0.1);
-  }
-
-  .price-header {
     text-align: center;
-    margin-bottom: var(--space-lg);
   }
 
-  .price-label {
-    display: block;
-    font-family: var(--font-display);
-    font-size: 12px;
-    text-transform: uppercase;
-    letter-spacing: 1px;
+  .cta-card-text {
+    margin: 0 0 var(--space-lg);
+    font-size: 15px;
     color: var(--marron);
-    margin-bottom: var(--space-xs);
-  }
-
-  .price-valor {
-    display: block;
-    font-family: var(--font-display);
-    font-size: 42px;
-    color: var(--color-primary);
-  }
-
-  .price-note {
-    display: block;
-    font-size: 14px;
-    color: var(--marron);
-    opacity: 0.7;
-  }
-
-  .price-info {
-    margin: var(--space-md) 0 0;
-    font-size: 13px;
-    text-align: center;
-    color: var(--marron);
-    opacity: 0.7;
+    line-height: 1.6;
   }
 
   /* Itinerario */
@@ -580,7 +544,7 @@ const structuredData = {
       grid-template-columns: 1fr;
     }
 
-    .price-card {
+    .cta-card {
       position: static;
     }
 
