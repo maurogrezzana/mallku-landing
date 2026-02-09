@@ -15,7 +15,7 @@ import { galeriaHomeItems } from '../data/galeria-home';
 import { resolveImage } from '../utils/images';
 
 const heroBg = await getImage({ src: resolveImage('/images/Quilmes 1.jpg'), width: 1600 });
-const ans10Img = resolveImage('/images/ANS 10.jpg');
+const exp4x4Img = resolveImage('/images/Real Grande 3.jpg');
 const resolvedGaleria = galeriaHomeItems.map(item => ({
   ...item,
   resolved: resolveImage(item.src),
@@ -216,7 +216,7 @@ const homeStructuredData = {
       <div class="wrap">
         <div class="exp-layout">
           <div class="exp-image">
-            <Image src={ans10Img} alt="Mallku Experience 4x4" loading="lazy" />
+            <Image src={exp4x4Img} alt="Mallku Experience 4x4" loading="lazy" />
             <span class="exp-tag">Experiencia Premium</span>
           </div>
           <div class="exp-content">
@@ -465,6 +465,7 @@ const homeStructuredData = {
     height: 100%;
     min-height: 400px;
     object-fit: cover;
+    object-position: 15% 30%;
     display: block;
   }
 

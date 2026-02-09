@@ -9,7 +9,7 @@ import { resolveImage } from '../../utils/images';
 import { siteConfig } from '../../data/site';
 
 const experiencia = getExperienciaBySlug('mallku-experience-4x4')!;
-const heroBg = await getImage({ src: resolveImage('/images/ANS 10.jpg'), width: 1600 });
+const heroBg = await getImage({ src: resolveImage('/images/Real Grande 3.jpg'), width: 1600 });
 
 const structuredData = {
   "@context": "https://schema.org",
@@ -17,7 +17,7 @@ const structuredData = {
   "name": experiencia.titulo,
   "description": experiencia.descripcion,
   "touristType": "Turismo arqueológico",
-  "image": `${siteConfig.url}/images/ANS 10.jpg`,
+  "image": `${siteConfig.url}/images/Real Grande 3.jpg`,
   "url": `${siteConfig.url}/experiencias/mallku-experience-4x4`,
   "offers": {
     "@type": "Offer",
@@ -36,7 +36,7 @@ const structuredData = {
 <BaseLayout
   title={`${experiencia.titulo} | Mallku Excursiones`}
   description={experiencia.descripcion}
-  ogImage="/images/ANS 10.jpg"
+  ogImage="/images/Real Grande 3.jpg"
   structuredData={structuredData}
 >
   <WhatsAppFloat />
