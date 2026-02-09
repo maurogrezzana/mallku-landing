@@ -45,14 +45,14 @@ export const excursiones: Excursion[] = [
       'Almuerzo típico regional incluido'
     ],
     itinerario: [
-      { hora: '08:00', actividad: 'Salida desde Tucumán', descripcion: 'Partimos desde punto de encuentro acordado en San Miguel de Tucumán' },
-      { hora: '09:30', actividad: 'Parque de los Menhires', descripcion: 'Visita guiada al sitio arqueológico con interpretación de la cultura Tafí' },
-      { hora: '11:00', actividad: 'Valle de Tafí', descripcion: 'Recorrido panorámico, parada en miradores y contexto histórico del valle' },
-      { hora: '12:30', actividad: 'Abra del Infiernillo', descripcion: 'Cruce del paso de montaña a 3.042 msnm con parada para fotos' },
-      { hora: '13:30', actividad: 'Almuerzo', descripcion: 'Almuerzo típico regional en restaurante local (incluido)' },
-      { hora: '15:00', actividad: 'Ciudad Sagrada de Quilmes', descripcion: 'Visita completa al sitio arqueológico con interpretación histórica profunda' },
-      { hora: '17:30', actividad: 'Regreso', descripcion: 'Retorno a Tucumán con paradas opcionales' },
-      { hora: '20:00', actividad: 'Llegada', descripcion: 'Llegada estimada a San Miguel de Tucumán' }
+      { hora: '08:00', actividad: 'Salida desde Tucumán', descripcion: 'La ciudad todavía duerme cuando partimos. La ruta trepa hacia el oeste mientras el sol empieza a calentar los cerros verdes del pedemonte tucumano.' },
+      { hora: '09:30', actividad: 'Parque de los Menhires', descripcion: 'Más de cien monolitos de piedra tallados hace dos mil años nos reciben en silencio. Recorremos el parque descifrando rostros, símbolos y las teorías que intentan explicar su significado.' },
+      { hora: '11:00', actividad: 'Valle de Tafí', descripcion: 'El valle se abre como un anfiteatro natural rodeado de cumbres. Paramos en miradores donde se siente el peso de la historia: este paisaje fue escenario de culturas que aquí vivieron durante milenios.' },
+      { hora: '12:30', actividad: 'Abra del Infiernillo', descripcion: 'A 3.042 metros, el aire se vuelve fino y el paisaje cambia radicalmente. Dejamos atrás las yungas verdes y entramos en el mundo seco y luminoso de los Valles Calchaquíes. La vista es infinita.' },
+      { hora: '13:30', actividad: 'Almuerzo', descripcion: 'Nos sentamos a comer en el valle. Sabores regionales, ritmo pausado, tiempo para conversar sobre lo que vimos y lo que viene. Todo incluido.' },
+      { hora: '15:00', actividad: 'Ciudad Sagrada de Quilmes', descripcion: 'El momento más intenso del día. Caminamos entre las terrazas de la ciudad que resistió 130 años a la conquista española. Cada muro cuenta una historia de organización, resistencia y tragedia.' },
+      { hora: '17:30', actividad: 'Regreso', descripcion: 'Emprendemos el regreso con la luz dorada de la tarde sobre los valles. Hay tiempo para paradas, preguntas y el silencio de procesar todo lo vivido.' },
+      { hora: '20:00', actividad: 'Llegada', descripcion: 'Llegamos a Tucumán con mil años de historia encima. No es lo mismo la ciudad después de haber caminado Quilmes.' }
     ],
     incluye: [
       'Transporte en vehículo cómodo con aire acondicionado',
@@ -119,14 +119,14 @@ export const excursiones: Excursion[] = [
       'Capilla histórica de La Banda'
     ],
     itinerario: [
-      { hora: '08:00', actividad: 'Salida desde Tucumán', descripcion: 'Partimos hacia el sur de la provincia' },
-      { hora: '09:30', actividad: 'Ruinas de Ibatín', descripcion: 'Visita al sitio de la primera fundación con contexto histórico completo' },
-      { hora: '11:30', actividad: 'Quebrada del Río Los Sosa', descripcion: 'Recorrido por la selva de yungas con paradas panorámicas' },
-      { hora: '13:00', actividad: 'Almuerzo en Tafí', descripcion: 'Almuerzo en el valle (incluido)' },
-      { hora: '14:30', actividad: 'Museo Jesuítico La Banda', descripcion: 'Visita al museo y capilla con historia de las estancias jesuitas' },
-      { hora: '16:00', actividad: 'Recorrido por el valle', descripcion: 'Paseo por Tafí del Valle con tiempo libre' },
-      { hora: '17:00', actividad: 'Regreso', descripcion: 'Retorno a Tucumán' },
-      { hora: '18:00', actividad: 'Llegada', descripcion: 'Llegada estimada a San Miguel de Tucumán' }
+      { hora: '08:00', actividad: 'Salida desde Tucumán', descripcion: 'Dejamos la ciudad hacia el sur, rumbo al lugar donde todo empezó. La ruta atraviesa cañaverales y el paisaje se vuelve cada vez más verde y selvático.' },
+      { hora: '09:30', actividad: 'Ruinas de Ibatín', descripcion: 'Entramos en la selva donde hace 460 años se fundó Tucumán por primera vez. Entre la vegetación aparecen los cimientos de lo que fue una ciudad colonial completa: iglesia, cabildo, plaza. Contamos por qué fracasó y qué nos enseña.' },
+      { hora: '11:30', actividad: 'Quebrada del Río Los Sosa', descripcion: 'La ruta se interna en una de las quebradas más espectaculares de las yungas. Helechos gigantes, cascadas, el río corriendo junto al camino. Paramos en miradores donde la selva se abre y deja ver la montaña.' },
+      { hora: '13:00', actividad: 'Almuerzo en Tafí', descripcion: 'Llegamos al Valle de Tafí con hambre y con paisaje de fondo. Almorzamos con calma, rodeados de montañas y aire limpio de altura. Todo incluido.' },
+      { hora: '14:30', actividad: 'Museo Jesuítico La Banda', descripcion: 'La capilla de La Banda guarda siglos de historia jesuita. Recorremos el museo donde se cuenta cómo los jesuitas transformaron el valle con su sistema de estancias y misiones.' },
+      { hora: '16:00', actividad: 'Recorrido por el valle', descripcion: 'Tiempo para caminar por Tafí del Valle, sentir la brisa de la tarde y recorrer un pueblo que vive entre cerros y tradición. Ritmo libre, sin apuro.' },
+      { hora: '17:00', actividad: 'Regreso', descripcion: 'Volvemos por la quebrada con la luz cambiando sobre la selva. El regreso también es parte de la experiencia.' },
+      { hora: '18:00', actividad: 'Llegada', descripcion: 'De vuelta en Tucumán con otra mirada. La ciudad que hoy conocés nació de un fracaso colonial que visitaste esta mañana.' }
     ],
     incluye: [
       'Transporte en vehículo cómodo con aire acondicionado',

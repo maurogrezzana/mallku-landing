@@ -79,13 +79,13 @@ const { apiUrl = 'https://mallku-api.vercel.app' } = Astro.props;
   </p>
 </form>
 
-<div id="form-success" class="form-message success" style="display: none;">
+<div id="form-success" class="form-message success" style="display: none;" role="alert" aria-live="polite">
   <span class="message-icon">&#10003;</span>
   <h4>¡Mensaje enviado!</h4>
   <p>Gracias por contactarnos. Te responderemos pronto.</p>
 </div>
 
-<div id="form-error" class="form-message error" style="display: none;">
+<div id="form-error" class="form-message error" style="display: none;" role="alert" aria-live="polite">
   <span class="message-icon">&#10007;</span>
   <h4>Error al enviar</h4>
   <p>Por favor, intentá de nuevo o escribinos por WhatsApp.</p>
@@ -281,7 +281,10 @@ const { apiUrl = 'https://mallku-api.vercel.app' } = Astro.props;
         }
       } catch (error) {
         form.style.display = 'none';
-        if (errorMessage) errorMessage.style.display = 'block';
+        if (errorMessage) {
+          errorMessage.style.display = 'block';
+          errorMessage.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        }
       } finally {
         submitBtn.textContent = originalText;
         submitBtn.classList.remove('btn-loading');
