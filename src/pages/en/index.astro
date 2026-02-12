@@ -1,0 +1,757 @@
+---
+import { Image, getImage } from 'astro:assets';
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import Header from '../../components/Header.astro';
+import Footer from '../../components/Footer.astro';
+import WhatsAppFloat from '../../components/WhatsAppFloat.astro';
+import ProductCard from '../../components/ProductCard.astro';
+import TestimonialCard from '../../components/TestimonialCard.astro';
+import FAQItem from '../../components/FAQItem.astro';
+import WhyCard from '../../components/WhyCard.astro';
+import Badge from '../../components/Badge.astro';
+import LeadCapture from '../../components/LeadCapture.astro';
+import { whatsappLinks, siteConfig } from '../../data/site';
+import { galeriaHomeItems } from '../../data/galeria-home';
+import { resolveImage } from '../../utils/images';
+
+const locale = 'en';
+const heroBg = await getImage({ src: resolveImage('/images/Quilmes 1.jpg'), width: 1600 });
+const exp4x4Img = resolveImage('/images/Real Grande 3.jpg');
+const resolvedGaleria = galeriaHomeItems.map(item => ({
+  ...item,
+  resolved: resolveImage(item.src),
+}));
+
+const badges = [
+  'Archaeological tourism',
+  'Cultural heritage',
+  'Scientific interpretation'
+];
+
+const products = [
+  {
+    slug: 'arqueologia-en-los-valles',
+    tag: 'Best seller',
+    title: 'Archaeology in the Valleys',
+    description: 'Traverse a thousand years of Andean history in a single day: from the sacred monoliths of the Taf\u00ed culture to the fortified city of Quilmes, the last bastion of Calchaqu\u00ed resistance. Archaeology, highland landscapes, and the living memory of the indigenous peoples of the NOA.',
+    highlights: [
+      'Menhir Park (Taf\u00ed culture)',
+      'Taf\u00ed Valley and its stunning landscapes',
+      'Abra del Infiernillo (3,042 m.a.s.l.)',
+      'Sacred City of Quilmes'
+    ],
+    duration: '12 hours',
+    departure: '8:00am',
+    ctaLink: whatsappLinks.valles,
+    image: resolveImage('/images/Quilmes 1.jpg')
+  },
+  {
+    slug: 'tucuman-colonial',
+    tag: 'Family friendly',
+    title: 'Colonial Tucum\u00e1n',
+    description: 'Understand how Tucum\u00e1n was born: from its first founding in the middle of the jungle to the Jesuit estate system that shaped the valley. A journey through the decisions, failures, and adaptations that gave shape to the province.',
+    highlights: [
+      'Ibat\u00edn - First Founding (1565-1685)',
+      'R\u00edo Los Sosa Gorge (yungas)',
+      'Taf\u00ed del Valle',
+      'Jesuit Museum of La Banda'
+    ],
+    duration: '10 hours',
+    departure: '8:00am',
+    ctaLink: whatsappLinks.colonial,
+    image: resolveImage('/images/Ibatin 1.jpg')
+  }
+];
+
+const whyCards = [
+  {
+    icon: '<svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M12 3L1 9l11 6 9-4.91V17h2V9M5 13.18v4L12 21l7-3.82v-4L12 17l-7-3.82z"/></svg>',
+    title: 'Specialized guides',
+    description: 'Not general tour guides. They are archaeologists with academic training who interpret sites with scientific rigor and accessible storytelling.'
+  },
+  {
+    icon: '<svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M16 11c1.66 0 2.99-1.34 2.99-3S17.66 5 16 5s-3 1.34-3 3 1.34 3 3 3zm-8 0c1.66 0 2.99-1.34 2.99-3S9.66 5 8 5 5 6.34 5 8s1.34 3 3 3zm0 2c-2.33 0-7 1.17-7 3.5V19h14v-2.5c0-2.33-4.67-3.5-7-3.5zm8 0c-.29 0-.62.02-.97.05 1.16.84 1.97 1.97 1.97 3.45V19h6v-2.5c0-2.33-4.67-3.5-7-3.5z"/></svg>',
+    title: 'Small groups',
+    description: 'Maximum 6-8 people per departure. Personalized attention, relaxed pace, no rush for questions. This is not mass tourism.'
+  },
+  {
+    icon: '<svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 17.93c-3.95-.49-7-3.85-7-7.93 0-.62.08-1.21.21-1.79L9 15v1c0 1.1.9 2 2 2v1.93zm6.9-2.54c-.26-.81-1-1.39-1.9-1.39h-1v-3c0-.55-.45-1-1-1H8v-2h2c.55 0 1-.45 1-1V7h2c1.1 0 2-.9 2-2v-.41c2.93 1.19 5 4.06 5 7.41 0 2.08-.8 3.97-2.1 5.39z"/></svg>',
+    title: 'Unique content',
+    description: 'Deep interpretation of each site. We don\'t repeat information from signs: we connect archaeology, history, landscape, and Andean worldview.'
+  }
+];
+
+const testimonials = [
+  {
+    quote: 'Impressive. It truly feels exclusive: impossible landscapes, zero rush, and flawless logistics. The guide is incredibly knowledgeable and explains everything clearly.',
+    author: 'Mart\u00edn',
+    location: 'Buenos Aires'
+  },
+  {
+    quote: 'Archaeology told on-site changes everything. It\'s not the same to read about Quilmes as it is to walk among its terraces while they explain how people lived. We came back with a new perspective on the NOA.',
+    author: 'Laura',
+    location: 'C\u00f3rdoba'
+  },
+  {
+    quote: 'The day at Gal\u00e1n is one of the most impactful we\'ve had in Argentina. Totally recommended if you\'re looking for something different from traditional tourism.',
+    author: 'Diego',
+    location: 'Rosario'
+  }
+];
+
+const faqs = [
+  {
+    question: 'What\'s included in the excursion?',
+    answer: 'Everything is included: round-trip transportation, specialized archaeological guide, all site entry fees, full lunch with drinks, and liability insurance.'
+  },
+  {
+    question: 'Is it physically demanding?',
+    answer: '"Archaeology in the Valleys" involves short hikes at altitude (up to 3,000m). "Colonial Tucum\u00e1n" is suitable for all ages and fitness levels.'
+  },
+  {
+    question: 'How many people per group?',
+    answer: 'Maximum 6-8 people. Very small groups to guarantee personalized attention and a quality experience.'
+  },
+  {
+    question: 'How do I check availability?',
+    answer: 'Write to us on WhatsApp and we\'ll send you available dates. You confirm your spot with a 30-50% deposit, and the balance is due 48 hours before departure.'
+  },
+  {
+    question: 'Can I cancel or reschedule?',
+    answer: 'Yes, with more than 7 days notice we refund 80% of the deposit. Between 7 and 3 days, 50%. Less than 3 days or no-show, no refund.'
+  },
+  {
+    question: 'What happens if it rains?',
+    answer: 'If there\'s a forecast for severe storms or dangerous conditions, we reschedule at no charge. Your safety is the priority.'
+  }
+];
+
+// Schema.org LocalBusiness + TourOperator
+const homeStructuredData = {
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": ["LocalBusiness", "TouristInformationCenter"],
+      "@id": siteConfig.url,
+      "name": siteConfig.name,
+      "description": "Archaeological tourism in northwestern Argentina. Excursions with professional guides to Quilmes, Taf\u00ed del Valle, menhirs, and more.",
+      "url": `${siteConfig.url}/en/`,
+      "telephone": siteConfig.contact.whatsapp,
+      "email": siteConfig.contact.email,
+      "address": {
+        "@type": "PostalAddress",
+        "addressLocality": "San Miguel de Tucum\u00e1n",
+        "addressRegion": "Tucum\u00e1n",
+        "addressCountry": "AR"
+      },
+      "geo": {
+        "@type": "GeoCoordinates",
+        "latitude": -26.8241,
+        "longitude": -65.2226
+      },
+      "image": `${siteConfig.url}/images/og-image.jpg`,
+      "aggregateRating": {
+        "@type": "AggregateRating",
+        "ratingValue": "5",
+        "reviewCount": "500",
+        "bestRating": "5"
+      },
+      "sameAs": [
+        siteConfig.contact.instagramUrl
+      ]
+    },
+    {
+      "@type": "WebSite",
+      "@id": `${siteConfig.url}/#website`,
+      "url": siteConfig.url,
+      "name": siteConfig.name,
+      "description": "Archaeological tourism in northwestern Argentina. Excursions with professional guides to Quilmes, Taf\u00ed del Valle, menhirs, and more.",
+      "publisher": { "@id": siteConfig.url },
+      "inLanguage": "en"
+    }
+  ]
+};
+---
+
+<BaseLayout
+  title="Archaeological Tourism in Northwestern Argentina"
+  description="Archaeological tourism in northwestern Argentina. Excursions with professional guides to Quilmes, Taf\u00ed del Valle, menhirs, and more."
+  structuredData={homeStructuredData}
+  locale={locale}
+>
+  <WhatsAppFloat />
+  <Header locale={locale} />
+
+  <main>
+    <!-- HERO -->
+    <section class="hero" style={`background: linear-gradient(to bottom, rgba(6,27,56,0.55) 0%, rgba(6,27,56,0.65) 50%, rgba(6,27,56,0.85) 100%), url('${heroBg.src}'); background-size: cover; background-position: center;`}>
+      <div class="wrap text-center">
+        <h1>Archaeological <span class="accent">Tourism</span><br/>in Northwestern Argentina</h1>
+        <p class="hero-lead">
+          Discover the deep history of Northwestern Argentina with professional interpretation,
+          rigorous scientific content, and respect for heritage.
+        </p>
+        <div class="hero-authority">
+          <span>Professional archaeology guide</span>
+          <span class="authority-sep">&middot;</span>
+          <span>Small groups</span>
+          <span class="authority-sep">&middot;</span>
+          <span>Tucum&aacute;n &middot; Catamarca &middot; Salta</span>
+        </div>
+        <div class="hero-ctas">
+          <a class="btn btn-primary" href="#excursiones">Explore excursions</a>
+          <a class="btn btn-outline" href="/en/nosotros">Learn our story</a>
+        </div>
+        <div class="badges">
+          {badges.map((text) => <Badge text={text} />)}
+        </div>
+      </div>
+    </section>
+
+    <!-- PRODUCTS -->
+    <section id="excursiones" class="section section-dark">
+      <div class="wrap">
+        <div class="grid-2">
+          {products.map((product) => <ProductCard {...product} locale={locale} />)}
+        </div>
+      </div>
+    </section>
+
+    <!-- EXPERIENCIA 4x4 -->
+    <section class="section section-light exp-4x4">
+      <div class="wrap">
+        <div class="exp-layout">
+          <div class="exp-image">
+            <Image src={exp4x4Img} alt="Mallku Experience 4x4" loading="lazy" />
+            <span class="exp-tag">Premium Experience</span>
+          </div>
+          <div class="exp-content">
+            <h2>Mallku Experience <span class="accent-dark">4x4</span></h2>
+            <p class="exp-subtitulo">4 days exploring the Catamarca Puna</p>
+            <p>A 4-day adventure through the most extreme and remote landscapes of the NOA: the Campo de Piedra P&oacute;mez, the Gal&aacute;n Volcano with the largest caldera in the world, ancient archaeological sites, and the Ruins of Shincal.</p>
+            <div class="exp-badges">
+              <span>4 Days / 3 Nights</span>
+              <span>4x4 Vehicle</span>
+              <span>Up to 3,957 m.a.s.l.</span>
+            </div>
+            <a class="btn btn-primary" href="/en/experiencias/mallku-experience-4x4">
+              View full itinerary
+            </a>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- SEPARADOR -->
+    <div class="section-dark" style="padding: var(--space-lg) 0 0;">
+      <div class="section-divider"><span>&#9670;</span></div>
+    </div>
+
+    <!-- WHY MALLKU -->
+    <section class="section section-dark">
+      <div class="wrap text-center">
+        <h2 class="section-title">Why is Mallku different?</h2>
+        <p class="section-subtitle">We're not a traditional travel agency. We are specialists in archaeology and cultural heritage.</p>
+
+        <div class="grid-3">
+          {whyCards.map((card) => <WhyCard {...card} />)}
+        </div>
+      </div>
+    </section>
+
+    <!-- CIFRAS -->
+    <section class="cifras-section">
+      <div class="wrap">
+        <div class="cifras-grid">
+          <div class="cifra-item">
+            <span class="cifra-numero">+500</span>
+            <span class="cifra-label">Travelers accompanied</span>
+          </div>
+          <div class="cifra-sep"></div>
+          <div class="cifra-item">
+            <span class="cifra-numero">+200</span>
+            <span class="cifra-label">Excursions completed</span>
+          </div>
+          <div class="cifra-sep"></div>
+          <div class="cifra-item">
+            <span class="cifra-numero">6</span>
+            <span class="cifra-label">Archaeological sites</span>
+          </div>
+          <div class="cifra-sep"></div>
+          <div class="cifra-item">
+            <span class="cifra-numero">100%</span>
+            <span class="cifra-label">Professional interpretation</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- GALERIA -->
+    <section class="section section-light galeria-home">
+      <div class="wrap text-center">
+        <h2 class="section-title" style="color: var(--azul);">Landscapes you'll <span class="accent-dark">discover</span></h2>
+        <p class="section-subtitle" style="color: var(--marron);">
+          Archaeological sites, Andean valleys, and the immensity of the Catamarca Puna.
+        </p>
+      </div>
+      <div class="wrap">
+        <div class="galeria-home-grid">
+          {resolvedGaleria.map((item, i) => (
+            <div class={`gh-item gh-item-${i + 1}`}>
+              <Image src={item.resolved} alt={item.alt} loading="lazy" />
+              <div class="gh-overlay">
+                <span class="gh-cat">{item.categoria}</span>
+              </div>
+            </div>
+          ))}
+        </div>
+        <div class="galeria-home-cta">
+          <a class="btn btn-primary" href="/en/galeria">
+            View full gallery
+          </a>
+        </div>
+      </div>
+    </section>
+
+    <!-- SEPARADOR -->
+    <div class="section-dark" style="padding: var(--space-lg) 0 0;">
+      <div class="section-divider"><span>&#9670;</span></div>
+    </div>
+
+    <!-- TESTIMONIALS -->
+    <section class="section section-terracota">
+      <div class="wrap text-center">
+        <h2 class="section-title">What our travelers say</h2>
+
+        <div class="grid-3" style="margin-top: var(--space-xl);">
+          {testimonials.map((t) => <TestimonialCard {...t} />)}
+        </div>
+      </div>
+    </section>
+
+    <!-- LEAD CAPTURE -->
+    <section class="section section-dark" style="padding-top: 0;">
+      <div class="wrap">
+        <LeadCapture locale={locale} />
+      </div>
+    </section>
+
+    <div class="section-divider"><span>&#9670;</span></div>
+
+    <!-- FAQ -->
+    <section class="section section-dark" style="padding-top: 0;">
+      <div class="wrap text-center">
+        <h2 class="section-title">Before you travel</h2>
+        <p class="section-subtitle">Everything you need to know before your first excursion.</p>
+
+        <div class="faq-grid">
+          {faqs.map((faq) => <FAQItem {...faq} />)}
+        </div>
+      </div>
+    </section>
+
+    <!-- CTA FINAL -->
+    <section class="section section-light">
+      <div class="wrap">
+        <div class="cta-box">
+          <h2>Ready to explore the NOA?</h2>
+          <p>Check dates, availability, and anything else you need. We'll respond quickly and with all the enthusiasm for you to live this experience.</p>
+          <a class="btn btn-primary" href={whatsappLinks.fechas} target="_blank" rel="noopener">
+            Inquire via WhatsApp
+          </a>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <Footer locale={locale} />
+</BaseLayout>
+
+<style>
+  /* Hero Section */
+  .hero {
+    min-height: 85vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+  }
+
+  .hero::before {
+    content: "";
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    height: 120px;
+    background: linear-gradient(to top, var(--color-bg-dark), transparent);
+    pointer-events: none;
+  }
+
+  .hero .wrap {
+    position: relative;
+    z-index: 1;
+    padding-top: 40px;
+    padding-bottom: 60px;
+  }
+
+  .hero h1 {
+    margin: 0 0 24px;
+    font-family: var(--font-heading);
+    font-size: clamp(42px, 7vw, 72px);
+    font-weight: 700;
+    line-height: 1.05;
+    text-transform: none;
+    letter-spacing: -0.02em;
+    text-shadow: 0 2px 20px rgba(0, 0, 0, 0.3);
+  }
+
+  .hero h1 .accent {
+    color: var(--color-primary);
+    text-shadow: 0 2px 30px rgba(209, 107, 56, 0.4);
+  }
+
+  .hero-lead {
+    font-size: 19px;
+    color: rgba(239, 227, 214, 0.9);
+    max-width: 60ch;
+    margin: 0 auto 40px;
+    line-height: 1.7;
+    text-shadow: 0 1px 10px rgba(0, 0, 0, 0.2);
+  }
+
+  .hero-ctas {
+    display: flex;
+    gap: 16px;
+    justify-content: center;
+    flex-wrap: wrap;
+    margin-bottom: 36px;
+  }
+
+  .hero-authority {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+    margin-bottom: 32px;
+    font-family: var(--font-display);
+    font-size: 12px;
+    text-transform: uppercase;
+    letter-spacing: 1.5px;
+    color: rgba(239, 227, 214, 0.7);
+  }
+
+  .authority-sep {
+    opacity: 0.4;
+  }
+
+  .badges {
+    display: flex;
+    gap: 12px;
+    justify-content: center;
+    flex-wrap: wrap;
+  }
+
+  /* Experience 4x4 Section */
+  .exp-layout {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: var(--space-2xl);
+    align-items: center;
+  }
+
+  .exp-image {
+    position: relative;
+    border-radius: var(--radius-xl);
+    overflow: hidden;
+  }
+
+  .exp-image img {
+    width: 100%;
+    height: 100%;
+    min-height: 400px;
+    object-fit: cover;
+    object-position: 15% 30%;
+    display: block;
+  }
+
+  .exp-tag {
+    position: absolute;
+    top: 16px;
+    left: 16px;
+    padding: 8px 16px;
+    background: var(--color-primary);
+    color: #fff;
+    font-family: var(--font-display);
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 1.5px;
+    border-radius: 0;
+  }
+
+  .exp-content h2 {
+    margin: 0 0 var(--space-xs);
+    font-size: 36px;
+    color: var(--azul);
+  }
+
+  .accent-dark {
+    color: var(--color-primary);
+  }
+
+  .exp-subtitulo {
+    font-size: 18px;
+    color: var(--color-primary);
+    font-weight: 600;
+    margin: 0 0 var(--space-md);
+  }
+
+  .exp-content p {
+    color: var(--marron);
+    line-height: 1.7;
+    margin: 0 0 var(--space-lg);
+  }
+
+  .exp-badges {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-sm);
+    margin-bottom: var(--space-lg);
+  }
+
+  .exp-badges span {
+    padding: 6px 14px;
+    background: rgba(6, 27, 56, 0.08);
+    border: 1px solid var(--color-line-dark);
+    border-radius: 0;
+    font-size: 13px;
+    color: var(--azul);
+  }
+
+  @media (max-width: 900px) {
+    .exp-layout {
+      grid-template-columns: 1fr;
+    }
+
+    .exp-image img {
+      height: 280px;
+    }
+  }
+
+  /* Cifras Section */
+  .cifras-section {
+    padding: var(--space-xl) 0;
+    background: var(--color-bg-light);
+    border-top: 1px solid var(--color-line-dark);
+    border-bottom: 1px solid var(--color-line-dark);
+  }
+
+  .cifras-grid {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: var(--space-xl);
+  }
+
+  .cifra-item {
+    text-align: center;
+  }
+
+  .cifra-numero {
+    display: block;
+    font-family: var(--font-heading);
+    font-size: clamp(36px, 5vw, 48px);
+    font-weight: 700;
+    color: var(--terracota);
+    line-height: 1;
+    margin-bottom: 8px;
+  }
+
+  .cifra-label {
+    display: block;
+    font-family: var(--font-display);
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 1.5px;
+    color: var(--marron);
+    opacity: 0.7;
+  }
+
+  .cifra-sep {
+    width: 1px;
+    height: 48px;
+    background: var(--color-line-dark);
+  }
+
+  @media (max-width: 700px) {
+    .cifras-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: var(--space-lg);
+    }
+
+    .cifra-sep {
+      display: none;
+    }
+  }
+
+  /* Gallery Home Section */
+  .galeria-home-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    grid-template-rows: auto auto auto;
+    gap: var(--space-sm);
+    margin-top: var(--space-xl);
+  }
+
+  .gh-item {
+    position: relative;
+    overflow: hidden;
+    cursor: pointer;
+  }
+
+  .gh-item img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.5s ease;
+    display: block;
+  }
+
+  .gh-item:hover img {
+    transform: scale(1.06);
+  }
+
+  .gh-overlay {
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(to top, rgba(6, 27, 56, 0.6) 0%, transparent 50%);
+    opacity: 0;
+    transition: opacity 0.3s ease;
+    display: flex;
+    align-items: flex-end;
+    padding: var(--space-md);
+  }
+
+  .gh-item:hover .gh-overlay {
+    opacity: 1;
+  }
+
+  .gh-cat {
+    font-family: var(--font-display);
+    font-size: 12px;
+    text-transform: uppercase;
+    letter-spacing: 1.5px;
+    color: #fff;
+  }
+
+  .gh-item-1 {
+    grid-column: span 2;
+    grid-row: span 2;
+    aspect-ratio: 1 / 1;
+  }
+
+  .gh-item-2,
+  .gh-item-3,
+  .gh-item-4,
+  .gh-item-5,
+  .gh-item-6,
+  .gh-item-7 {
+    aspect-ratio: 4 / 3;
+  }
+
+  .gh-item-8 {
+    grid-column: span 2;
+    aspect-ratio: 16 / 9;
+  }
+
+  .galeria-home-cta {
+    text-align: center;
+    margin-top: var(--space-xl);
+  }
+
+  @media (max-width: 900px) {
+    .galeria-home-grid {
+      grid-template-columns: repeat(2, 1fr);
+    }
+
+    .gh-item-1 {
+      grid-column: span 2;
+      grid-row: span 1;
+      aspect-ratio: 16 / 9;
+    }
+
+    .gh-item-8 {
+      grid-column: span 2;
+      aspect-ratio: 16 / 9;
+    }
+  }
+
+  @media (max-width: 480px) {
+    .galeria-home-grid {
+      grid-template-columns: 1fr;
+    }
+
+    .gh-item-1,
+    .gh-item-8 {
+      grid-column: span 1;
+    }
+
+    .gh-item {
+      aspect-ratio: 16 / 9;
+    }
+  }
+
+  /* FAQ Grid */
+  .faq-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 18px;
+    margin-top: var(--space-xl);
+    text-align: left;
+  }
+
+  @media (max-width: 980px) {
+    .faq-grid {
+      grid-template-columns: 1fr;
+    }
+  }
+
+  /* CTA Box */
+  .cta-box {
+    max-width: 700px;
+    margin: 0 auto;
+    padding: 48px;
+    border: 2px solid var(--color-primary);
+    border-radius: var(--radius-xl);
+    background: #fff;
+    text-align: center;
+  }
+
+  .cta-box h2 {
+    margin: 0 0 14px;
+    font-size: 36px;
+    color: var(--azul);
+  }
+
+  .cta-box p {
+    margin: 0 0 28px;
+    font-size: 16px;
+    color: var(--marron);
+  }
+
+  @media (max-width: 600px) {
+    .hero {
+      min-height: 70vh;
+    }
+
+    .hero .wrap {
+      padding-top: 20px;
+      padding-bottom: 40px;
+    }
+
+    .cta-box {
+      padding: 32px 24px;
+    }
+  }
+</style>

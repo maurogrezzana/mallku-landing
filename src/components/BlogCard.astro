@@ -1,6 +1,9 @@
 ---
 import { Image } from 'astro:assets';
 import type { ImageMetadata } from 'astro';
+import { useTranslations, getLocalePath } from '../i18n/index';
+import { defaultLocale } from '../i18n/locales';
+import type { Locale } from '../i18n/locales';
 
 interface Props {
   slug: string;
@@ -10,19 +13,25 @@ interface Props {
   categoria: string;
   tiempoLectura: string;
   image?: ImageMetadata;
+  locale?: Locale;
 }
 
-const { slug, titulo, excerpt, fecha, categoria, tiempoLectura, image } = Astro.props;
+const { slug, titulo, excerpt, fecha, categoria, tiempoLectura, image, locale = defaultLocale } = Astro.props;
+const t = useTranslations(locale);
 
-// Format date
-const fechaFormateada = new Date(fecha).toLocaleDateString('es-AR', {
+const dateLocaleMap: Record<Locale, string> = { es: 'es-AR', en: 'en-US', fr: 'fr-FR' };
+const fechaFormateada = new Date(fecha).toLocaleDateString(dateLocaleMap[locale], {
   day: 'numeric',
   month: 'long',
   year: 'numeric'
 });
+
+const blogPath = getLocalePath(`/blog/${slug}`, locale);
+const readSuffix = locale === 'en' ? 'read' : locale === 'fr' ? 'de lecture' : 'lectura';
+const readMore = locale === 'en' ? 'Read article →' : locale === 'fr' ? 'Lire l\'article →' : 'Leer artículo →';
 ---
 
-<a href={`/blog/${slug}`} class="blog-card">
+<a href={blogPath} class="blog-card">
   <div class="blog-image">
     {image && <Image src={image} alt={titulo} loading="lazy" />}
     <span class="categoria-tag">{categoria}</span>
@@ -31,11 +40,11 @@ const fechaFormateada = new Date(fecha).toLocaleDateString('es-AR', {
     <div class="blog-meta">
       <span class="fecha">{fechaFormateada}</span>
       <span class="separador">·</span>
-      <span class="lectura">{tiempoLectura} lectura</span>
+      <span class="lectura">{tiempoLectura} {readSuffix}</span>
     </div>
     <h3>{titulo}</h3>
     <p>{excerpt}</p>
-    <span class="leer-mas">Leer artículo →</span>
+    <span class="leer-mas">{readMore}</span>
   </div>
 </a>
 

@@ -1,0 +1,55 @@
+---
+import { locales, defaultLocale } from '../i18n/locales';
+import type { Locale } from '../i18n/locales';
+import { switchLocalePath } from '../i18n/index';
+
+interface Props {
+  locale: Locale;
+}
+
+const { locale } = Astro.props;
+const currentPath = Astro.url.pathname;
+
+const localeLabels: Record<Locale, string> = {
+  es: 'ES',
+  en: 'EN',
+  fr: 'FR',
+};
+---
+
+<div class="lang-switcher">
+  {locales.map((loc) => (
+    <a
+      href={switchLocalePath(currentPath, loc)}
+      class:list={['lang-option', { active: loc === locale }]}
+      aria-label={loc === 'es' ? 'Español' : loc === 'en' ? 'English' : 'Français'}
+    >
+      {localeLabels[loc]}
+    </a>
+  ))}
+</div>
+
+<style>
+  .lang-switcher {
+    display: flex;
+    align-items: center;
+    gap: 2px;
+  }
+
+  .lang-option {
+    padding: 6px 8px;
+    font-family: var(--font-display);
+    font-size: 11px;
+    letter-spacing: 0.5px;
+    color: rgba(239, 227, 214, 0.5);
+    transition: color var(--transition-normal);
+  }
+
+  .lang-option:hover {
+    color: var(--color-text-light);
+  }
+
+  .lang-option.active {
+    color: var(--color-primary);
+  }
+</style>

@@ -1,6 +1,9 @@
 ---
 import { Image } from 'astro:assets';
 import type { ImageMetadata } from 'astro';
+import { useTranslations } from '../i18n/index';
+import { defaultLocale } from '../i18n/locales';
+import type { Locale } from '../i18n/locales';
 
 interface Props {
   tag: string;
@@ -12,9 +15,11 @@ interface Props {
   ctaLink: string;
   image?: ImageMetadata;
   slug?: string;
+  locale?: Locale;
 }
 
-const { tag, title, description, highlights, duration, departure, ctaLink, image, slug } = Astro.props;
+const { tag, title, description, highlights, duration, departure, ctaLink, image, slug, locale = defaultLocale } = Astro.props;
+const t = useTranslations(locale);
 
 // Placeholder icons for when no image is provided
 const placeholderIcon = slug === 'tucuman-colonial' ? '🏚️' : '🏛️';
@@ -38,7 +43,7 @@ const placeholderIcon = slug === 'tucuman-colonial' ? '🏚️' : '🏛️';
     <p class="product-promise">{description}</p>
 
     <div class="product-highlights">
-      <h4>Puntos destacados</h4>
+      <h4>{t('card.highlights')}</h4>
       <ul class="highlights-list">
         {highlights.map((item) => <li>{item}</li>)}
       </ul>
@@ -46,21 +51,21 @@ const placeholderIcon = slug === 'tucuman-colonial' ? '🏚️' : '🏛️';
 
     <div class="product-details">
       <div class="detail-box">
-        <strong>Duración</strong>
+        <strong>{t('card.duration')}</strong>
         <span>{duration}</span>
       </div>
       <div class="detail-box">
-        <strong>Salida</strong>
+        <strong>{t('card.departure')}</strong>
         <span>{departure}</span>
       </div>
     </div>
 
     <div class="product-incluye">
-      <span>Todo incluido · Grupos reducidos</span>
+      <span>{t('card.included')}</span>
     </div>
 
     <a class="btn btn-primary btn-full" href={ctaLink} target="_blank" rel="noopener">
-      Consultar disponibilidad
+      {t('card.cta')}
     </a>
   </div>
 </div>

@@ -1,29 +1,36 @@
 ---
+import { useTranslations } from '../i18n/index';
+import { defaultLocale } from '../i18n/locales';
+import type { Locale } from '../i18n/locales';
+
 interface Props {
   apiUrl?: string;
+  locale?: Locale;
 }
 
-const { apiUrl = 'https://mallku-api.vercel.app' } = Astro.props;
+const { apiUrl = 'https://mallku-api.vercel.app', locale = defaultLocale } = Astro.props;
+const t = useTranslations(locale);
 ---
 
 <form
   class="contact-form"
   id="contact-form"
   data-api-url={apiUrl}
+  data-msg-sending={t('form.sending')}
 >
   <div class="form-row">
     <div class="form-group">
-      <label for="nombre">Nombre completo *</label>
+      <label for="nombre">{t('form.name')} *</label>
       <input
         type="text"
         id="nombre"
         name="nombre"
         required
-        placeholder="Tu nombre"
+        placeholder={t('form.name')}
       />
     </div>
     <div class="form-group">
-      <label for="email">Email *</label>
+      <label for="email">{t('form.email')} *</label>
       <input
         type="email"
         id="email"
@@ -58,20 +65,20 @@ const { apiUrl = 'https://mallku-api.vercel.app' } = Astro.props;
   </div>
 
   <div class="form-group">
-    <label for="mensaje">Mensaje *</label>
+    <label for="mensaje">{t('form.message')} *</label>
     <textarea
       id="mensaje"
       name="mensaje"
       required
       rows="5"
-      placeholder="Contanos qué te gustaría saber, fechas de interés, cantidad de personas..."
+      placeholder={t('form.message')}
     ></textarea>
   </div>
 
   <input type="text" name="_gotcha" style="display:none" />
 
   <button type="submit" class="btn btn-primary btn-full" id="submit-btn">
-    Enviar consulta
+    {t('form.submit')}
   </button>
 
   <p class="form-note">
@@ -81,14 +88,14 @@ const { apiUrl = 'https://mallku-api.vercel.app' } = Astro.props;
 
 <div id="form-success" class="form-message success" style="display: none;" role="alert" aria-live="polite">
   <span class="message-icon">&#10003;</span>
-  <h4>¡Mensaje enviado!</h4>
-  <p>Gracias por contactarnos. Te responderemos pronto.</p>
+  <h4>{t('form.successTitle')}</h4>
+  <p>{t('form.successMsg')}</p>
 </div>
 
 <div id="form-error" class="form-message error" style="display: none;" role="alert" aria-live="polite">
   <span class="message-icon">&#10007;</span>
-  <h4>Error al enviar</h4>
-  <p>Por favor, intentá de nuevo o escribinos por WhatsApp.</p>
+  <h4>{t('form.errorTitle')}</h4>
+  <p>{t('form.errorMsg')}</p>
 </div>
 
 <style>
@@ -236,6 +243,7 @@ const { apiUrl = 'https://mallku-api.vercel.app' } = Astro.props;
 
   if (form) {
     const apiUrl = form.dataset.apiUrl || '';
+    const msgSending = form.dataset.msgSending || 'Sending...';
 
     form.addEventListener('submit', async (e) => {
       e.preventDefault();
@@ -246,7 +254,7 @@ const { apiUrl = 'https://mallku-api.vercel.app' } = Astro.props;
 
       // Disable button and show loading
       const originalText = submitBtn.textContent;
-      submitBtn.textContent = 'Enviando...';
+      submitBtn.textContent = msgSending;
       submitBtn.classList.add('btn-loading');
 
       const formData = new FormData(form);

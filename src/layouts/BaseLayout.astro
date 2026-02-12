@@ -1,5 +1,8 @@
 ---
 import { siteConfig } from '../data/site';
+import { localeHtmlLang, localeOg, defaultLocale, locales } from '../i18n/locales';
+import { switchLocalePath } from '../i18n/index';
+import type { Locale } from '../i18n/locales';
 import '../styles/global.css';
 
 interface Props {
@@ -8,6 +11,7 @@ interface Props {
   ogImage?: string;
   ogType?: string;
   structuredData?: Record<string, any>;
+  locale?: Locale;
 }
 
 const {
@@ -15,17 +19,22 @@ const {
   description = siteConfig.description,
   ogImage,
   ogType = 'website',
-  structuredData
+  structuredData,
+  locale = defaultLocale
 } = Astro.props;
 
 const fullTitle = title === siteConfig.name ? title : `${title} | ${siteConfig.name}`;
 const resolvedOgImage = ogImage
   ? (ogImage.startsWith('http') ? ogImage : `${siteConfig.url}${ogImage}`)
   : `${siteConfig.url}${siteConfig.social.ogImage}`;
+
+const htmlLang = localeHtmlLang[locale];
+const ogLocale = localeOg[locale];
+const currentPath = Astro.url.pathname;
 ---
 
 <!doctype html>
-<html lang="es">
+<html lang={htmlLang}>
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
@@ -50,7 +59,7 @@ const resolvedOgImage = ogImage
   <meta property="og:type" content={ogType} />
   <meta property="og:url" content={Astro.url} />
   <meta property="og:image" content={resolvedOgImage} />
-  <meta property="og:locale" content="es_AR" />
+  <meta property="og:locale" content={ogLocale} />
   <meta property="og:site_name" content={siteConfig.name} />
 
   <!-- Twitter -->
@@ -61,6 +70,15 @@ const resolvedOgImage = ogImage
 
   <!-- Canonical -->
   <link rel="canonical" href={Astro.url} />
+
+  <!-- Hreflang alternate links -->
+  {locales.map((loc) => {
+    const altPath = switchLocalePath(currentPath, loc);
+    const href = `${siteConfig.url}${altPath}`;
+    const hreflangValue = loc === 'es' ? 'es' : loc;
+    return <link rel="alternate" hreflang={hreflangValue} href={href} />;
+  })}
+  <link rel="alternate" hreflang="x-default" href={`${siteConfig.url}${switchLocalePath(currentPath, defaultLocale)}`} />
 
   <!-- Structured Data -->
   {structuredData && (

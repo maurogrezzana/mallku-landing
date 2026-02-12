@@ -1,0 +1,724 @@
+---
+import { Image, getImage } from 'astro:assets';
+import BaseLayout from '../../../layouts/BaseLayout.astro';
+import Header from '../../../components/Header.astro';
+import Footer from '../../../components/Footer.astro';
+import WhatsAppFloat from '../../../components/WhatsAppFloat.astro';
+import { getExperienciaBySlug } from '../../../data/get-data';
+import { resolveImage } from '../../../utils/images';
+import { siteConfig } from '../../../data/site';
+
+const locale = 'en';
+const experiencia = (await getExperienciaBySlug('mallku-experience-4x4', 'en'))!;
+const heroBg = await getImage({ src: resolveImage('/images/Real Grande 3.jpg'), width: 1600 });
+
+const structuredData = {
+  "@context": "https://schema.org",
+  "@type": "TouristTrip",
+  "name": experiencia.titulo,
+  "description": experiencia.descripcion,
+  "touristType": "Archaeological tourism",
+  "inLanguage": "en",
+  "image": `${siteConfig.url}/images/Real Grande 3.jpg`,
+  "url": `${siteConfig.url}/en/experiencias/mallku-experience-4x4`,
+  "offers": {
+    "@type": "Offer",
+    "availability": "https://schema.org/InStock"
+  },
+  "provider": {
+    "@type": "TourOperator",
+    "name": siteConfig.name,
+    "url": siteConfig.url
+  },
+  "duration": `P${experiencia.dias}D`,
+  "maximumAttendeeCapacity": experiencia.grupoMax.replace(/[^0-9]/g, '').slice(-1) || "8"
+};
+---
+
+<BaseLayout
+  title={`${experiencia.titulo} | Mallku Excursions`}
+  description={experiencia.descripcion}
+  ogImage="/images/Real Grande 3.jpg"
+  structuredData={structuredData}
+  locale="en"
+>
+  <WhatsAppFloat locale="en" />
+  <Header locale="en" />
+
+  <main>
+    <!-- HERO -->
+    <section class="hero" style={`background: linear-gradient(to bottom, rgba(6,27,56,0.5), rgba(6,27,56,0.8)), url('${heroBg.src}'); background-size: cover; background-position: center;`}>
+      <div class="hero-overlay"></div>
+      <div class="wrap hero-content">
+        <span class="tag">{experiencia.tag}</span>
+        <h1>{experiencia.titulo}</h1>
+        <p class="subtitulo">{experiencia.subtitulo}</p>
+
+        <div class="hero-badges">
+          <span class="badge">4 Days</span>
+          <span class="badge">4x4</span>
+          <span class="badge">Up to {experiencia.alturaMaxima}</span>
+          <span class="badge">Small groups</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- INTRO -->
+    <section class="section section-light">
+      <div class="wrap">
+        <div class="intro-layout">
+          <div class="intro-content">
+            <h2>A unique expedition in the NOA</h2>
+            {experiencia.descripcionLarga.map((parrafo) => (
+              <p>{parrafo}</p>
+            ))}
+          </div>
+
+          <aside class="intro-sidebar">
+            <div class="info-card">
+              <h3>Key details</h3>
+              <ul class="info-list">
+                <li>
+                  <strong>Duration</strong>
+                  <span>{experiencia.duracion}</span>
+                </li>
+                <li>
+                  <strong>Location</strong>
+                  <span>{experiencia.ubicacion}</span>
+                </li>
+                <li>
+                  <strong>Meeting point</strong>
+                  <span>{experiencia.puntoEncuentro}</span>
+                </li>
+                <li>
+                  <strong>Maximum altitude</strong>
+                  <span>{experiencia.alturaMaxima}</span>
+                </li>
+                <li>
+                  <strong>Difficulty</strong>
+                  <span>{experiencia.dificultad}</span>
+                </li>
+                <li>
+                  <strong>Maximum group</strong>
+                  <span>{experiencia.grupoMax}</span>
+                </li>
+              </ul>
+            </div>
+          </aside>
+        </div>
+      </div>
+    </section>
+
+    <!-- ITINERARY -->
+    <section class="section section-dark">
+      <div class="wrap">
+        <h2 class="section-title text-center">Day-by-day itinerary</h2>
+        <p class="section-subtitle text-center">Four days of adventure in the Catamarca Puna</p>
+
+        <div class="itinerario-dias">
+          {experiencia.itinerarioPorDia.map((dia) => (
+            <details class="dia-card" open={dia.dia === 1}>
+              <summary class="dia-header">
+                <div class="dia-numero">Day {dia.dia}</div>
+                <div class="dia-info">
+                  <h3>{dia.titulo}</h3>
+                  <span class="dia-meta">{dia.horario} {dia.alturaMaxima && `· Max altitude: ${dia.alturaMaxima}`}</span>
+                </div>
+              </summary>
+              <div class="dia-content">
+                <h4>Sites to visit:</h4>
+                <ul class="sitios-lista">
+                  {dia.sitios.map((sitio) => (
+                    <li>{sitio}</li>
+                  ))}
+                </ul>
+                {dia.imagenes && dia.imagenes.length > 0 && (
+                  <div class="dia-fotos">
+                    {dia.imagenes.slice(0, 3).map((img, i) => (
+                      <div class="dia-foto">
+                        <Image src={resolveImage(img)} alt={`${dia.titulo} - photo ${i + 1}`} loading="lazy" />
+                      </div>
+                    ))}
+                  </div>
+                )}
+                {dia.noche && (
+                  <p class="dia-noche">Night at: <strong>{dia.noche}</strong></p>
+                )}
+                {dia.extra && (
+                  <p class="dia-extra">{dia.extra}</p>
+                )}
+              </div>
+            </details>
+          ))}
+        </div>
+      </div>
+    </section>
+
+    <!-- CTA -->
+    <section class="section section-terracota">
+      <div class="wrap">
+        <div class="cta-experiencia">
+          <h2>Inquire about this experience</h2>
+          <p>Includes all excursions, 4x4 transport, local guide and farewell dinner. Accommodation not included (3 nights in Antofagasta de la Sierra).</p>
+          <a class="btn btn-white" href={experiencia.whatsappLink} target="_blank" rel="noopener">
+            Check available dates
+          </a>
+        </div>
+      </div>
+    </section>
+
+    <!-- INCLUDES / NOT INCLUDED -->
+    <section class="section section-light">
+      <div class="wrap">
+        <div class="incluye-grid">
+          <div class="incluye-card">
+            <h3>What's included</h3>
+            <ul>
+              {experiencia.incluye.map((item) => (
+                <li><span class="check">✓</span> {item}</li>
+              ))}
+            </ul>
+          </div>
+          <div class="incluye-card no-incluye">
+            <h3>Not included</h3>
+            <ul>
+              {experiencia.noIncluye.map((item) => (
+                <li><span class="cross">✗</span> {item}</li>
+              ))}
+            </ul>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- RECOMMENDATIONS -->
+    <section class="section section-dark">
+      <div class="wrap">
+        <h2 class="section-title text-center">Travel recommendations</h2>
+        <p class="section-subtitle text-center">Prepare for a high-altitude, extreme weather experience</p>
+
+        <div class="recomendaciones-grid">
+          {experiencia.recomendaciones.map((rec) => (
+            <div class="recomendacion-item">
+              <span class="rec-icon">→</span>
+              <p>{rec}</p>
+            </div>
+          ))}
+        </div>
+      </div>
+    </section>
+
+    <!-- PRACTICAL INFO -->
+    <section class="section section-light">
+      <div class="wrap">
+        <h2 class="section-title text-center" style="color: var(--azul);">Practical information</h2>
+
+        <div class="info-practica-grid">
+          <div class="info-practica-card">
+            <h4>Meeting point</h4>
+            <p>The experience starts and ends in <strong>Belen, Catamarca</strong>. You can get there by car, bus, or fly to Catamarca city and then take ground transport.</p>
+          </div>
+          <div class="info-practica-card">
+            <h4>Accommodation</h4>
+            <p>All 3 nights are in <strong>Antofagasta de la Sierra</strong>. There are inn and cabin options available. We help you coordinate the booking.</p>
+          </div>
+          <div class="info-practica-card">
+            <h4>Weather</h4>
+            <p>High-altitude climate: sunny days with wind, cold nights (can drop below 0°C / 32°F). Extreme temperature range. Bring layered clothing.</p>
+          </div>
+          <div class="info-practica-card">
+            <h4>Local operator</h4>
+            <p>We work with <strong>Aventura Extrema Catamarca</strong>, local guides with years of experience in the Puna region.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- FINAL CTA -->
+    <section class="section section-dark cta-final">
+      <div class="wrap text-center">
+        <h2 class="section-title">Ready for the adventure?</h2>
+        <p class="section-subtitle">Write to us via WhatsApp to check dates and availability.</p>
+        <a class="btn btn-primary btn-lg" href={experiencia.whatsappLink} target="_blank" rel="noopener">
+          Check availability
+        </a>
+        <p class="cta-back">
+          <a href="/en/excursiones">← View one-day excursions</a>
+        </p>
+      </div>
+    </section>
+  </main>
+
+  <Footer locale="en" />
+</BaseLayout>
+
+<style>
+  /* Hero */
+  .hero {
+    position: relative;
+    min-height: 70vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .hero-overlay {
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(ellipse 80% 50% at 50% 0%, rgba(209, 107, 56, 0.3), transparent);
+  }
+
+  .hero-content {
+    position: relative;
+    z-index: 1;
+    text-align: center;
+    padding: 100px 0 60px;
+  }
+
+  .tag {
+    display: inline-block;
+    padding: 10px 20px;
+    background: var(--color-primary);
+    color: #fff;
+    font-family: var(--font-display);
+    font-size: 12px;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    border-radius: 0;
+    margin-bottom: var(--space-lg);
+  }
+
+  .hero h1 {
+    font-size: clamp(42px, 7vw, 72px);
+    margin: 0 0 var(--space-sm);
+    text-transform: uppercase;
+  }
+
+  .subtitulo {
+    font-size: clamp(18px, 3vw, 24px);
+    color: var(--color-primary);
+    margin: 0 0 var(--space-xl);
+  }
+
+  .hero-badges {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: var(--space-sm);
+  }
+
+  .badge {
+    padding: 8px 16px;
+    background: rgba(239, 227, 214, 0.15);
+    border: 1px solid rgba(239, 227, 214, 0.3);
+    border-radius: 0;
+    font-size: 13px;
+    color: var(--beige);
+  }
+
+  /* Intro Layout */
+  .intro-layout {
+    display: grid;
+    grid-template-columns: 1fr 320px;
+    gap: var(--space-2xl);
+    align-items: start;
+  }
+
+  .intro-content h2 {
+    margin: 0 0 var(--space-lg);
+    font-size: 32px;
+    color: var(--azul);
+  }
+
+  .intro-content p {
+    margin: 0 0 var(--space-md);
+    line-height: 1.9;
+    color: var(--marron);
+    font-size: 17px;
+  }
+
+  .info-card {
+    padding: var(--space-xl);
+    background: #fff;
+    border: 2px solid var(--color-primary);
+    border-radius: var(--radius-xl);
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.08);
+  }
+
+  .info-card h3 {
+    margin: 0 0 var(--space-md);
+    font-size: 18px;
+    color: var(--azul);
+    text-transform: uppercase;
+    letter-spacing: 1px;
+  }
+
+  .info-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+  }
+
+  .info-list li {
+    display: flex;
+    justify-content: space-between;
+    padding: var(--space-sm) 0;
+    border-bottom: 1px solid var(--color-line-dark);
+    font-size: 14px;
+  }
+
+  .info-list li:last-child {
+    border-bottom: none;
+  }
+
+  .info-list strong {
+    color: var(--marron);
+    font-weight: 600;
+  }
+
+  .info-list span {
+    color: var(--azul);
+    text-align: right;
+  }
+
+  /* Itinerary Days */
+  .itinerario-dias {
+    max-width: 900px;
+    margin: var(--space-xl) auto 0;
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-md);
+  }
+
+  .dia-card {
+    background: rgba(239, 227, 214, 0.08);
+    border: 1px solid var(--color-line-light);
+    border-radius: var(--radius-lg);
+    overflow: hidden;
+  }
+
+  .dia-card[open] {
+    border-color: var(--color-primary);
+  }
+
+  .dia-header {
+    display: grid;
+    grid-template-columns: 80px 1fr auto;
+    gap: var(--space-md);
+    align-items: center;
+    padding: var(--space-lg);
+    cursor: pointer;
+    list-style: none;
+  }
+
+  .dia-header::-webkit-details-marker {
+    display: none;
+  }
+
+  .dia-numero {
+    font-family: var(--font-display);
+    font-size: 14px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    color: var(--color-primary);
+  }
+
+  .dia-info h3 {
+    margin: 0;
+    font-size: 20px;
+  }
+
+  .dia-meta {
+    font-size: 13px;
+    opacity: 0.7;
+  }
+
+
+  .dia-content {
+    padding: 0 var(--space-lg) var(--space-lg);
+    padding-left: calc(80px + var(--space-lg) + var(--space-md));
+  }
+
+  .dia-content h4 {
+    margin: 0 0 var(--space-sm);
+    font-size: 14px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    opacity: 0.7;
+  }
+
+  .sitios-lista {
+    list-style: none;
+    padding: 0;
+    margin: 0 0 var(--space-md);
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: var(--space-xs) var(--space-lg);
+  }
+
+  .sitios-lista li {
+    font-size: 14px;
+    padding: var(--space-xs) 0;
+    padding-left: var(--space-md);
+    position: relative;
+  }
+
+  .sitios-lista li::before {
+    content: "◆";
+    position: absolute;
+    left: 0;
+    color: var(--color-primary);
+    font-size: 8px;
+    top: 50%;
+    transform: translateY(-50%);
+  }
+
+  .dia-fotos {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: var(--space-md);
+    margin: var(--space-md) 0;
+  }
+
+  .dia-foto {
+    border-radius: var(--radius-md);
+    overflow: hidden;
+    aspect-ratio: 3/2;
+  }
+
+  .dia-foto img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.3s ease;
+  }
+
+  .dia-foto:hover img {
+    transform: scale(1.08);
+  }
+
+  .dia-noche {
+    margin: var(--space-md) 0 0;
+    padding: var(--space-sm) var(--space-md);
+    background: rgba(209, 107, 56, 0.15);
+    border-radius: var(--radius-md);
+    font-size: 14px;
+    display: inline-block;
+  }
+
+  .dia-extra {
+    margin: var(--space-sm) 0 0;
+    padding: var(--space-sm) var(--space-md);
+    background: rgba(46, 125, 50, 0.15);
+    border-radius: var(--radius-md);
+    font-size: 14px;
+    color: #2e7d32;
+  }
+
+  /* CTA Experience */
+  .cta-experiencia {
+    text-align: center;
+    max-width: 700px;
+    margin: 0 auto;
+  }
+
+  .cta-experiencia h2 {
+    margin: 0 0 var(--space-md);
+    font-size: 36px;
+  }
+
+  .cta-experiencia p {
+    margin: 0 0 var(--space-lg);
+    font-size: 18px;
+    opacity: 0.9;
+    line-height: 1.7;
+  }
+
+  .btn-white {
+    background: var(--azul);
+    color: #fff;
+  }
+
+  .btn-white:hover {
+    background: var(--marron);
+  }
+
+  /* Includes Grid */
+  .incluye-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: var(--space-lg);
+  }
+
+  .incluye-card {
+    padding: var(--space-xl);
+    background: #fff;
+    border-radius: var(--radius-xl);
+    border: 1px solid var(--color-line-dark);
+  }
+
+  .incluye-card h3 {
+    margin: 0 0 var(--space-lg);
+    font-size: 22px;
+    color: var(--azul);
+  }
+
+  .incluye-card ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+  }
+
+  .incluye-card li {
+    display: flex;
+    align-items: flex-start;
+    gap: var(--space-sm);
+    padding: var(--space-sm) 0;
+    color: var(--marron);
+    border-bottom: 1px solid var(--color-line-dark);
+  }
+
+  .incluye-card li:last-child {
+    border-bottom: none;
+  }
+
+  .check {
+    color: #2e7d32;
+    font-weight: bold;
+  }
+
+  .cross {
+    color: #c62828;
+    font-weight: bold;
+  }
+
+  .no-incluye {
+    background: #fafafa;
+  }
+
+  /* Recommendations */
+  .recomendaciones-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: var(--space-md);
+    margin-top: var(--space-xl);
+  }
+
+  .recomendacion-item {
+    display: flex;
+    gap: var(--space-sm);
+    padding: var(--space-md);
+    background: rgba(239, 227, 214, 0.08);
+    border-radius: var(--radius-md);
+    border: 1px solid var(--color-line-light);
+  }
+
+  .rec-icon {
+    color: var(--color-primary);
+    font-weight: bold;
+    flex-shrink: 0;
+  }
+
+  .recomendacion-item p {
+    margin: 0;
+    font-size: 14px;
+    line-height: 1.5;
+  }
+
+  /* Practical Info */
+  .info-practica-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: var(--space-lg);
+    margin-top: var(--space-xl);
+  }
+
+  .info-practica-card {
+    padding: var(--space-lg);
+    background: #fff;
+    border-radius: var(--radius-lg);
+    border: 1px solid var(--color-line-dark);
+  }
+
+  .info-practica-card h4 {
+    margin: 0 0 var(--space-sm);
+    font-size: 16px;
+    color: var(--azul);
+  }
+
+  .info-practica-card p {
+    margin: 0;
+    font-size: 14px;
+    color: var(--marron);
+    line-height: 1.6;
+  }
+
+  /* Final CTA */
+  .cta-final {
+    padding: var(--space-3xl) 0;
+  }
+
+  .btn-lg {
+    padding: 18px 48px;
+    font-size: 16px;
+  }
+
+  .cta-back {
+    margin-top: var(--space-lg);
+  }
+
+  .cta-back a {
+    color: var(--color-primary);
+    font-size: 14px;
+  }
+
+  /* Responsive */
+  @media (max-width: 900px) {
+    .intro-layout {
+      grid-template-columns: 1fr;
+    }
+
+    .incluye-grid {
+      grid-template-columns: 1fr;
+    }
+
+    .recomendaciones-grid {
+      grid-template-columns: 1fr;
+    }
+
+    .info-practica-grid {
+      grid-template-columns: 1fr;
+    }
+
+    .dia-header {
+      grid-template-columns: 1fr;
+      gap: var(--space-sm);
+    }
+
+    .dia-numero {
+      order: -1;
+    }
+
+    .dia-content {
+      padding-left: var(--space-lg);
+    }
+
+    .sitios-lista {
+      grid-template-columns: 1fr;
+    }
+
+    .dia-fotos {
+      grid-template-columns: repeat(2, 1fr);
+    }
+  }
+
+  @media (max-width: 600px) {
+    .hero {
+      min-height: 60vh;
+    }
+
+    .hero-content {
+      padding: 80px var(--space-md) 40px;
+    }
+  }
+</style>
