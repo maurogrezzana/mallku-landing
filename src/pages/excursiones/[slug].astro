@@ -4,6 +4,7 @@ import BaseLayout from '../../layouts/BaseLayout.astro';
 import Header from '../../components/Header.astro';
 import Footer from '../../components/Footer.astro';
 import WhatsAppFloat from '../../components/WhatsAppFloat.astro';
+import ProductCard from '../../components/ProductCard.astro';
 import { excursiones, type Excursion } from '../../data/excursiones';
 import { resolveImage } from '../../utils/images';
 import { siteConfig } from '../../data/site';
@@ -22,6 +23,7 @@ interface Props {
 const { excursion } = Astro.props;
 const heroBg = await getImage({ src: resolveImage(excursion.imagen), width: 1600 });
 const resolvedFotos = excursion.imagenes.slice(0, 7).map(img => resolveImage(img));
+const relatedExcursions = excursiones.filter(exc => exc.slug !== excursion.slug);
 
 // Schema.org TouristTrip structured data
 const structuredData = {
@@ -79,6 +81,11 @@ const structuredData = {
     <!-- HERO -->
     <section class="hero-excursion" style={`background-image: linear-gradient(to bottom, rgba(6,27,56,0.5), rgba(6,27,56,0.8)), url('${heroBg.src}');`}>
       <div class="wrap">
+        <nav class="breadcrumb" aria-label="Navegación">
+          <a href="/">Inicio</a> <span>&rsaquo;</span>
+          <a href="/excursiones">Excursiones</a> <span>&rsaquo;</span>
+          <span class="current">{excursion.titulo}</span>
+        </nav>
         <span class="tag">{excursion.tag}</span>
         <h1>{excursion.titulo}</h1>
         <p class="subtitulo">{excursion.subtitulo}</p>
@@ -110,6 +117,13 @@ const structuredData = {
             <div>
               <strong>Grupo máximo</strong>
               <span>{excursion.grupoMax}</span>
+            </div>
+          </div>
+          <div class="meta-item">
+            <span class="meta-icon"><svg viewBox="0 0 24 24"><path d="M19 4h-1V2h-2v2H8V2H6v2H5c-1.11 0-1.99.9-1.99 2L3 20c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 16H5V10h14v10zM9 14H7v-2h2v2zm4 0h-2v-2h2v2zm4 0h-2v-2h2v2zm-8 4H7v-2h2v2zm4 0h-2v-2h2v2zm4 0h-2v-2h2v2z"/></svg></span>
+            <div>
+              <strong>Mejor época</strong>
+              <span>{excursion.mejorEpoca}</span>
             </div>
           </div>
         </div>
@@ -222,8 +236,32 @@ const structuredData = {
       </div>
     </section>
 
+    <!-- EXCURSIONES RELACIONADAS -->
+    {relatedExcursions.length > 0 && (
+      <section class="section section-dark">
+        <div class="wrap">
+          <h2 class="section-title text-center">También te puede interesar</h2>
+          <div class="related-grid">
+            {relatedExcursions.map((exc) => (
+              <ProductCard
+                tag={exc.tag}
+                title={exc.titulo}
+                description={exc.descripcion}
+                highlights={exc.highlights.slice(0, 4)}
+                duration={exc.duracion}
+                departure={exc.salida}
+                ctaLink={exc.whatsappLink}
+                image={resolveImage(exc.imagen)}
+                slug={exc.slug}
+              />
+            ))}
+          </div>
+        </div>
+      </section>
+    )}
+
     <!-- CTA FINAL -->
-    <section class="section section-dark">
+    <section class="section section-dark" style="padding-top: 0;">
       <div class="wrap text-center">
         <h2 class="section-title">¿Listo para vivir esta experiencia?</h2>
         <p class="section-subtitle">Escribinos y te contamos todo sobre la próxima salida.</p>
@@ -241,6 +279,31 @@ const structuredData = {
 </BaseLayout>
 
 <style>
+  /* Breadcrumb */
+  .breadcrumb {
+    font-size: 12px;
+    margin-bottom: var(--space-md);
+    color: rgba(239, 227, 214, 0.5);
+  }
+
+  .breadcrumb a {
+    color: rgba(239, 227, 214, 0.6);
+    transition: color var(--transition-normal);
+  }
+
+  .breadcrumb a:hover {
+    color: var(--color-primary);
+  }
+
+  .breadcrumb span {
+    margin: 0 6px;
+  }
+
+  .breadcrumb .current {
+    color: rgba(239, 227, 214, 0.8);
+    margin: 0;
+  }
+
   /* Hero Excursion */
   .hero-excursion {
     padding: 80px 0 60px;
@@ -537,6 +600,14 @@ const structuredData = {
   .recomendacion-item p {
     margin: 0;
     font-size: 14px;
+  }
+
+  /* Related Excursions */
+  .related-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: var(--space-lg);
+    margin-top: var(--space-xl);
   }
 
   @media (max-width: 900px) {

@@ -20,6 +20,7 @@ export interface Excursion {
   priceNote: string;
   dificultad: string;
   grupoMax: string;
+  mejorEpoca: string;
   whatsappLink: string;
   imagen: string;
   imagenes: string[];
@@ -82,6 +83,7 @@ export const excursiones: Excursion[] = [
     priceNote: 'Todo incluido · Grupos reducidos',
     dificultad: 'Media (caminatas cortas en altura)',
     grupoMax: '6-8 personas',
+    mejorEpoca: 'Abril a noviembre (clima seco, ideal para caminatas)',
     whatsappLink: 'https://wa.me/5493815702549?text=Hola%2C%20quiero%20info%20sobre%20Arqueolog%C3%ADa%20en%20los%20Valles',
     imagen: '/images/Quilmes 1.jpg',
     imagenes: [
@@ -154,6 +156,7 @@ export const excursiones: Excursion[] = [
     priceNote: 'Todo incluido · Apto todas las edades',
     dificultad: 'Baja (apto para todas las edades)',
     grupoMax: '6-8 personas',
+    mejorEpoca: 'Todo el año (la selva es más verde en verano)',
     whatsappLink: 'https://wa.me/5493815702549?text=Hola%2C%20quiero%20info%20sobre%20Tucum%C3%A1n%20Colonial',
     imagen: '/images/Ibatin 1.jpg',
     imagenes: [

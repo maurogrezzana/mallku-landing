@@ -42,7 +42,7 @@ export const en = {
   'form.submit': 'Send message',
   'form.sending': 'Sending...',
   'form.successTitle': 'Message sent!',
-  'form.successMsg': 'Thank you for contacting us. We\'ll get back to you soon.',
+  'form.successMsg': 'Thank you for reaching out. We\'ll reply within the next few hours via email or WhatsApp.',
   'form.errorTitle': 'Error sending',
   'form.errorMsg': 'Please try again or write to us on WhatsApp.',
   'form.directTitle': 'Write to us directly',

@@ -31,6 +31,7 @@ export interface ExperienciaMultiDia {
   incluye: string[];
   noIncluye: string[];
   recomendaciones: string[];
+  mejorEpoca: string;
   whatsappLink: string;
   imagen: string;
   imagenes: string[];
@@ -210,6 +211,7 @@ export const experiencias: ExperienciaMultiDia[] = [
       'Medicación para altura si tenés antecedentes',
       'Cámara de fotos con batería extra (el frío las agota rápido)'
     ],
+    mejorEpoca: 'Marzo a noviembre (evitar temporada de lluvias dic-feb)',
     whatsappLink: 'https://wa.me/5493815702549?text=Hola%2C%20quiero%20info%20sobre%20Mallku%20Experience%204x4',
     imagen: '/images/4x4.png',
     imagenes: [

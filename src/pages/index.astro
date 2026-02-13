@@ -82,19 +82,25 @@ const whyCards = [
 
 const testimonials = [
   {
-    quote: 'Impresionante. Se siente realmente exclusivo: paisajes imposibles, cero apuro y una logística impecable. El guía sabe muchísimo y lo explica de forma súper clara.',
-    author: 'Martín',
-    location: 'Buenos Aires'
+    quote: 'Caminamos Quilmes con una explicación que te pone la piel de gallina. El guía no solo conoce la historia — la vive. Cada terraza, cada muro tiene un por qué. No es turismo: es una clase magistral en medio del paisaje.',
+    author: 'Martín Vázquez',
+    location: 'Buenos Aires',
+    excursion: 'Arqueología en los Valles',
+    fecha: 'Octubre 2024'
   },
   {
-    quote: 'La arqueología contada en el lugar cambia todo. No es lo mismo leer sobre Quilmes que caminar entre sus terrazas mientras te explican cómo vivían. Volvimos con otra mirada del NOA.',
-    author: 'Laura',
-    location: 'Córdoba'
+    quote: 'Pensé que iba a ser un paseo más, pero caminar por Ibatín entre la selva y escuchar cómo se fundó Tucumán ahí fue otra cosa. Volvimos con otra mirada del NOA. Ideal para ir con familia.',
+    author: 'Laura Peralta',
+    location: 'Córdoba',
+    excursion: 'Tucumán Colonial',
+    fecha: 'Noviembre 2024'
   },
   {
-    quote: 'El día del Galán es de los más impactantes que hicimos en Argentina. Totalmente recomendable si buscás algo diferente al turismo tradicional.',
-    author: 'Diego',
-    location: 'Rosario'
+    quote: 'El día del Volcán Galán es de los más impactantes que hicimos en Argentina. La caldera, las lagunas, los géiseres — todo parece de otro planeta. El baqueano conoce cada rincón de la Puna.',
+    author: 'Diego Ferreyra',
+    location: 'Rosario',
+    excursion: 'Mallku Experience 4x4',
+    fecha: 'Septiembre 2024'
   }
 ];
 
@@ -167,6 +173,17 @@ const homeStructuredData = {
       "description": siteConfig.description,
       "publisher": { "@id": siteConfig.url },
       "inLanguage": "es-AR"
+    },
+    {
+      "@type": "FAQPage",
+      "mainEntity": faqs.map(faq => ({
+        "@type": "Question",
+        "name": faq.question,
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": faq.answer
+        }
+      }))
     }
   ]
 };
@@ -316,8 +333,9 @@ const homeStructuredData = {
     <section class="section section-terracota">
       <div class="wrap text-center">
         <h2 class="section-title">Lo que dicen nuestros viajeros</h2>
+        <p class="section-subtitle" style="color: rgba(255,255,255,0.8);">Lo que cuentan quienes ya vivieron la experiencia.</p>
 
-        <div class="grid-3" style="margin-top: var(--space-xl);">
+        <div class="grid-3" style="margin-top: var(--space-lg);">
           {testimonials.map((t) => <TestimonialCard {...t} />)}
         </div>
       </div>
