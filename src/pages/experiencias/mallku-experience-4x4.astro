@@ -164,7 +164,7 @@ const structuredData = {
       <div class="wrap">
         <div class="cta-experiencia">
           <h2>Consultar por esta experiencia</h2>
-          <p>Incluye todas las excursiones, transporte 4x4, guía local y cena de despedida. El alojamiento no está incluido (3 noches en Antofagasta de la Sierra).</p>
+          <p>Incluye todas las excursiones, transporte 4x4, alojamiento (3 noches), guía local y cena de despedida.</p>
           <a class="btn btn-white" href={experiencia.whatsappLink} target="_blank" rel="noopener">
             Consultar fechas disponibles
           </a>
@@ -200,7 +200,7 @@ const structuredData = {
     <section class="section section-dark">
       <div class="wrap">
         <h2 class="section-title text-center">Recomendaciones para el viaje</h2>
-        <p class="section-subtitle text-center">Preparate para una experiencia en altura y clima extremo</p>
+        <p class="section-subtitle text-center">Indicaciones para aprovechar al máximo la experiencia en la Puna</p>
 
         <div class="recomendaciones-grid">
           {experiencia.recomendaciones.map((rec) => (
@@ -225,7 +225,7 @@ const structuredData = {
           </div>
           <div class="info-practica-card">
             <h4>Alojamiento</h4>
-            <p>Las 3 noches son en <strong>Antofagasta de la Sierra</strong>. Hay opciones de hostería y cabañas. Te ayudamos a coordinar la reserva.</p>
+            <p>Las 3 noches en <strong>Antofagasta de la Sierra</strong> están incluidas. Alojamiento en hostería o cabañas según disponibilidad.</p>
           </div>
           <div class="info-practica-card">
             <h4>Clima</h4>
@@ -484,6 +484,7 @@ const structuredData = {
     display: grid;
     grid-template-columns: repeat(2, 1fr);
     gap: var(--space-xs) var(--space-lg);
+    align-items: start;
   }
 
   .sitios-lista li {
@@ -491,6 +492,7 @@ const structuredData = {
     padding: var(--space-xs) 0;
     padding-left: var(--space-md);
     position: relative;
+    line-height: 1.4;
   }
 
   .sitios-lista li::before {
@@ -499,7 +501,7 @@ const structuredData = {
     left: 0;
     color: var(--color-primary);
     font-size: 8px;
-    top: 50%;
+    top: calc(var(--space-xs) + 0.7em);
     transform: translateY(-50%);
   }
 
@@ -685,7 +687,7 @@ const structuredData = {
 
   /* CTA Final */
   .cta-final {
-    padding: var(--space-3xl) 0;
+    padding: var(--space-2xl) 0;
   }
 
   .btn-lg {

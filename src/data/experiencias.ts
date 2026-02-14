@@ -55,7 +55,7 @@ export const experiencias: ExperienciaMultiDia[] = [
     ubicacion: 'Puna de Catamarca',
     puntoEncuentro: 'Belén, Catamarca',
     precioTotal: '$1.525.000',
-    incluyeAlojamiento: false,
+    incluyeAlojamiento: true,
     alturaMaxima: '3.957 msnm',
     dificultad: 'Media-Alta (altura y caminos de ripio)',
     grupoMax: '4-6 personas',
@@ -71,7 +71,6 @@ export const experiencias: ExperienciaMultiDia[] = [
           'Duna de Randolfo',
           'Reserva de la Biosfera de Laguna Blanca',
           'Mirador Pasto Ventura',
-          'El Peñón (almuerzo)',
           'Mirador Volcán Carachi',
           'Recorrido lava volcánica Volcán Carachi',
           'Laguna Carachi',
@@ -97,12 +96,10 @@ export const experiencias: ExperienciaMultiDia[] = [
         horario: '08:30 a 16:00',
         alturaMaxima: '3.457 msnm',
         sitios: [
-          'Volcán Antofagasta (trekking opcional)',
-          'Puraca',
+          'Pucará de Alumbrera',
           'Confluencia',
-          'El Coiparcito',
-          'Sitio Arqueológico Punta La Peña',
-          'Sitio Arqueológico Peñas Coloradas'
+          'Peñas Coloradas',
+          'Volcán Antofagasta (trekking opcional)'
         ],
         precio: '$330.000',
         noche: 'Antofagasta de la Sierra',
@@ -126,7 +123,7 @@ export const experiencias: ExperienciaMultiDia[] = [
         titulo: 'Volcán Galán',
         horario: '07:30 a 17:00',
         sitios: [
-          'Campo de Tobas',
+          'Campo de Las Tobas',
           'Cañón de Mirihuaca',
           'Real Grande',
           'Cañón de Real Grande',
@@ -138,13 +135,12 @@ export const experiencias: ExperienciaMultiDia[] = [
           'Laguna Grande',
           'Laguna Cavi',
           'Campo Vicuñaro',
-          'El Peñón',
           'Mirador Cerro La Herradura',
           'Mirador Volcanes Antofagasta-Alumbrera'
         ],
         precio: '$360.000',
         noche: 'Antofagasta de la Sierra',
-        extra: 'Cena de despedida incluida (asado autóctono o trucha)',
+        extra: 'Cena de despedida incluida (parrillada)',
         imagenes: [
           '/images/real grande.jpg',
           '/images/Real Grande 2.jpg',
@@ -167,12 +163,11 @@ export const experiencias: ExperienciaMultiDia[] = [
       },
       {
         dia: 4,
-        titulo: 'Regreso a Belén y Shincal',
+        titulo: 'Regreso a Belén y El Shincal de Quimivil',
         horario: 'Mañana y tarde',
         sitios: [
           'Viaje de regreso a Belén',
-          'Almuerzo en Belén',
-          'Ruinas de Shincal (turno tarde)'
+          'Visita a El Shincal de Quimivil'
         ],
         precio: '$410.000',
         imagenes: [
@@ -187,6 +182,7 @@ export const experiencias: ExperienciaMultiDia[] = [
     ],
     incluye: [
       'Transporte en vehículo 4x4 durante los 4 días',
+      'Alojamiento en Antofagasta de la Sierra (3 noches)',
       'Guía baqueano local especializado',
       'Todas las excursiones detalladas en el itinerario',
       'Entradas a sitios arqueológicos',
@@ -194,22 +190,19 @@ export const experiencias: ExperienciaMultiDia[] = [
       'Seguro de responsabilidad civil'
     ],
     noIncluye: [
-      'Alojamiento en Antofagasta de la Sierra (3 noches)',
-      'Comidas no mencionadas (desayunos, almuerzos)',
-      'Traslado hasta Belén',
+      'Comidas (almuerzo y cena)',
       'Propinas (opcionales)',
       'Gastos personales'
     ],
     recomendaciones: [
-      'Llevar agua en cantidad (mínimo 2 litros por día)',
-      'Ropa en capas: hace frío por la mañana y calor al mediodía',
-      'Abrigo liviano pero efectivo (viento en altura)',
-      'Sombrero o gorra y protector solar (radiación UV extrema)',
-      'Anteojos de sol con buen filtro',
-      'Calzado cómodo y cerrado para caminar',
-      'Mate cebado si querés (opcional)',
-      'Medicación para altura si tenés antecedentes',
-      'Cámara de fotos con batería extra (el frío las agota rápido)'
+      'Hidratación: llevar al menos 2 litros de agua por jornada. La altura y el clima seco aceleran la deshidratación.',
+      'Vestimenta técnica en capas: la amplitud térmica puede superar los 30 °C entre la mañana y el mediodía.',
+      'Cortaviento o campera liviana resistente al viento. En altura, las ráfagas son constantes.',
+      'Protección solar de alto factor y sombrero o gorra. La radiación UV en la Puna es extrema.',
+      'Lentes de sol con filtro UV certificado. Imprescindible para recorridos prolongados.',
+      'Calzado cerrado con buena suela, apto para terrenos irregulares y caminatas en ripio.',
+      'Consultar con un médico si se tiene predisposición al mal de altura (apunamiento). Llevar medicación preventiva si corresponde.',
+      'Batería y memoria extra para cámaras o teléfonos. Las bajas temperaturas reducen significativamente la autonomía de los dispositivos.'
     ],
     mejorEpoca: 'Marzo a noviembre (evitar temporada de lluvias dic-feb)',
     whatsappLink: 'https://wa.me/5493815702549?text=Hola%2C%20quiero%20info%20sobre%20Mallku%20Experience%204x4',
