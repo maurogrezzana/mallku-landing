@@ -83,7 +83,7 @@ export const posts: Post[] = [
     categoria: 'Guías',
     autor: 'Equipo Mallku',
     tiempoLectura: '4 min',
-    imagen: '/images/Tafi del Valle.jpg'
+    imagen: '/images/quilmes 4.jpg'
   },
   {
     slug: 'volcan-galan-caldera-mas-grande-del-mundo',
@@ -101,7 +101,7 @@ export const posts: Post[] = [
     categoria: 'Naturaleza',
     autor: 'Equipo Mallku',
     tiempoLectura: '5 min',
-    imagen: '/images/ANS 10.jpg'
+    imagen: '/images/Volcan Galan 2.webp'
   },
   {
     slug: 'campo-piedra-pomez-paisaje-otro-planeta',
@@ -119,7 +119,7 @@ export const posts: Post[] = [
     categoria: 'Naturaleza',
     autor: 'Equipo Mallku',
     tiempoLectura: '5 min',
-    imagen: '/images/Campo las tobas 1.jpg'
+    imagen: '/images/Campo Piedra Pomez.jpg'
   },
   {
     slug: 'shincal-quimivil-capital-inca-del-sur',
@@ -137,7 +137,7 @@ export const posts: Post[] = [
     categoria: 'Arqueología',
     autor: 'Equipo Mallku',
     tiempoLectura: '6 min',
-    imagen: '/images/Pucara los Negros 1.jpg'
+    imagen: '/images/Shincal 1.jpg'
   },
   {
     slug: 'mejor-epoca-visitar-noa-guia-mes-a-mes',

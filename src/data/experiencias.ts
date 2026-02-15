@@ -80,9 +80,9 @@ export const experiencias: ExperienciaMultiDia[] = [
         precio: '$425.000',
         noche: 'Antofagasta de la Sierra',
         imagenes: [
-          '/images/ANS.jpg',
-          '/images/ANS 2.jpg',
-          '/images/ANS 3.jpg',
+          '/images/ANS 12.jpg',
+          '/images/Campo Piedra Pomez.jpg',
+          '/images/Campo Piedra Pomez 2.jpg',
           '/images/ANS 4.jpg',
           '/images/ANS 5.jpg',
           '/images/Dunas.JPG',
@@ -104,9 +104,9 @@ export const experiencias: ExperienciaMultiDia[] = [
         precio: '$330.000',
         noche: 'Antofagasta de la Sierra',
         imagenes: [
-          '/images/Confluencia 1.JPG',
+          '/images/Pucara los negros 2.jpg',
           '/images/Confluencia 2.jpg',
-          '/images/Confluencia 3.JPG',
+          '/images/ANS.jpg',
           '/images/Confluencia 4.JPG',
           '/images/Confluencia 5.JPG',
           '/images/Confluencia 6.JPG',
@@ -143,8 +143,8 @@ export const experiencias: ExperienciaMultiDia[] = [
         extra: 'Cena de despedida incluida (parrillada)',
         imagenes: [
           '/images/real grande.jpg',
-          '/images/Real Grande 2.jpg',
-          '/images/Real Grande 3.jpg',
+          '/images/Volcan Galan 1.webp',
+          '/images/Volcan Galan 2.webp',
           '/images/Real Grande 4.jpg',
           '/images/Real Grande 5.jpg',
           '/images/Real Grande 6.jpg',
@@ -171,12 +171,9 @@ export const experiencias: ExperienciaMultiDia[] = [
         ],
         precio: '$410.000',
         imagenes: [
-          '/images/4x4.png',
-          '/images/4x4 2.png',
-          '/images/4x4 3.png',
-          '/images/4x4 4.png',
-          '/images/4x4 5.jpg',
-          '/images/Rancho el tuichy.jpg',
+          '/images/Real Grande 9.jpg',
+          '/images/Shincal 1.jpg',
+          '/images/Shincal 2.jpg',
         ]
       }
     ],
