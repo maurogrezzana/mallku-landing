@@ -59,7 +59,7 @@ leadsRouter.post(
       });
 
       // Enviar emails (async, no bloquean la respuesta)
-      const adminEmail = c.env?.ADMIN_EMAIL || 'info@mallku.com.ar';
+      const adminEmail = c.env?.ADMIN_EMAIL || process.env.ADMIN_EMAIL || 'info@mallku.com.ar';
 
       // Notificación al admin
       sendLeadNotification(newLead, adminEmail).catch((err) => {

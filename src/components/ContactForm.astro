@@ -260,16 +260,15 @@ const t = useTranslations(locale);
       const formData = new FormData(form);
 
       const payload = {
-        name: formData.get('nombre') as string,
+        nombre: formData.get('nombre') as string,
         email: formData.get('email') as string,
-        phone: (formData.get('telefono') as string) || undefined,
-        excursion_interest: (formData.get('excursion') as string) || undefined,
-        message: formData.get('mensaje') as string,
+        telefono: (formData.get('telefono') as string) || undefined,
+        excursionInteres: (formData.get('excursion') as string) || undefined,
+        mensaje: formData.get('mensaje') as string,
         source: 'website_contact',
-        referrer: document.referrer || undefined,
-        utm_source: new URLSearchParams(window.location.search).get('utm_source') || undefined,
-        utm_medium: new URLSearchParams(window.location.search).get('utm_medium') || undefined,
-        utm_campaign: new URLSearchParams(window.location.search).get('utm_campaign') || undefined,
+        utmSource: new URLSearchParams(window.location.search).get('utm_source') || undefined,
+        utmMedium: new URLSearchParams(window.location.search).get('utm_medium') || undefined,
+        utmCampaign: new URLSearchParams(window.location.search).get('utm_campaign') || undefined,
       };
 
       try {

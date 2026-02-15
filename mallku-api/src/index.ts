@@ -76,20 +76,27 @@ app.use(
   })
 );
 
+// Helper: get env var from c.env (Cloudflare Workers) or process.env (Node.js/Vercel)
+const getEnv = (c: any, key: string): string => {
+  return c.env?.[key] || process.env[key] || '';
+};
+
 // Inicializar servicios y DB en cada request
 app.use('*', async (c, next) => {
   // Inicializar base de datos
-  const db = createDb(c.env.DATABASE_URL);
+  const db = createDb(getEnv(c, 'DATABASE_URL'));
   c.set('db', db);
 
   // Inicializar Resend
-  if (c.env.RESEND_API_KEY) {
-    initResend(c.env.RESEND_API_KEY);
+  const resendKey = getEnv(c, 'RESEND_API_KEY');
+  if (resendKey) {
+    initResend(resendKey);
   }
 
   // Inicializar Posthog
-  if (c.env.POSTHOG_API_KEY) {
-    initPosthog(c.env.POSTHOG_API_KEY);
+  const posthogKey = getEnv(c, 'POSTHOG_API_KEY');
+  if (posthogKey) {
+    initPosthog(posthogKey);
   }
 
   await next();
@@ -108,7 +115,7 @@ app.get('/', (c) => {
     name: 'Mallku API',
     version: '1.0.0',
     status: 'running',
-    environment: c.env.ENVIRONMENT || 'development',
+    environment: getEnv(c, 'ENVIRONMENT') || 'development',
     timestamp: new Date().toISOString(),
   });
 });
@@ -118,9 +125,9 @@ app.get('/health', (c) => {
   return c.json({
     status: 'healthy',
     services: {
-      database: !!c.env.DATABASE_URL,
-      email: !!c.env.RESEND_API_KEY,
-      analytics: !!c.env.POSTHOG_API_KEY,
+      database: !!getEnv(c, 'DATABASE_URL'),
+      email: !!getEnv(c, 'RESEND_API_KEY'),
+      analytics: !!getEnv(c, 'POSTHOG_API_KEY'),
     },
     timestamp: new Date().toISOString(),
   });
@@ -240,7 +247,7 @@ app.onError((err, c) => {
     {
       success: false,
       message: 'Error interno del servidor',
-      error: c.env.ENVIRONMENT === 'development' ? err.message : undefined,
+      error: getEnv(c, 'ENVIRONMENT') === 'development' ? err.message : undefined,
     },
     500
   );
