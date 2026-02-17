@@ -1,0 +1,545 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<title>Arqueología en los Valles - Mallku Excursiones</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=Noto+Serif:wght@400;600&display=swap');
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  @page {
+    size: A4;
+    margin: 0;
+  }
+
+  body {
+    font-family: 'Noto Serif', Georgia, serif;
+    color: #2c1810;
+    line-height: 1.6;
+    background: #fff;
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+  }
+
+  .page {
+    width: 210mm;
+    min-height: 297mm;
+    padding: 20mm 22mm;
+    page-break-after: always;
+    position: relative;
+  }
+
+  .page:last-child { page-break-after: auto; }
+
+  /* Header bar */
+  .header-bar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding-bottom: 12px;
+    border-bottom: 3px solid #d16b38;
+    margin-bottom: 24px;
+  }
+
+  .logo-text {
+    font-family: 'Playfair Display', serif;
+    font-size: 22px;
+    font-weight: 700;
+    color: #061b38;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+  }
+
+  .logo-sub {
+    font-size: 9px;
+    letter-spacing: 3px;
+    color: #d16b38;
+    text-transform: uppercase;
+    font-family: 'Noto Serif', serif;
+  }
+
+  .tag {
+    display: inline-block;
+    background: #d16b38;
+    color: #fff;
+    padding: 5px 14px;
+    font-size: 10px;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    font-weight: 600;
+  }
+
+  /* Hero section */
+  .hero {
+    background: linear-gradient(135deg, #061b38 0%, #0a2a52 100%);
+    color: #efe3d6;
+    padding: 32px;
+    margin-bottom: 24px;
+  }
+
+  .hero h1 {
+    font-family: 'Playfair Display', serif;
+    font-size: 36px;
+    font-weight: 700;
+    margin-bottom: 6px;
+    color: #fff;
+  }
+
+  .hero h1 span { color: #d16b38; }
+
+  .hero .subtitulo {
+    font-size: 16px;
+    color: #d16b38;
+    margin-bottom: 16px;
+    font-weight: 600;
+  }
+
+  .hero .descripcion {
+    font-size: 13px;
+    line-height: 1.7;
+    color: rgba(239, 227, 214, 0.85);
+    max-width: 90%;
+  }
+
+  /* Meta grid */
+  .meta-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 12px;
+    margin-bottom: 24px;
+  }
+
+  .meta-item {
+    text-align: center;
+    padding: 14px 8px;
+    border: 1px solid #e8ddd0;
+    background: #faf7f3;
+  }
+
+  .meta-item strong {
+    display: block;
+    font-size: 9px;
+    text-transform: uppercase;
+    letter-spacing: 1.5px;
+    color: #d16b38;
+    margin-bottom: 4px;
+  }
+
+  .meta-item span {
+    font-size: 13px;
+    color: #061b38;
+    font-weight: 600;
+  }
+
+  /* Section titles */
+  h2 {
+    font-family: 'Playfair Display', serif;
+    font-size: 22px;
+    color: #061b38;
+    margin-bottom: 16px;
+    padding-bottom: 8px;
+    border-bottom: 2px solid #d16b38;
+    display: inline-block;
+  }
+
+  h3 {
+    font-size: 14px;
+    text-transform: uppercase;
+    letter-spacing: 1.5px;
+    color: #d16b38;
+    margin-bottom: 12px;
+  }
+
+  /* Description */
+  .description p {
+    font-size: 12.5px;
+    margin-bottom: 12px;
+    line-height: 1.8;
+    color: #3d2b1f;
+  }
+
+  /* Highlights */
+  .highlights {
+    list-style: none;
+    margin-bottom: 24px;
+  }
+
+  .highlights li {
+    padding: 8px 0 8px 20px;
+    position: relative;
+    font-size: 12.5px;
+    border-bottom: 1px solid #f0e8df;
+  }
+
+  .highlights li::before {
+    content: "◆";
+    position: absolute;
+    left: 0;
+    color: #d16b38;
+    font-size: 8px;
+    top: 10px;
+  }
+
+  /* Itinerary */
+  .itinerario-item {
+    display: grid;
+    grid-template-columns: 55px 1fr;
+    gap: 12px;
+    padding: 10px 0;
+    border-bottom: 1px solid #f0e8df;
+  }
+
+  .itinerario-hora {
+    font-family: 'Playfair Display', serif;
+    font-size: 15px;
+    font-weight: 700;
+    color: #d16b38;
+    text-align: right;
+    padding-top: 2px;
+  }
+
+  .itinerario-content h4 {
+    font-size: 13px;
+    color: #061b38;
+    margin-bottom: 3px;
+    font-weight: 600;
+  }
+
+  .itinerario-content p {
+    font-size: 11px;
+    color: #5a4a3e;
+    line-height: 1.5;
+  }
+
+  /* Includes grid */
+  .includes-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 20px;
+    margin-bottom: 24px;
+  }
+
+  .includes-card {
+    padding: 16px;
+    border: 1px solid #e8ddd0;
+  }
+
+  .includes-card.no-incluye {
+    background: #faf7f3;
+  }
+
+  .includes-card ul {
+    list-style: none;
+  }
+
+  .includes-card li {
+    padding: 5px 0;
+    font-size: 11.5px;
+    border-bottom: 1px solid #f0e8df;
+    display: flex;
+    gap: 8px;
+  }
+
+  .includes-card li:last-child { border-bottom: none; }
+
+  .check { color: #2e7d32; font-weight: bold; }
+  .cross { color: #c62828; font-weight: bold; }
+
+  /* Recommendations */
+  .reco-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 8px;
+  }
+
+  .reco-item {
+    display: flex;
+    gap: 8px;
+    padding: 8px 10px;
+    background: #faf7f3;
+    font-size: 11px;
+    line-height: 1.4;
+  }
+
+  .reco-item span { color: #d16b38; font-weight: bold; flex-shrink: 0; }
+
+  /* CTA */
+  .cta-section {
+    background: #d16b38;
+    color: #fff;
+    padding: 24px;
+    text-align: center;
+    margin-top: 24px;
+  }
+
+  .cta-section h2 {
+    color: #fff;
+    border-bottom-color: rgba(255,255,255,0.3);
+    font-size: 20px;
+  }
+
+  .cta-section p {
+    font-size: 12px;
+    margin-bottom: 12px;
+    opacity: 0.9;
+  }
+
+  .cta-contact {
+    font-size: 16px;
+    font-weight: 700;
+    letter-spacing: 1px;
+  }
+
+  .cta-wa { font-size: 13px; margin-top: 4px; opacity: 0.8; }
+
+  /* Footer */
+  .footer {
+    text-align: center;
+    padding-top: 16px;
+    margin-top: 20px;
+    border-top: 1px solid #e8ddd0;
+    font-size: 10px;
+    color: #8a7a6e;
+  }
+
+  .footer a { color: #d16b38; text-decoration: none; }
+
+  /* Diamond separator */
+  .separator {
+    text-align: center;
+    margin: 20px 0;
+    color: #d16b38;
+    font-size: 12px;
+    letter-spacing: 8px;
+  }
+
+  /* Image styles */
+  .image-strip {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+    margin-bottom: 24px;
+  }
+
+  .image-strip img {
+    width: 100%;
+    height: 140px;
+    object-fit: cover;
+    display: block;
+  }
+
+  .hero-image {
+    width: 100%;
+    height: 180px;
+    object-fit: cover;
+    display: block;
+    margin-bottom: 24px;
+  }
+
+  .image-single {
+    width: 100%;
+    height: 150px;
+    object-fit: cover;
+    display: block;
+    margin: 16px 0;
+  }
+
+  @media print {
+    .page { padding: 15mm 18mm; }
+    .image-strip img, .hero-image, .image-single {
+      -webkit-print-color-adjust: exact;
+      print-color-adjust: exact;
+    }
+  }
+</style>
+</head>
+<body>
+
+<!-- PAGE 1 -->
+<div class="page">
+  <div class="header-bar">
+    <div>
+      <div class="logo-text">Mallku</div>
+      <div class="logo-sub">Turismo Arqueológico</div>
+    </div>
+    <div class="tag">Más vendido</div>
+  </div>
+
+  <div class="hero">
+    <h1>Arqueología <span>en los Valles</span></h1>
+    <div class="subtitulo">Quilmes, Tafí y los Menhires</div>
+    <p class="descripcion">
+      Recorrer mil años de historia andina en un día: desde los monolitos sagrados de la cultura Tafí hasta la ciudad fortificada de Quilmes, último bastión de la resistencia calchaquí. Arqueología, paisaje de altura y memoria viva de los pueblos originarios del NOA.
+    </p>
+  </div>
+
+  <div class="image-strip">
+    <img src="../src/assets/images/Quilmes 1.jpg" alt="Ciudad Sagrada de Quilmes">
+    <img src="../src/assets/images/menhires 1.jpg" alt="Parque de los Menhires">
+  </div>
+
+  <div class="meta-grid">
+    <div class="meta-item">
+      <strong>Duración</strong>
+      <span>12 horas</span>
+    </div>
+    <div class="meta-item">
+      <strong>Salida</strong>
+      <span>8:00 AM</span>
+    </div>
+    <div class="meta-item">
+      <strong>Dificultad</strong>
+      <span>Media</span>
+    </div>
+    <div class="meta-item">
+      <strong>Grupo máx.</strong>
+      <span>6-8 personas</span>
+    </div>
+  </div>
+
+  <h2>La experiencia</h2>
+  <div class="description">
+    <p>Esta excursión te lleva a través de más de mil años de historia andina en un solo día. Comenzamos en el Valle de Tafí, donde la cultura Tafí dejó su huella en forma de misteriosos menhires de piedra, monolitos que aún guardan secretos sobre sus rituales y cosmovisión.</p>
+    <p>Cruzamos el Abra del Infiernillo a más de 3.000 metros de altura, un paso de montaña que conecta dos mundos: las yungas húmedas y los valles secos calchaquíes. El paisaje cambia dramáticamente mientras descendemos hacia Quilmes.</p>
+    <p>Quilmes fue la ciudad más grande del noroeste argentino prehispánico. Sus habitantes resistieron más de 130 años a la conquista española, siendo el último bastión de la resistencia calchaquí. Caminar entre sus terrazas es caminar por la historia viva de un pueblo que nunca se rindió.</p>
+  </div>
+
+  <h2>Qué vas a descubrir</h2>
+  <ul class="highlights">
+    <li>Parque de los Menhires (cultura Tafí, 300 AC - 800 DC)</li>
+    <li>Valle de Tafí y su esplendor paisajístico</li>
+    <li>Abra del Infiernillo (3.042 msnm)</li>
+    <li>Ciudad Sagrada de Quilmes (último bastión calchaquí)</li>
+    <li>Almuerzo típico regional incluido</li>
+  </ul>
+
+  <div class="separator">◆ ◆ ◆</div>
+
+  <h2>Tu día, paso a paso</h2>
+
+  <div class="itinerario-item">
+    <div class="itinerario-hora">08:00</div>
+    <div class="itinerario-content">
+      <h4>Salida desde Tucumán</h4>
+      <p>La ciudad todavía duerme cuando partimos. La ruta trepa hacia el oeste mientras el sol empieza a calentar los cerros verdes del pedemonte tucumano.</p>
+    </div>
+  </div>
+  <div class="itinerario-item">
+    <div class="itinerario-hora">09:30</div>
+    <div class="itinerario-content">
+      <h4>Parque de los Menhires</h4>
+      <p>Más de cien monolitos de piedra tallados hace dos mil años nos reciben en silencio. Recorremos el parque descifrando rostros, símbolos y las teorías que intentan explicar su significado.</p>
+    </div>
+  </div>
+  <div class="itinerario-item">
+    <div class="itinerario-hora">11:00</div>
+    <div class="itinerario-content">
+      <h4>Valle de Tafí</h4>
+      <p>El valle se abre como un anfiteatro natural rodeado de cumbres. Paramos en miradores donde se siente el peso de la historia.</p>
+    </div>
+  </div>
+  <div class="itinerario-item">
+    <div class="itinerario-hora">12:30</div>
+    <div class="itinerario-content">
+      <h4>Abra del Infiernillo</h4>
+      <p>A 3.042 metros, el aire se vuelve fino y el paisaje cambia radicalmente. Dejamos atrás las yungas verdes y entramos en el mundo seco y luminoso de los Valles Calchaquíes.</p>
+    </div>
+  </div>
+</div>
+
+<!-- PAGE 2 -->
+<div class="page">
+  <div class="header-bar">
+    <div>
+      <div class="logo-text">Mallku</div>
+      <div class="logo-sub">Turismo Arqueológico</div>
+    </div>
+    <div class="tag">Arqueología en los Valles</div>
+  </div>
+
+  <div class="itinerario-item">
+    <div class="itinerario-hora">13:30</div>
+    <div class="itinerario-content">
+      <h4>Almuerzo</h4>
+      <p>Nos sentamos a comer en el valle. Sabores regionales, ritmo pausado, tiempo para conversar sobre lo que vimos y lo que viene. Todo incluido.</p>
+    </div>
+  </div>
+  <div class="itinerario-item">
+    <div class="itinerario-hora">15:00</div>
+    <div class="itinerario-content">
+      <h4>Ciudad Sagrada de Quilmes</h4>
+      <p>El momento más intenso del día. Caminamos entre las terrazas de la ciudad que resistió 130 años a la conquista española. Cada muro cuenta una historia de organización, resistencia y tragedia.</p>
+    </div>
+  </div>
+  <div class="itinerario-item">
+    <div class="itinerario-hora">17:30</div>
+    <div class="itinerario-content">
+      <h4>Regreso</h4>
+      <p>Emprendemos el regreso con la luz dorada de la tarde sobre los valles. Hay tiempo para paradas, preguntas y el silencio de procesar todo lo vivido.</p>
+    </div>
+  </div>
+  <div class="itinerario-item">
+    <div class="itinerario-hora">20:00</div>
+    <div class="itinerario-content">
+      <h4>Llegada a Tucumán</h4>
+      <p>Llegamos a Tucumán con mil años de historia encima. No es lo mismo la ciudad después de haber caminado Quilmes.</p>
+    </div>
+  </div>
+
+  <div class="image-strip">
+    <img src="../src/assets/images/Infiernillo.jpg" alt="Abra del Infiernillo">
+    <img src="../src/assets/images/Quilmes 6.jpg" alt="Ruinas de Quilmes">
+  </div>
+
+  <div class="separator">◆ ◆ ◆</div>
+
+  <h2>Incluido / No incluido</h2>
+  <div class="includes-grid">
+    <div class="includes-card">
+      <h3>Incluye</h3>
+      <ul>
+        <li><span class="check">✓</span> Transporte en vehículo cómodo con A/C</li>
+        <li><span class="check">✓</span> Guía arqueólogo especializado</li>
+        <li><span class="check">✓</span> Entrada al Parque de los Menhires</li>
+        <li><span class="check">✓</span> Entrada a la Ciudad Sagrada de Quilmes</li>
+        <li><span class="check">✓</span> Almuerzo completo con bebida</li>
+        <li><span class="check">✓</span> Seguro de responsabilidad civil</li>
+        <li><span class="check">✓</span> Agua mineral durante el recorrido</li>
+      </ul>
+    </div>
+    <div class="includes-card no-incluye">
+      <h3>No incluye</h3>
+      <ul>
+        <li><span class="cross">✗</span> Propinas (opcionales)</li>
+        <li><span class="cross">✗</span> Gastos personales</li>
+        <li><span class="cross">✗</span> Comidas adicionales no mencionadas</li>
+      </ul>
+    </div>
+  </div>
+
+  <h2>Recomendaciones</h2>
+  <div class="reco-grid">
+    <div class="reco-item"><span>→</span> Llevar ropa cómoda y en capas (variación de temperatura por altura)</div>
+    <div class="reco-item"><span>→</span> Calzado cerrado cómodo para caminar</div>
+    <div class="reco-item"><span>→</span> Protector solar y sombrero</div>
+    <div class="reco-item"><span>→</span> Agua extra personal</div>
+    <div class="reco-item"><span>→</span> Cámara de fotos</div>
+    <div class="reco-item"><span>→</span> Efectivo para compras artesanales (opcional)</div>
+  </div>
+
+  <div class="cta-section">
+    <h2>¿Listo para vivir esta experiencia?</h2>
+    <p>Escribinos y te contamos todo sobre la próxima salida. Grupos reducidos, cupos limitados.</p>
+    <div class="cta-contact">+54 9 3815 70-2549</div>
+    <div class="cta-wa">WhatsApp · mallkuexcursiones@gmail.com</div>
+  </div>
+
+  <div class="footer">
+    <p><strong>Mallku Excursiones Arqueológicas</strong> · Tucumán, Argentina</p>
+    <p><a href="https://mallku.com.ar">mallku.com.ar</a> · @mallkuexcursiones</p>
+  </div>
+</div>
+
+</body>
+</html>

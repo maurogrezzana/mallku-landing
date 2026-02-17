@@ -20,7 +20,7 @@ export const posts: Post[] = [
       'Los Quilmes eran parte del pueblo Diaguita, una confederación de pueblos que habitaron el noroeste argentino. Su ciudad, construida sobre las laderas del cerro Alto del Rey, fue diseñada estratégicamente: terrazas agrícolas en las zonas bajas, viviendas en las laderas y puestos de observación en las cimas.',
       'Lo que hace única a Quilmes es su historia de resistencia. Cuando los españoles llegaron al valle a mediados del siglo XVI, los Quilmes se negaron a someterse. Durante más de 130 años resistieron, aliándose con otros pueblos diaguitas en las famosas Guerras Calchaquíes.',
       'Recién en 1667, después de tres grandes guerras y múltiples campañas militares, los españoles lograron someter definitivamente a los Quilmes. Pero la conquista no terminó ahí: el castigo fue brutal. Más de 2.000 sobrevivientes fueron forzados a caminar hasta Buenos Aires, donde fueron reubicados en una reducción que hoy conocemos como... Quilmes, la ciudad bonaerense.',
-      'Caminar hoy entre las ruinas de Quilmes es caminar por la historia viva de un pueblo que nunca se rindió fácilmente. Las terrazas, los morteros, las murallas, todo habla de una sociedad organizada, próspera y profundamente conectada con su territorio.',
+      'Caminar hoy en la Ciudad Sagrada de Quilmes es caminar por la historia viva de un pueblo que nunca se rindió fácilmente. Las terrazas, los morteros, las murallas, todo habla de una sociedad organizada, próspera y profundamente conectada con su territorio.',
       'En nuestras excursiones, no solo recorremos el sitio: lo interpretamos. Contamos la historia que los carteles no cuentan, las decisiones políticas, las alianzas, las traiciones, y el impacto que este proceso tuvo en la configuración del noroeste argentino.'
     ],
     fecha: '2024-02-15',
@@ -32,14 +32,14 @@ export const posts: Post[] = [
   {
     slug: 'menhires-tafi-misterios-piedra',
     titulo: 'Los menhires de Tafí: misterios en piedra',
-    excerpt: 'Los menhires del Valle de Tafí son los monumentos megalíticos más antiguos de Argentina. ¿Qué representan? ¿Quiénes los crearon? Exploramos las teorías y certezas.',
+    excerpt: 'Los menhires del Valle de Tafí son uno de los conjuntos megalíticos más importantes de Argentina. ¿Qué representan? ¿Quiénes los crearon? Exploramos las teorías y certezas.',
     contenido: [
-      'En el corazón del Valle de Tafí, a más de 2.000 metros de altura, se encuentran los menhires más antiguos de Argentina. Estos monolitos de piedra, algunos de más de 3 metros de altura, fueron tallados por la cultura Tafí hace más de 2.000 años.',
+      'En el corazón del Valle de Tafí, a más de 2.000 metros de altura, se encuentra uno de los conjuntos megalíticos más importantes de Argentina. Estos monolitos de piedra, algunos de más de 3 metros de altura, fueron tallados por la cultura Tafí hace más de 2.000 años.',
       'La cultura Tafí habitó el valle entre el 300 a.C. y el 800 d.C., antes de la llegada de otras culturas andinas como los diaguitas. Eran agricultores y pastores que desarrollaron un sistema único de organización social, dejando como legado estos misteriosos monolitos.',
       '¿Qué representan los menhires? Esta pregunta ha fascinado a arqueólogos desde el siglo XIX. Algunas teorías sugieren que eran marcadores territoriales, otras que representaban ancestros o espíritus protectores. Lo que sabemos con certeza es que muchos de ellos tienen rostros tallados: ojos, narices, bocas, y en algunos casos, adornos y tocados.',
-      'El Parque de los Menhires, creado en los años 70, reúne más de 100 de estos monolitos que fueron trasladados desde distintos puntos del valle. Aunque el traslado fue controvertido (los menhires perdieron su contexto original), permitió preservarlos y estudiarlos sistemáticamente.',
+      'La Reserva Arqueológica de los Menhires, creada en los años 70, reúne aproximadamente 50 de estos monolitos que fueron trasladados desde distintos puntos del valle. Aunque el traslado fue controvertido (los menhires perdieron su contexto original), permitió preservarlos y estudiarlos sistemáticamente.',
       'Lo más interesante es que los menhires no estaban solos. En las excavaciones se encontraron asociados a círculos de piedra, montículos y estructuras que sugieren espacios ceremoniales. Algunos investigadores proponen que formaban parte de un paisaje sagrado más amplio, donde cada elemento tenía un significado específico.',
-      'En nuestras excursiones al Valle de Tafí, visitamos el Parque de los Menhires con interpretación especializada. Explicamos las distintas teorías, mostramos los detalles de las tallas, y conectamos estos monumentos con la cosmovisión andina que todavía pervive en la región.'
+      'En nuestras excursiones al Valle de Tafí, visitamos la Reserva Arqueológica de los Menhires con interpretación especializada. Explicamos las distintas teorías, mostramos los detalles de las tallas, y conectamos estos monumentos con la cosmovisión andina que todavía pervive en la región.'
     ],
     fecha: '2024-01-28',
     categoria: 'Arqueología',
@@ -77,7 +77,8 @@ export const posts: Post[] = [
       'ALTURA: Si no estás acostumbrado a la altura, es normal sentir un poco de fatiga o dolor de cabeza leve. Evitá comidas pesadas la noche anterior, dormí bien, y avisanos si sentís malestar durante el recorrido. Las caminatas son a ritmo tranquilo justamente para permitir la aclimatación.',
       'QUÉ LLEVAR: Cámara o celular con batería cargada (los paisajes son increíbles). Efectivo para compras artesanales opcionales. Medicación personal si tomás alguna. Documento de identidad.',
       'QUÉ ESPERAR: No somos un tour de fotos rápidas. Nuestras excursiones son interpretativas: caminamos, paramos, explicamos, preguntamos. Es una experiencia de aprendizaje en el lugar. Vení con curiosidad y ganas de escuchar.',
-      'CONDICIÓN FÍSICA: "Arqueología en los Valles" requiere caminatas moderadas en terreno irregular, subiendo algunos tramos. Si tenés movilidad reducida o condiciones de salud particulares, consultanos antes. "Tucumán Colonial" es más accesible y apta para todas las edades.'
+      'CONDICIÓN FÍSICA: "Arqueología en los Valles" requiere caminatas moderadas en terreno irregular, subiendo algunos tramos. Si tenés movilidad reducida o condiciones de salud particulares, consultanos antes. "Tucumán Colonial" es más accesible y apta para todas las edades.',
+      'Si llegaste hasta acá, ya estás listo para la aventura. En Mallku creemos que la arqueología no se estudia solo en museos: se vive caminando los mismos senderos que transitaron nuestros ancestros. Te esperamos para compartir estas historias, estos paisajes, y estos silencios que dicen tanto. Consultá por nuestras próximas salidas y sumate a la experiencia.'
     ],
     fecha: '2024-02-01',
     categoria: 'Guías',
@@ -87,15 +88,15 @@ export const posts: Post[] = [
   },
   {
     slug: 'volcan-galan-caldera-mas-grande-del-mundo',
-    titulo: 'Volcán Galán: la caldera más grande del mundo',
-    excerpt: 'En la Puna catamarqueña se esconde una de las formaciones geológicas más impresionantes del planeta. El Volcán Galán alberga la caldera volcánica más grande del mundo, y casi nadie lo sabe.',
+    titulo: 'Volcán Galán: una de las calderas más grandes del mundo',
+    excerpt: 'En la Puna catamarqueña se esconde una de las formaciones geológicas más impresionantes del planeta. El Volcán Galán alberga una de las calderas volcánicas más grandes del mundo, y casi nadie lo sabe.',
     contenido: [
-      'A más de 5.000 metros de altura, en el corazón de la Puna catamarqueña, el Volcán Galán guarda un récord que pocos conocen: su caldera de 40 kilómetros de diámetro es la más grande del mundo. Para dimensionarlo, dentro de ella cabría cómodamente una ciudad como Buenos Aires.',
+      'A más de 5.000 metros de altura, en el corazón de la Puna catamarqueña, el Volcán Galán guarda un récord impresionante: su caldera de aproximadamente 38 kilómetros de diámetro es una de las más grandes del mundo. Para dimensionarlo: la ciudad de Buenos Aires, que tiene unos 20 km de diámetro, cabría casi dos veces dentro de ella.',
       'El Galán hizo erupción hace aproximadamente 2,5 millones de años en un evento de proporciones casi inimaginables. La explosión fue tan violenta que expulsó más de 1.000 kilómetros cúbicos de material volcánico, un volumen que supera con creces las erupciones más conocidas de la historia moderna.',
       'Lo que queda hoy es un paisaje que parece de otro planeta. La caldera está rodeada de picos que superan los 5.900 metros, mientras que su interior alberga lagunas de colores intensos donde flamencos rosados se alimentan en silencio. El contraste entre la aridez extrema y la vida que persiste es sobrecogedor.',
       'Pero el Galán no es solo geología. En sus inmediaciones se han encontrado evidencias de presencia humana que datan de miles de años. Los pueblos originarios de la Puna conocían este paisaje, lo transitaban y probablemente lo veneraban. Los caminos que hoy recorremos tienen miles de años de historia.',
       'Llegar al Galán requiere una travesía por la Puna que es en sí misma una experiencia: campos de piedra pómez, salares, vicuñas en estado salvaje, y un cielo que de noche muestra la Vía Láctea como en pocos lugares del mundo.',
-      'En nuestra experiencia Mallku Experience 4x4 recorremos esta región durante 4 días, combinando la geología extrema del Galán con sitios arqueológicos como el Shincal de Quimivil y las ruinas de Antofagasta de la Sierra. Es un viaje para quienes buscan lo extraordinario.'
+      'En nuestra experiencia Mallku Experience 4x4 recorremos esta región durante 4 días, combinando la geología extrema del Galán con sitios arqueológicos en Antofagasta de la Sierra y el Shincal de Quimivil en Londres, Catamarca. Es un viaje para quienes buscan lo extraordinario.'
     ],
     fecha: '2024-03-10',
     categoria: 'Naturaleza',
