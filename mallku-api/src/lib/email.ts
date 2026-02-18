@@ -187,3 +187,40 @@ export async function sendLeadConfirmation(lead: Lead): Promise<boolean> {
     return false;
   }
 }
+
+// ==========================================
+// GENERIC EMAIL FUNCTION
+// ==========================================
+
+interface SendEmailOptions {
+  to: string;
+  subject: string;
+  html: string;
+  from?: string;
+}
+
+export async function sendEmail(options: SendEmailOptions): Promise<boolean> {
+  if (!resend) {
+    console.error('Resend not initialized');
+    return false;
+  }
+
+  try {
+    const { error } = await resend.emails.send({
+      from: options.from || 'Mallku <onboarding@resend.dev>',
+      to: options.to,
+      subject: options.subject,
+      html: options.html,
+    });
+
+    if (error) {
+      console.error('Error sending email:', error);
+      return false;
+    }
+
+    return true;
+  } catch (err) {
+    console.error('Error sending email:', err);
+    return false;
+  }
+}
