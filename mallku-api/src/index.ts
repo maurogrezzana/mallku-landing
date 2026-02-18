@@ -64,6 +64,9 @@ app.use(
       const allowedOrigins = [
         'http://localhost:4321', // Astro dev
         'http://localhost:3000', // Dashboard dev
+        'http://localhost:5173', // Vite dev
+        'http://localhost:5174', // Vite dev (puerto alternativo)
+        'http://localhost:5175', // Vite dev (puerto alternativo)
         'https://mallku.com.ar',
         'https://www.mallku.com.ar',
         'https://admin.mallku.com.ar',
