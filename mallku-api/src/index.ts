@@ -8,6 +8,7 @@ import { initPosthog, shutdown as shutdownPosthog } from './lib/analytics';
 import leadsRouter from './routes/leads';
 import analyticsRouter from './routes/analytics';
 import authRouter from './routes/auth';
+import excursionsRouter from './routes/excursions';
 import { authMiddleware } from './lib/auth';
 
 // ==========================================
@@ -131,6 +132,7 @@ app.route('/api/v1/auth', authRouter);
 app.post('/api/v1/leads', async (c, next) => await next()); // Lead creation is public
 app.route('/api/v1/leads', leadsRouter);
 app.route('/api/v1/analytics', analyticsRouter);
+app.route('/api/v1/excursions', excursionsRouter);
 
 // API v1 - Rutas admin (protegidas)
 app.use('/api/v1/admin/*', authMiddleware());

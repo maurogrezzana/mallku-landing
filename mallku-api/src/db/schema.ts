@@ -34,6 +34,17 @@ export const dateStatusEnum = pgEnum('date_status', [
   'cancelado'
 ]);
 
+export const bookingTipoEnum = pgEnum('booking_tipo', [
+  'fecha-fija',
+  'personalizada'
+]);
+
+export const propuestaEstadoEnum = pgEnum('propuesta_estado', [
+  'pendiente',
+  'aprobada',
+  'rechazada'
+]);
+
 export const userRoleEnum = pgEnum('user_role', [
   'admin',
   'staff',
@@ -148,7 +159,7 @@ export const excursions = pgTable('excursions', {
 
   // Contenido estructurado
   highlights: jsonb('highlights').$type<string[]>().default([]),
-  itinerario: jsonb('itinerario').$type<{hora: string; actividad: string; descripcion: string}[]>().default([]),
+  itinerario: jsonb('itinerario').$type<{orden: number; titulo: string; descripcion: string; imagen?: string}[]>().default([]),
   incluye: jsonb('incluye').$type<string[]>().default([]),
   noIncluye: jsonb('no_incluye').$type<string[]>().default([]),
   recomendaciones: jsonb('recomendaciones').$type<string[]>().default([]),
@@ -199,8 +210,12 @@ export const bookings = pgTable('bookings', {
   // Número único de reserva
   bookingNumber: varchar('booking_number', { length: 20 }).unique().notNull(),
 
+  // Tipo de reserva (fecha fija o personalizada)
+  tipo: bookingTipoEnum('tipo').notNull(),
+
   // Referencias
-  dateId: uuid('date_id').references(() => dates.id).notNull(),
+  dateId: uuid('date_id').references(() => dates.id), // Nullable - solo para fecha-fija
+  excursionId: uuid('excursion_id').references(() => excursions.id), // Para personalizada
   leadId: uuid('lead_id').references(() => leads.id),
 
   // Datos del cliente
@@ -211,7 +226,12 @@ export const bookings = pgTable('bookings', {
 
   // Detalles de la reserva
   cantidadPersonas: integer('cantidad_personas').notNull(),
-  precioTotal: integer('precio_total').notNull(), // En centavos ARS
+  precioTotal: integer('precio_total'), // Nullable - se calcula cuando se aprueba
+
+  // Campos específicos para tipo='personalizada'
+  fechaPropuesta: timestamp('fecha_propuesta'),
+  estadoPropuesta: propuestaEstadoEnum('estado_propuesta'),
+  motivoRechazo: text('motivo_rechazo'),
 
   // Estado
   status: bookingStatusEnum('status').default('pending').notNull(),
