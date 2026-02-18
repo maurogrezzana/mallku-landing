@@ -70,7 +70,7 @@ export async function getFechas(locale: Locale): Promise<FechaSalida[]> {
   try {
     const controller = new AbortController();
     const timeout = setTimeout(() => controller.abort(), 5000);
-    const res = await fetch('https://mallku-api.vercel.app/api/v1/calendar', {
+    const res = await fetch('https://mallku-api.vercel.app/api/v1/dates/calendar', {
       signal: controller.signal,
     });
     clearTimeout(timeout);

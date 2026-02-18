@@ -238,7 +238,7 @@ function generarWhatsAppLink(salida: FechaSalida) {
 
   async function actualizarCalendario() {
     try {
-      const res = await fetch(`${API_URL}/api/v1/calendar`);
+      const res = await fetch(`${API_URL}/api/v1/dates/calendar`);
       if (!res.ok) return;
       const json = await res.json();
       if (!json.success || !Array.isArray(json.data)) return;

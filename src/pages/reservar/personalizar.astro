@@ -252,7 +252,7 @@ import { excursiones } from '../../data/excursiones';
   async function loadProximasFechas(slug: string) {
     const container = document.getElementById('proximas-fechas') as HTMLElement;
     try {
-      const res = await fetch(`${API_URL}/api/v1/calendar?excursion=${slug}`);
+      const res = await fetch(`${API_URL}/api/v1/dates/calendar?excursion=${slug}`);
       if (res.ok) {
         const json = await res.json();
         if (json.success && Array.isArray(json.data) && json.data.length > 0) {
