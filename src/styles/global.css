@@ -25,21 +25,22 @@
 
   /* Tipografía */
   --font-display: 'Anton', sans-serif;
+  --font-heading: 'Playfair Display', Georgia, serif;
   --font-body: 'Noto Serif', Georgia, serif;
 
   /* Espaciado */
   --space-xs: 0.5rem;
   --space-sm: 1rem;
   --space-md: 1.5rem;
-  --space-lg: 2rem;
-  --space-xl: 3rem;
-  --space-2xl: 5rem;
+  --space-lg: 2.5rem;
+  --space-xl: 4rem;
+  --space-2xl: 6.5rem;
 
   /* Radios */
-  --radius-sm: 8px;
-  --radius-md: 14px;
-  --radius-lg: 18px;
-  --radius-xl: 26px;
+  --radius-sm: 0;
+  --radius-md: 0;
+  --radius-lg: 0;
+  --radius-xl: 0;
 
   /* Contenedor */
   --max-width: 1200px;
@@ -67,7 +68,15 @@ body {
 }
 
 /* Tipografía */
-h1, h2, h3, h4, h5, h6 {
+h1, h2 {
+  font-family: var(--font-heading);
+  font-weight: 600;
+  text-transform: none;
+  letter-spacing: -0.02em;
+  line-height: 1.12;
+}
+
+h3, h4, h5, h6 {
   font-family: var(--font-display);
   font-weight: 400;
   text-transform: uppercase;
@@ -98,8 +107,12 @@ img {
 }
 
 .section-title {
-  font-size: clamp(28px, 4vw, 36px);
+  font-size: clamp(28px, 4vw, 40px);
   margin: 0 0 var(--space-sm);
+  font-family: var(--font-heading);
+  font-weight: 600;
+  text-transform: none;
+  letter-spacing: -0.02em;
 }
 
 .section-subtitle {
@@ -140,11 +153,25 @@ img {
   background: var(--color-primary);
   border-color: var(--color-primary);
   color: #fff;
+  box-shadow: 0 2px 8px rgba(209, 107, 56, 0.3);
 }
 
 .btn-primary:hover {
   background: var(--color-primary-hover);
   border-color: var(--color-primary-hover);
+  box-shadow: 0 4px 16px rgba(209, 107, 56, 0.4);
+}
+
+.btn-outline {
+  background: transparent;
+  border: 1px solid rgba(239, 227, 214, 0.4);
+  color: var(--color-text-light);
+}
+
+.btn-outline:hover {
+  background: rgba(239, 227, 214, 0.1);
+  border-color: rgba(239, 227, 214, 0.6);
+  box-shadow: 0 2px 12px rgba(239, 227, 214, 0.15);
 }
 
 .btn-full {
@@ -169,6 +196,36 @@ img {
 .section-terracota {
   background: var(--terracota);
   color: #fff;
+}
+
+/* Separador decorativo */
+.section-divider {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 20px;
+  padding: 0 var(--space-md);
+  max-width: var(--max-width);
+  margin: 0 auto;
+}
+
+.section-divider::before,
+.section-divider::after {
+  content: "";
+  flex: 1;
+  height: 1px;
+  background: var(--color-line-light);
+}
+
+.section-divider span {
+  font-size: 10px;
+  color: var(--color-primary);
+  opacity: 0.6;
+}
+
+.section-light .section-divider::before,
+.section-light .section-divider::after {
+  background: var(--color-line-dark);
 }
 
 /* Grid responsive */

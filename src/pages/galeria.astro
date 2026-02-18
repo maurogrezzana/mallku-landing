@@ -1,50 +1,93 @@
 ---
+import { Image, getImage } from 'astro:assets';
 import BaseLayout from '../layouts/BaseLayout.astro';
 import Header from '../components/Header.astro';
 import Footer from '../components/Footer.astro';
 import WhatsAppFloat from '../components/WhatsAppFloat.astro';
 import { whatsappLinks } from '../data/site';
+import { resolveImage } from '../utils/images';
 
-// Definición de las fotos de la galería
-// Cuando tengas fotos reales, reemplazá los placeholders
 const galeriaItems = [
   {
     categoria: 'Quilmes',
     items: [
-      { titulo: 'Ciudad Sagrada de Quilmes', descripcion: 'Vista panorámica del sitio arqueológico', placeholder: '🏛️' },
-      { titulo: 'Terrazas de cultivo', descripcion: 'Sistema agrícola ancestral', placeholder: '🌾' },
-      { titulo: 'Fortaleza en altura', descripcion: 'Murallas defensivas calchaquíes', placeholder: '🏰' },
-      { titulo: 'Atardecer en Quilmes', descripcion: 'Los colores del valle al caer el sol', placeholder: '🌅' },
+      { titulo: 'Ciudad Sagrada de Quilmes', src: '/images/Quilmes 1.jpg' },
+      { titulo: 'Ruinas de Quilmes', src: '/images/Quilmes 2.jpg' },
+      { titulo: 'Quilmes - Vista panorámica', src: '/images/quilmes 3.jpg' },
+      { titulo: 'Quilmes - Terrazas', src: '/images/quilmes 4.jpg' },
+      { titulo: 'Quilmes - Sendero', src: '/images/quilmes 5.jpg' },
+      { titulo: 'Quilmes - Muros ancestrales', src: '/images/Quilmes 6.jpg' },
+      { titulo: 'Quilmes - Paisaje', src: '/images/Quilmes 7.jpg' },
+      { titulo: 'Quilmes - Estructura', src: '/images/Quilmes 8.jpg' },
+      { titulo: 'Quilmes - Cerro', src: '/images/Quilmes 9.jpg' },
     ]
   },
   {
-    categoria: 'Tafí del Valle',
+    categoria: 'Tafí y Menhires',
     items: [
-      { titulo: 'Parque de los Menhires', descripcion: 'Monolitos de la cultura Tafí', placeholder: '🗿' },
-      { titulo: 'Valle de Tafí', descripcion: 'Paisaje de altura a 2.000 msnm', placeholder: '🏔️' },
-      { titulo: 'Capilla de La Banda', descripcion: 'Arquitectura colonial en el valle', placeholder: '⛪' },
-      { titulo: 'Dique La Angostura', descripcion: 'Espejo de agua entre montañas', placeholder: '💧' },
-    ]
-  },
-  {
-    categoria: 'Camino y Paisajes',
-    items: [
-      { titulo: 'Abra del Infiernillo', descripcion: 'Paso de montaña a 3.042 msnm', placeholder: '⛰️' },
-      { titulo: 'Quebrada del Río Los Sosa', descripcion: 'Selva de yungas tucumana', placeholder: '🌿' },
-      { titulo: 'Ruta de los Valles', descripcion: 'Caminos entre cerros y cardones', placeholder: '🛤️' },
-      { titulo: 'Cielo del NOA', descripcion: 'Noches estrelladas en altura', placeholder: '✨' },
+      { titulo: 'Menhires - Monolitos', src: '/images/menhires 1.jpg' },
+      { titulo: 'Menhires - Detalle', src: '/images/menhires 2.jpg' },
+      { titulo: 'Menhires - Parque', src: '/images/menhires 3.jpg' },
+      { titulo: 'Menhires - Vista general', src: '/images/Menhires 4.jpg' },
+      { titulo: 'Tafí del Valle', src: '/images/Tafi del Valle.jpg' },
+      { titulo: 'Abra del Infiernillo', src: '/images/Infiernillo.jpg' },
+      { titulo: 'Menhires - Atardecer', src: '/images/Menhires 5.jpg' },
+      { titulo: 'Tafí - Valle', src: '/images/Tafi 2.jpg' },
+      { titulo: 'Menhires - Sendero', src: '/images/Menhires 6.jpg' },
     ]
   },
   {
     categoria: 'Tucumán Colonial',
     items: [
-      { titulo: 'Ruinas de Ibatín', descripcion: 'Primera fundación de Tucumán (1565)', placeholder: '🏚️' },
-      { titulo: 'Museo Jesuítico', descripcion: 'Historia de las estancias coloniales', placeholder: '📜' },
-      { titulo: 'Selva tucumana', descripcion: 'Vegetación exuberante de las yungas', placeholder: '🌳' },
-      { titulo: 'Arquitectura histórica', descripcion: 'Vestigios del período colonial', placeholder: '🏛️' },
+      { titulo: 'Ruinas de Ibatín', src: '/images/Ibatin 1.jpg' },
+      { titulo: 'Ibatín - Excavación', src: '/images/ibatin 2.jpg' },
+      { titulo: 'Ibatín - Restos', src: '/images/Ibatin 3.jpg' },
+      { titulo: 'Ibatín - Sitio', src: '/images/Ibatin 4.jpg' },
+      { titulo: 'Ibatín - Vista', src: '/images/Ibatin 5.jpg' },
+      { titulo: 'Museo Jesuita', src: '/images/Museo jesuita 1.jpg' },
+      { titulo: 'Museo Jesuita - Interior', src: '/images/museo jesuita 2.jpg' },
+      { titulo: 'Museo Jesuita - Detalle', src: '/images/museo jesuita 3.jpg' },
+      { titulo: 'Reducción de Lules', src: '/images/reduccion lules 1.jpg' },
+      { titulo: 'Reducción de Lules - Vista', src: '/images/reduccion lules 2.jpg' },
+      { titulo: 'Reducción de Lules - Detalle', src: '/images/reduccion lules 3.jpg' },
+      { titulo: 'Reducción de Lules - Paisaje', src: '/images/reduccion lules 4.jpg' },
+    ]
+  },
+  {
+    categoria: 'Puna y Experiencia 4x4',
+    items: [
+      { titulo: 'Antofagasta de la Sierra', src: '/images/ANS.jpg' },
+      { titulo: 'ANS - Paisaje', src: '/images/ANS 6.jpg' },
+      { titulo: 'ANS - Camino', src: '/images/ANS 9.jpg' },
+      { titulo: 'ANS - Vista panorámica', src: '/images/ANS 12.jpg' },
+      { titulo: 'ANS - Formaciones', src: '/images/ANS 15.jpg' },
+      { titulo: 'ANS - Horizonte', src: '/images/ANS 18.jpg' },
+      { titulo: 'Confluencia', src: '/images/Confluencia 2.jpg' },
+      { titulo: 'Confluencia - Río', src: '/images/Confluencia 6.jpg' },
+      { titulo: 'Real Grande', src: '/images/real grande.jpg' },
+      { titulo: 'Real Grande - Paisaje', src: '/images/Real Grande 5.jpg' },
+      { titulo: 'Real Grande - Valle', src: '/images/Real Grande 9.jpg' },
+      { titulo: 'Real Grande - Montañas', src: '/images/Real Grande 13.jpg' },
+      { titulo: 'Dunas', src: '/images/Dunas.JPG' },
+      { titulo: 'Campo las Tobas', src: '/images/Campo las tobas 1.jpg' },
+      { titulo: 'Pucará los Negros', src: '/images/Pucara los Negros 1.jpg' },
+      { titulo: 'Experiencia 4x4', src: '/images/4X4 6.jpg' },
+      { titulo: '4x4 - Aventura', src: '/images/ANS 7.jpg' },
+      { titulo: '4x4 - Puna', src: '/images/Campo Piedra Pomez 2.jpg' },
+      { titulo: 'ANS - Desierto', src: '/images/ANS 11.jpg' },
     ]
   }
 ];
+
+// Resolve images
+const resolvedGaleria = galeriaItems.map(seccion => ({
+  ...seccion,
+  items: seccion.items.map(item => ({
+    ...item,
+    resolved: resolveImage(item.src),
+  })),
+}));
+const heroBg = await getImage({ src: resolveImage('/images/ANS 15.jpg'), width: 1600 });
 ---
 
 <BaseLayout
@@ -56,7 +99,7 @@ const galeriaItems = [
 
   <main>
     <!-- HERO -->
-    <section class="hero-galeria">
+    <section class="hero-galeria" style={`background-image: linear-gradient(to bottom, rgba(6,27,56,0.6), rgba(6,27,56,0.85)), url('${heroBg.src}');`}>
       <div class="wrap text-center">
         <h1>Galería de <span class="accent">Imágenes</span></h1>
         <p class="hero-lead">
@@ -66,19 +109,16 @@ const galeriaItems = [
     </section>
 
     <!-- GALERÍA POR CATEGORÍAS -->
-    {galeriaItems.map((seccion) => (
+    {resolvedGaleria.map((seccion) => (
       <section class="section section-dark">
         <div class="wrap">
           <h2 class="categoria-title">{seccion.categoria}</h2>
-          <div class="galeria-grid">
+          <div class="galeria-mosaico">
             {seccion.items.map((item) => (
-              <div class="galeria-item">
-                <div class="galeria-imagen">
-                  <span class="placeholder-icon">{item.placeholder}</span>
-                </div>
-                <div class="galeria-info">
-                  <h3>{item.titulo}</h3>
-                  <p>{item.descripcion}</p>
+              <div class="mosaico-item" data-lightbox>
+                <Image src={item.resolved} alt={item.titulo} loading="lazy" />
+                <div class="mosaico-overlay">
+                  <span class="mosaico-titulo">{item.titulo}</span>
                 </div>
               </div>
             ))}
@@ -91,7 +131,7 @@ const galeriaItems = [
     <section class="section section-light">
       <div class="wrap text-center">
         <div class="nota-box">
-          <h3>📸 ¿Querés ver más?</h3>
+          <h3>¿Querés ver más?</h3>
           <p>
             Seguinos en Instagram donde compartimos fotos de cada salida, historias de los sitios que visitamos y novedades de próximas excursiones.
           </p>
@@ -116,15 +156,23 @@ const galeriaItems = [
     </section>
   </main>
 
+  <!-- LIGHTBOX -->
+  <div id="lightbox" class="lightbox" style="display: none;">
+    <button class="lightbox-close" aria-label="Cerrar">&times;</button>
+    <button class="lightbox-prev" aria-label="Anterior">&#8249;</button>
+    <button class="lightbox-next" aria-label="Siguiente">&#8250;</button>
+    <img id="lightbox-img" src="" alt="" />
+    <p id="lightbox-caption" class="lightbox-caption"></p>
+  </div>
+
   <Footer />
 </BaseLayout>
 
 <style>
   .hero-galeria {
     padding: 80px 0 40px;
-    background:
-      radial-gradient(ellipse 80% 50% at 50% 0%, rgba(209, 107, 56, 0.15), transparent),
-      var(--color-bg-dark);
+    background-size: cover;
+    background-position: center;
   }
 
   .hero-galeria h1 {
@@ -152,53 +200,51 @@ const galeriaItems = [
     display: inline-block;
   }
 
-  /* Galería Grid */
-  .galeria-grid {
-    display: grid;
-    grid-template-columns: repeat(4, 1fr);
-    gap: var(--space-md);
+  /* Mosaico (CSS columns masonry) */
+  .galeria-mosaico {
+    columns: 4;
+    column-gap: 6px;
   }
 
-  .galeria-item {
-    border-radius: var(--radius-lg);
+  .mosaico-item {
+    position: relative;
+    break-inside: avoid;
+    margin-bottom: 6px;
     overflow: hidden;
-    background: rgba(239, 227, 214, 0.05);
-    border: 1px solid var(--color-line-light);
-    transition: transform var(--transition-normal), box-shadow var(--transition-normal);
+    cursor: pointer;
   }
 
-  .galeria-item:hover {
-    transform: translateY(-4px);
-    box-shadow: 0 12px 40px rgba(0, 0, 0, 0.3);
+  .mosaico-item img {
+    width: 100%;
+    display: block;
+    transition: transform 0.5s ease;
   }
 
-  .galeria-imagen {
-    aspect-ratio: 4/3;
-    background: linear-gradient(135deg, rgba(209, 107, 56, 0.2), rgba(6, 27, 56, 0.3));
+  .mosaico-item:hover img {
+    transform: scale(1.05);
+  }
+
+  .mosaico-overlay {
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(to top, rgba(0, 0, 0, 0.7) 0%, transparent 40%);
+    opacity: 0;
+    transition: opacity 0.3s ease;
     display: flex;
-    align-items: center;
-    justify-content: center;
+    align-items: flex-end;
+    padding: 16px;
   }
 
-  .placeholder-icon {
-    font-size: 48px;
-    opacity: 0.8;
+  .mosaico-item:hover .mosaico-overlay {
+    opacity: 1;
   }
 
-  .galeria-info {
-    padding: var(--space-md);
-  }
-
-  .galeria-info h3 {
-    margin: 0 0 var(--space-xs);
-    font-size: 14px;
-    text-transform: uppercase;
-  }
-
-  .galeria-info p {
-    margin: 0;
+  .mosaico-titulo {
+    font-family: var(--font-display);
     font-size: 13px;
-    opacity: 0.7;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    color: #fff;
   }
 
   /* Nota Box */
@@ -208,7 +254,6 @@ const galeriaItems = [
     padding: var(--space-xl);
     background: #fff;
     border: 2px solid var(--color-primary);
-    border-radius: var(--radius-xl);
   }
 
   .nota-box h3 {
@@ -222,19 +267,161 @@ const galeriaItems = [
     color: var(--marron);
   }
 
+  /* Lightbox */
+  .lightbox {
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.95);
+    z-index: 9999;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+  }
+
+  .lightbox img {
+    max-width: 90vw;
+    max-height: 85vh;
+    object-fit: contain;
+  }
+
+  .lightbox-caption {
+    color: rgba(255, 255, 255, 0.8);
+    font-family: var(--font-display);
+    font-size: 13px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    margin-top: 20px;
+    text-align: center;
+  }
+
+  .lightbox-close {
+    position: absolute;
+    top: 20px;
+    right: 30px;
+    background: none;
+    border: none;
+    color: #fff;
+    font-size: 48px;
+    cursor: pointer;
+    line-height: 1;
+    z-index: 10;
+  }
+
+  .lightbox-prev,
+  .lightbox-next {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    background: rgba(255, 255, 255, 0.1);
+    border: none;
+    color: #fff;
+    font-size: 48px;
+    cursor: pointer;
+    padding: 8px 16px;
+    z-index: 10;
+    transition: background 0.2s;
+  }
+
+  .lightbox-prev:hover,
+  .lightbox-next:hover {
+    background: rgba(255, 255, 255, 0.25);
+  }
+
+  .lightbox-prev {
+    left: 20px;
+  }
+
+  .lightbox-next {
+    right: 20px;
+  }
+
   @media (max-width: 1100px) {
-    .galeria-grid {
-      grid-template-columns: repeat(2, 1fr);
+    .galeria-mosaico {
+      columns: 3;
     }
   }
 
-  @media (max-width: 600px) {
-    .galeria-grid {
-      grid-template-columns: 1fr;
+  @media (max-width: 768px) {
+    .galeria-mosaico {
+      columns: 2;
+    }
+  }
+
+  @media (max-width: 480px) {
+    .galeria-mosaico {
+      columns: 1;
     }
 
     .hero-galeria {
       padding: 60px 0 30px;
     }
+
+    .lightbox-prev,
+    .lightbox-next {
+      font-size: 32px;
+      padding: 4px 12px;
+    }
   }
 </style>
+
+<script>
+  const lightbox = document.getElementById('lightbox')!;
+  const lightboxImg = document.getElementById('lightbox-img') as HTMLImageElement;
+  const lightboxCaption = document.getElementById('lightbox-caption')!;
+  const items = document.querySelectorAll('[data-lightbox]');
+
+  let currentIndex = 0;
+  const allImages: { src: string; title: string }[] = [];
+
+  items.forEach((item) => {
+    const img = item.querySelector('img');
+    const title = item.querySelector('.mosaico-titulo');
+    if (img) {
+      allImages.push({
+        src: img.getAttribute('src') || '',
+        title: title?.textContent || ''
+      });
+    }
+  });
+
+  function openLightbox(index: number) {
+    currentIndex = index;
+    lightboxImg.src = allImages[index].src;
+    lightboxImg.alt = allImages[index].title;
+    lightboxCaption.textContent = allImages[index].title;
+    lightbox.style.display = 'flex';
+    document.body.style.overflow = 'hidden';
+  }
+
+  function closeLightbox() {
+    lightbox.style.display = 'none';
+    document.body.style.overflow = '';
+  }
+
+  function navigate(dir: number) {
+    currentIndex = (currentIndex + dir + allImages.length) % allImages.length;
+    lightboxImg.src = allImages[currentIndex].src;
+    lightboxImg.alt = allImages[currentIndex].title;
+    lightboxCaption.textContent = allImages[currentIndex].title;
+  }
+
+  items.forEach((item, i) => {
+    item.addEventListener('click', () => openLightbox(i));
+  });
+
+  document.querySelector('.lightbox-close')?.addEventListener('click', closeLightbox);
+  document.querySelector('.lightbox-prev')?.addEventListener('click', () => navigate(-1));
+  document.querySelector('.lightbox-next')?.addEventListener('click', () => navigate(1));
+
+  lightbox.addEventListener('click', (e) => {
+    if (e.target === lightbox) closeLightbox();
+  });
+
+  document.addEventListener('keydown', (e) => {
+    if (lightbox.style.display === 'none') return;
+    if (e.key === 'Escape') closeLightbox();
+    if (e.key === 'ArrowLeft') navigate(-1);
+    if (e.key === 'ArrowRight') navigate(1);
+  });
+</script>

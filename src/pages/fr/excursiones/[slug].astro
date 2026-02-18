@@ -1,0 +1,566 @@
+---
+import { Image, getImage } from 'astro:assets';
+import BaseLayout from '../../../layouts/BaseLayout.astro';
+import Header from '../../../components/Header.astro';
+import Footer from '../../../components/Footer.astro';
+import WhatsAppFloat from '../../../components/WhatsAppFloat.astro';
+import { getExcursiones } from '../../../data/get-data';
+import type { Excursion } from '../../../data/excursiones';
+import { resolveImage } from '../../../utils/images';
+import { siteConfig } from '../../../data/site';
+
+export async function getStaticPaths() {
+  const excursiones = await getExcursiones('fr');
+  return excursiones.map((excursion) => ({
+    params: { slug: excursion.slug },
+    props: { excursion }
+  }));
+}
+
+interface Props {
+  excursion: Excursion;
+}
+
+const { excursion } = Astro.props;
+const heroBg = await getImage({ src: resolveImage(excursion.imagen), width: 1600 });
+const resolvedFotos = excursion.imagenes.slice(0, 7).map(img => resolveImage(img));
+
+// Schema.org TouristTrip structured data
+const structuredData = {
+  "@context": "https://schema.org",
+  "@type": "TouristTrip",
+  "name": excursion.titulo,
+  "description": excursion.descripcion,
+  "touristType": "Turismo arqueológico",
+  "image": `${siteConfig.url}${excursion.imagen}`,
+  "url": `${siteConfig.url}/fr/excursiones/${excursion.slug}`,
+  "itinerary": {
+    "@type": "ItemList",
+    "itemListElement": excursion.itinerario.map((item, i) => ({
+      "@type": "ListItem",
+      "position": i + 1,
+      "name": item.actividad,
+      "description": item.descripcion
+    }))
+  },
+  "offers": {
+    "@type": "Offer",
+    "availability": "https://schema.org/InStock"
+  },
+  "provider": {
+    "@type": "TourOperator",
+    "name": siteConfig.name,
+    "url": siteConfig.url,
+    "telephone": siteConfig.contact.whatsapp,
+    "address": {
+      "@type": "PostalAddress",
+      "addressLocality": "San Miguel de Tucumán",
+      "addressRegion": "Tucumán",
+      "addressCountry": "AR"
+    }
+  },
+  "duration": excursion.duracion,
+  "maximumAttendeeCapacity": excursion.grupoMax.replace(/[^0-9]/g, '').slice(-1) || "8",
+  "includesAttraction": excursion.highlights.map(h => ({
+    "@type": "TouristAttraction",
+    "name": h
+  }))
+};
+---
+
+<BaseLayout
+  title={excursion.titulo}
+  description={excursion.descripcion}
+  ogImage={excursion.imagen}
+  structuredData={structuredData}
+>
+  <WhatsAppFloat locale="fr" />
+  <Header locale="fr" />
+
+  <main>
+    <!-- HERO -->
+    <section class="hero-excursion" style={`background-image: linear-gradient(to bottom, rgba(6,27,56,0.5), rgba(6,27,56,0.8)), url('${heroBg.src}');`}>
+      <div class="wrap">
+        <span class="tag">{excursion.tag}</span>
+        <h1>{excursion.titulo}</h1>
+        <p class="subtitulo">{excursion.subtitulo}</p>
+
+        <div class="hero-meta">
+          <div class="meta-item">
+            <span class="meta-icon"><svg viewBox="0 0 24 24"><path d="M11.99 2C6.47 2 2 6.48 2 12s4.47 10 9.99 10C17.52 22 22 17.52 22 12S17.52 2 11.99 2zM12 20c-4.42 0-8-3.58-8-8s3.58-8 8-8 8 3.58 8 8-3.58 8-8 8zm.5-13H11v6l5.25 3.15.75-1.23-4.5-2.67z"/></svg></span>
+            <div>
+              <strong>Durée</strong>
+              <span>{excursion.duracion}</span>
+            </div>
+          </div>
+          <div class="meta-item">
+            <span class="meta-icon"><svg viewBox="0 0 24 24"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z"/></svg></span>
+            <div>
+              <strong>Départ</strong>
+              <span>{excursion.salida}</span>
+            </div>
+          </div>
+          <div class="meta-item">
+            <span class="meta-icon"><svg viewBox="0 0 24 24"><path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zM9 17H7v-7h2v7zm4 0h-2V7h2v10zm4 0h-2v-4h2v4z"/></svg></span>
+            <div>
+              <strong>Difficulté</strong>
+              <span>{excursion.dificultad}</span>
+            </div>
+          </div>
+          <div class="meta-item">
+            <span class="meta-icon"><svg viewBox="0 0 24 24"><path d="M16 11c1.66 0 2.99-1.34 2.99-3S17.66 5 16 5s-3 1.34-3 3 1.34 3 3 3zm-8 0c1.66 0 2.99-1.34 2.99-3S9.66 5 8 5 5 6.34 5 8s1.34 3 3 3zm0 2c-2.33 0-7 1.17-7 3.5V19h14v-2.5c0-2.33-4.67-3.5-7-3.5zm8 0c-.29 0-.62.02-.97.05 1.16.84 1.97 1.97 1.97 3.45V19h6v-2.5c0-2.33-4.67-3.5-7-3.5z"/></svg></span>
+            <div>
+              <strong>Groupe maximum</strong>
+              <span>{excursion.grupoMax}</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- DESCRIPCIÓN -->
+    <section class="section section-light">
+      <div class="wrap">
+        <div class="content-layout">
+          <div class="content-main">
+            <h2>L'expérience</h2>
+            {excursion.descripcionLarga.map((parrafo) => (
+              <p>{parrafo}</p>
+            ))}
+
+            <h3>Que allez-vous découvrir?</h3>
+            <ul class="highlights">
+              {excursion.highlights.map((item) => (
+                <li>{item}</li>
+              ))}
+            </ul>
+          </div>
+
+          <aside class="content-sidebar">
+            <div class="cta-card">
+              <p class="cta-card-text">Écrivez-nous et nous confirmons les dates et places</p>
+              <a class="btn btn-primary btn-full" href={excursion.whatsappLink} target="_blank" rel="noopener">
+                Consulter la disponibilité
+              </a>
+            </div>
+          </aside>
+        </div>
+      </div>
+    </section>
+
+    <!-- GALERÍA DE FOTOS -->
+    <section class="section section-dark">
+      <div class="wrap">
+        <h2 class="section-title text-center">Images du parcours</h2>
+        <div class="fotos-grid">
+          {resolvedFotos.map((img, i) => (
+            <div class={`foto-item ${i === 0 ? 'foto-grande' : ''}`}>
+              <Image src={img} alt={`${excursion.titulo} - photo ${i + 1}`} loading="lazy" />
+            </div>
+          ))}
+        </div>
+      </div>
+    </section>
+
+    <!-- ITINERARIO -->
+    <section class="section section-dark" style="padding-top: 0;">
+      <div class="wrap">
+        <h2 class="section-title text-center">Votre journée, étape par étape</h2>
+        <div class="itinerario">
+          {excursion.itinerario.map((item, index) => (
+            <div class="itinerario-item">
+              <div class="itinerario-hora">{item.hora}</div>
+              <div class="itinerario-linea">
+                <div class="itinerario-punto"></div>
+                {index < excursion.itinerario.length - 1 && <div class="itinerario-connector"></div>}
+              </div>
+              <div class="itinerario-content">
+                <h4>{item.actividad}</h4>
+                <p>{item.descripcion}</p>
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+    </section>
+
+    <!-- INCLUYE / NO INCLUYE -->
+    <section class="section section-light">
+      <div class="wrap">
+        <div class="incluye-grid">
+          <div class="incluye-card">
+            <h3>Inclus dans votre excursion</h3>
+            <ul>
+              {excursion.incluye.map((item) => (
+                <li>{item}</li>
+              ))}
+            </ul>
+          </div>
+          <div class="incluye-card no-incluye">
+            <h3>Non inclus</h3>
+            <ul>
+              {excursion.noIncluye.map((item) => (
+                <li>{item}</li>
+              ))}
+            </ul>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- RECOMENDACIONES -->
+    <section class="section section-terracota">
+      <div class="wrap">
+        <h2 class="section-title text-center">Préparez-vous pour l'expérience</h2>
+        <p class="section-subtitle text-center" style="color: rgba(255,255,255,0.85);">Ce que nous recommandons pour profiter au maximum</p>
+        <div class="recomendaciones-grid">
+          {excursion.recomendaciones.map((rec) => (
+            <div class="recomendacion-item">
+              <svg class="rec-icon" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z" fill="currentColor"/></svg>
+              <p>{rec}</p>
+            </div>
+          ))}
+        </div>
+      </div>
+    </section>
+
+    <!-- CTA FINAL -->
+    <section class="section section-dark">
+      <div class="wrap text-center">
+        <h2 class="section-title">Prêt pour vivre cette expérience?</h2>
+        <p class="section-subtitle">Écrivez-nous et nous vous racontons tout sur la prochaine sortie.</p>
+        <a class="btn btn-primary" href={excursion.whatsappLink} target="_blank" rel="noopener">
+          Consulter la disponibilité
+        </a>
+        <p style="margin-top: var(--space-md); opacity: 0.6; font-size: 14px;">
+          <a href="/fr/excursiones" style="color: var(--color-primary);">← Voir toutes les excursions</a>
+        </p>
+      </div>
+    </section>
+  </main>
+
+  <Footer locale="fr" />
+</BaseLayout>
+
+<style>
+  /* Hero Excursion */
+  .hero-excursion {
+    padding: 80px 0 60px;
+    background-size: cover;
+    background-position: center;
+  }
+
+  .tag {
+    display: inline-block;
+    padding: 8px 16px;
+    background: var(--color-primary);
+    color: #fff;
+    font-family: var(--font-display);
+    font-size: 12px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    border-radius: 0;
+    margin-bottom: var(--space-md);
+  }
+
+  .hero-excursion h1 {
+    margin: 0 0 var(--space-xs);
+    font-size: clamp(36px, 5vw, 52px);
+  }
+
+  .subtitulo {
+    font-size: 20px;
+    color: var(--color-primary);
+    margin: 0 0 var(--space-xl);
+  }
+
+  .hero-meta {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-lg);
+    padding: var(--space-lg);
+    background: rgba(239, 227, 214, 0.08);
+    border-radius: var(--radius-lg);
+    border: 1px solid var(--color-line-light);
+  }
+
+  .meta-item {
+    display: flex;
+    align-items: center;
+    gap: var(--space-sm);
+  }
+
+  .meta-icon {
+    display: flex;
+    align-items: center;
+  }
+
+  .meta-icon svg {
+    width: 22px;
+    height: 22px;
+    fill: var(--color-primary);
+  }
+
+  .meta-item strong {
+    display: block;
+    font-family: var(--font-display);
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    color: rgba(239, 227, 214, 0.6);
+  }
+
+  .meta-item span:not(.meta-icon) {
+    font-size: 15px;
+  }
+
+  /* Fotos Grid */
+  .fotos-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: var(--space-md);
+    margin-top: var(--space-xl);
+  }
+
+  .foto-item {
+    border-radius: var(--radius-md);
+    overflow: hidden;
+    aspect-ratio: 3/2;
+  }
+
+  .foto-item.foto-grande {
+    grid-column: span 2;
+    grid-row: span 2;
+    aspect-ratio: auto;
+  }
+
+  .foto-item img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.4s ease;
+    cursor: pointer;
+  }
+
+  .foto-item:hover img {
+    transform: scale(1.05);
+  }
+
+  @media (max-width: 600px) {
+    .fotos-grid {
+      grid-template-columns: repeat(2, 1fr);
+    }
+
+    .foto-item.foto-grande {
+      grid-column: span 2;
+      grid-row: span 1;
+      aspect-ratio: 16/9;
+    }
+  }
+
+  /* Content Layout */
+  .content-layout {
+    display: grid;
+    grid-template-columns: 1fr 350px;
+    gap: var(--space-2xl);
+    align-items: start;
+  }
+
+  .content-main h2 {
+    margin: 0 0 var(--space-md);
+    font-size: 28px;
+    color: var(--azul);
+  }
+
+  .content-main h3 {
+    margin: var(--space-xl) 0 var(--space-md);
+    font-size: 22px;
+    color: var(--azul);
+  }
+
+  .content-main p {
+    margin: 0 0 var(--space-md);
+    line-height: 1.8;
+    color: var(--marron);
+  }
+
+  .highlights {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+  }
+
+  .highlights li {
+    padding: var(--space-sm) 0;
+    padding-left: var(--space-lg);
+    position: relative;
+    color: var(--marron);
+    border-bottom: 1px solid var(--color-line-dark);
+  }
+
+  .highlights li::before {
+    content: "◆";
+    position: absolute;
+    left: 0;
+    color: var(--color-primary);
+  }
+
+  /* CTA Card */
+  .cta-card {
+    position: sticky;
+    top: 120px;
+    padding: var(--space-xl);
+    background: #fff;
+    border: 2px solid var(--color-primary);
+    border-radius: var(--radius-xl);
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.1);
+    text-align: center;
+  }
+
+  .cta-card-text {
+    margin: 0 0 var(--space-lg);
+    font-size: 15px;
+    color: var(--marron);
+    line-height: 1.6;
+  }
+
+  /* Itinerario */
+  .itinerario {
+    max-width: 700px;
+    margin: var(--space-xl) auto 0;
+  }
+
+  .itinerario-item {
+    display: grid;
+    grid-template-columns: 80px 40px 1fr;
+    gap: var(--space-sm);
+    padding-bottom: var(--space-lg);
+  }
+
+  .itinerario-hora {
+    font-family: var(--font-display);
+    font-size: 18px;
+    text-align: right;
+    padding-top: 2px;
+  }
+
+  .itinerario-linea {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .itinerario-punto {
+    width: 16px;
+    height: 16px;
+    background: var(--color-primary);
+    border-radius: 50%;
+    flex-shrink: 0;
+  }
+
+  .itinerario-connector {
+    width: 2px;
+    flex-grow: 1;
+    background: var(--color-line-light);
+    margin-top: var(--space-xs);
+  }
+
+  .itinerario-content h4 {
+    margin: 0 0 var(--space-xs);
+    font-size: 16px;
+  }
+
+  .itinerario-content p {
+    margin: 0;
+    font-size: 14px;
+    opacity: 0.75;
+  }
+
+  /* Incluye Grid */
+  .incluye-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: var(--space-lg);
+  }
+
+  .incluye-card {
+    padding: var(--space-xl);
+    background: #fff;
+    border-radius: var(--radius-xl);
+    border: 1px solid var(--color-line-dark);
+  }
+
+  .incluye-card h3 {
+    margin: 0 0 var(--space-md);
+    font-size: 20px;
+    color: var(--azul);
+  }
+
+  .incluye-card ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+  }
+
+  .incluye-card li {
+    padding: var(--space-sm) 0;
+    color: var(--marron);
+    border-bottom: 1px solid var(--color-line-dark);
+  }
+
+  .incluye-card li:last-child {
+    border-bottom: none;
+  }
+
+  /* Recomendaciones */
+  .recomendaciones-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: var(--space-md);
+    margin-top: var(--space-xl);
+  }
+
+  .recomendacion-item {
+    display: flex;
+    gap: var(--space-sm);
+    padding: var(--space-md);
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: var(--radius-md);
+  }
+
+  .rec-icon {
+    width: 20px;
+    height: 20px;
+    flex-shrink: 0;
+    margin-top: 2px;
+    opacity: 0.85;
+  }
+
+  .recomendacion-item p {
+    margin: 0;
+    font-size: 14px;
+  }
+
+  @media (max-width: 900px) {
+    .content-layout {
+      grid-template-columns: 1fr;
+    }
+
+    .cta-card {
+      position: static;
+    }
+
+    .incluye-grid {
+      grid-template-columns: 1fr;
+    }
+
+    .recomendaciones-grid {
+      grid-template-columns: 1fr;
+    }
+
+    .hero-meta {
+      flex-direction: column;
+      gap: var(--space-md);
+    }
+  }
+</style>

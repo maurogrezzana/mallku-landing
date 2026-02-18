@@ -1,0 +1,340 @@
+---
+import { Image } from 'astro:assets';
+import BaseLayout from '../../../layouts/BaseLayout.astro';
+import Header from '../../../components/Header.astro';
+import Footer from '../../../components/Footer.astro';
+import WhatsAppFloat from '../../../components/WhatsAppFloat.astro';
+import { getPosts } from '../../../data/get-data';
+import type { Post } from '../../../data/posts';
+import { resolveImage } from '../../../utils/images';
+
+const locale = 'en';
+const posts = await getPosts(locale);
+
+export async function getStaticPaths() {
+  const { getPosts } = await import('../../../data/get-data');
+  const posts = await getPosts('en');
+  return posts.map((post) => ({
+    params: { slug: post.slug },
+    props: { post }
+  }));
+}
+
+interface Props {
+  post: Post;
+}
+
+const { post } = Astro.props;
+const postImage = resolveImage(post.imagen);
+
+// Format date
+const fechaFormateada = new Date(post.fecha).toLocaleDateString('en-US', {
+  day: 'numeric',
+  month: 'long',
+  year: 'numeric'
+});
+
+// Get related posts (same category, excluding current)
+const relatedPosts = posts
+  .filter(p => p.categoria === post.categoria && p.slug !== post.slug)
+  .slice(0, 2);
+---
+
+<BaseLayout
+  title={post.titulo}
+  description={post.excerpt}
+  locale="en"
+>
+  <WhatsAppFloat />
+  <Header locale="en" />
+
+  <main>
+    <!-- HERO POST -->
+    <section class="hero-post">
+      <div class="wrap">
+        <a href="/en/blog" class="back-link">&larr; Back to blog</a>
+        <span class="categoria-tag">{post.categoria}</span>
+        <h1>{post.titulo}</h1>
+        <div class="post-meta">
+          <span class="autor">{post.autor}</span>
+          <span class="separador">&middot;</span>
+          <span class="fecha">{fechaFormateada}</span>
+          <span class="separador">&middot;</span>
+          <span class="lectura">{post.tiempoLectura} read</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- IMAGE -->
+    <section class="post-hero-image">
+      <div class="wrap">
+        <div class="post-image-container">
+          <Image src={postImage} alt={post.titulo} loading="eager" />
+        </div>
+      </div>
+    </section>
+
+    <!-- CONTENT -->
+    <section class="section section-light">
+      <div class="wrap">
+        <article class="post-content">
+          {post.contenido.map((parrafo) => (
+            <p>{parrafo}</p>
+          ))}
+        </article>
+
+        <!-- SHARE -->
+        <div class="share-section">
+          <span>Share:</span>
+          <div class="share-buttons">
+            <a
+              href={`https://wa.me/?text=${encodeURIComponent(post.titulo + ' - Mallku Excursiones: ')}`}
+              target="_blank"
+              rel="noopener"
+              class="share-btn whatsapp"
+            >
+              WhatsApp
+            </a>
+            <a
+              href={`https://twitter.com/intent/tweet?text=${encodeURIComponent(post.titulo)}&url=`}
+              target="_blank"
+              rel="noopener"
+              class="share-btn twitter"
+            >
+              Twitter
+            </a>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- RELATED -->
+    {relatedPosts.length > 0 && (
+      <section class="section section-dark">
+        <div class="wrap">
+          <h2 class="section-title text-center">Related articles</h2>
+          <div class="related-grid">
+            {relatedPosts.map((related) => (
+              <a href={`/en/blog/${related.slug}`} class="related-card">
+                <span class="related-categoria">{related.categoria}</span>
+                <h3>{related.titulo}</h3>
+                <span class="related-lectura">{related.tiempoLectura} read</span>
+              </a>
+            ))}
+          </div>
+        </div>
+      </section>
+    )}
+
+    <!-- CTA -->
+    <section class="section section-terracota">
+      <div class="wrap text-center">
+        <h2 class="section-title">Want to visit these sites in person?</h2>
+        <p class="section-subtitle" style="color: rgba(255,255,255,0.85);">
+          Our excursions take you to experience history where it happened.
+        </p>
+        <a class="btn" href="/en/excursiones" style="background: #fff; color: var(--terracota);">
+          View excursions
+        </a>
+      </div>
+    </section>
+  </main>
+
+  <Footer locale="en" />
+</BaseLayout>
+
+<style>
+  .hero-post {
+    padding: 80px 0 60px;
+    background:
+      radial-gradient(ellipse 80% 50% at 50% 0%, rgba(209, 107, 56, 0.15), transparent),
+      var(--color-bg-dark);
+  }
+
+  .back-link {
+    display: inline-block;
+    margin-bottom: 24px;
+    font-size: 14px;
+    color: rgba(239, 227, 214, 0.7);
+    transition: color 0.2s ease;
+  }
+
+  .back-link:hover {
+    color: var(--color-primary);
+  }
+
+  .categoria-tag {
+    display: inline-block;
+    padding: 8px 16px;
+    background: var(--color-primary);
+    color: #fff;
+    font-family: var(--font-display);
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    border-radius: 0;
+    margin-bottom: 20px;
+  }
+
+  .hero-post h1 {
+    margin: 0 0 24px;
+    font-size: clamp(32px, 5vw, 48px);
+    line-height: 1.15;
+    max-width: 800px;
+  }
+
+  .post-meta {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    font-size: 14px;
+    color: rgba(239, 227, 214, 0.7);
+  }
+
+  .separador {
+    opacity: 0.4;
+  }
+
+  /* Post Hero Image */
+  .post-hero-image {
+    background: var(--color-bg-dark);
+    padding: 0 0 var(--space-xl);
+  }
+
+  .post-image-container {
+    max-width: 900px;
+    margin: 0 auto;
+    overflow: hidden;
+  }
+
+  .post-image-container img {
+    width: 100%;
+    height: auto;
+    max-height: 500px;
+    object-fit: cover;
+  }
+
+  /* Post Content */
+  .post-content {
+    max-width: 700px;
+    margin: 0 auto;
+  }
+
+  .post-content p {
+    margin: 0 0 24px;
+    font-size: 17px;
+    line-height: 1.85;
+    color: var(--marron);
+  }
+
+  .post-content p:first-child {
+    font-size: 19px;
+    color: var(--azul);
+  }
+
+  /* Share */
+  .share-section {
+    max-width: 700px;
+    margin: 48px auto 0;
+    padding-top: 32px;
+    border-top: 1px solid var(--color-line-dark);
+    display: flex;
+    align-items: center;
+    gap: 16px;
+  }
+
+  .share-section > span {
+    font-family: var(--font-display);
+    font-size: 13px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    color: var(--marron);
+  }
+
+  .share-buttons {
+    display: flex;
+    gap: 12px;
+  }
+
+  .share-btn {
+    padding: 8px 16px;
+    border-radius: 0;
+    font-size: 13px;
+    font-weight: 600;
+    transition: opacity 0.2s ease;
+  }
+
+  .share-btn:hover {
+    opacity: 0.85;
+  }
+
+  .share-btn.whatsapp {
+    background: #25d366;
+    color: #fff;
+  }
+
+  .share-btn.twitter {
+    background: #1da1f2;
+    color: #fff;
+  }
+
+  /* Related */
+  .related-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: var(--space-lg);
+    margin-top: var(--space-xl);
+  }
+
+  .related-card {
+    padding: 28px;
+    background: rgba(239, 227, 214, 0.05);
+    border: 1px solid var(--color-line-light);
+    border-radius: var(--radius-xl);
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+  }
+
+  .related-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 12px 40px rgba(0, 0, 0, 0.25);
+  }
+
+  .related-categoria {
+    display: inline-block;
+    padding: 4px 10px;
+    background: var(--color-primary);
+    color: #fff;
+    font-family: var(--font-display);
+    font-size: 10px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    border-radius: 0;
+    margin-bottom: 12px;
+  }
+
+  .related-card h3 {
+    margin: 0 0 12px;
+    font-size: 18px;
+    line-height: 1.3;
+  }
+
+  .related-card:hover h3 {
+    color: var(--color-primary);
+  }
+
+  .related-lectura {
+    font-size: 13px;
+    color: rgba(239, 227, 214, 0.6);
+  }
+
+  @media (max-width: 700px) {
+    .related-grid {
+      grid-template-columns: 1fr;
+    }
+
+    .share-section {
+      flex-direction: column;
+      align-items: flex-start;
+    }
+  }
+</style>

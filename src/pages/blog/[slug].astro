@@ -1,9 +1,11 @@
 ---
+import { Image } from 'astro:assets';
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import Header from '../../components/Header.astro';
 import Footer from '../../components/Footer.astro';
 import WhatsAppFloat from '../../components/WhatsAppFloat.astro';
 import { posts, type Post } from '../../data/posts';
+import { resolveImage } from '../../utils/images';
 
 export function getStaticPaths() {
   return posts.map((post) => ({
@@ -17,6 +19,7 @@ interface Props {
 }
 
 const { post } = Astro.props;
+const postImage = resolveImage(post.imagen);
 
 // Format date
 const fechaFormateada = new Date(post.fecha).toLocaleDateString('es-AR', {
@@ -51,6 +54,15 @@ const relatedPosts = posts
           <span class="fecha">{fechaFormateada}</span>
           <span class="separador">·</span>
           <span class="lectura">{post.tiempoLectura} lectura</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- IMAGEN -->
+    <section class="post-hero-image">
+      <div class="wrap">
+        <div class="post-image-container">
+          <Image src={postImage} alt={post.titulo} loading="eager" />
         </div>
       </div>
     </section>
@@ -153,7 +165,7 @@ const relatedPosts = posts
     font-size: 11px;
     text-transform: uppercase;
     letter-spacing: 1px;
-    border-radius: 6px;
+    border-radius: 0;
     margin-bottom: 20px;
   }
 
@@ -174,6 +186,25 @@ const relatedPosts = posts
 
   .separador {
     opacity: 0.4;
+  }
+
+  /* Post Hero Image */
+  .post-hero-image {
+    background: var(--color-bg-dark);
+    padding: 0 0 var(--space-xl);
+  }
+
+  .post-image-container {
+    max-width: 900px;
+    margin: 0 auto;
+    overflow: hidden;
+  }
+
+  .post-image-container img {
+    width: 100%;
+    height: auto;
+    max-height: 500px;
+    object-fit: cover;
   }
 
   /* Post Content */
@@ -220,7 +251,7 @@ const relatedPosts = posts
 
   .share-btn {
     padding: 8px 16px;
-    border-radius: 6px;
+    border-radius: 0;
     font-size: 13px;
     font-weight: 600;
     transition: opacity 0.2s ease;
@@ -270,7 +301,7 @@ const relatedPosts = posts
     font-size: 10px;
     text-transform: uppercase;
     letter-spacing: 1px;
-    border-radius: 4px;
+    border-radius: 0;
     margin-bottom: 12px;
   }
 

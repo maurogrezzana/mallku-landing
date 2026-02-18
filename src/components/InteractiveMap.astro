@@ -23,9 +23,9 @@ const puntos: Punto[] = [
     tipo: 'destino'
   },
   {
-    lat: -26.8667,
-    lng: -65.7500,
-    nombre: 'Parque de los Menhires',
+    lat: -26.9397,
+    lng: -65.7105,
+    nombre: 'Museo Arqueológico Los Menhires',
     descripcion: 'Monolitos de la cultura Tafí (300 AC - 800 DC)',
     tipo: 'destino'
   },
@@ -37,17 +37,38 @@ const puntos: Punto[] = [
     tipo: 'destino'
   },
   {
-    lat: -26.7333,
-    lng: -65.4833,
+    lat: -27.2205,
+    lng: -65.5870,
     nombre: 'Ruinas de Ibatín',
     descripcion: 'Primera fundación de Tucumán (1565-1685)',
     tipo: 'destino'
   },
   {
-    lat: -26.7847,
-    lng: -65.6639,
+    lat: -26.7406,
+    lng: -65.7731,
     nombre: 'Abra del Infiernillo',
     descripcion: 'Paso de montaña a 3.042 msnm',
+    tipo: 'destino'
+  },
+  {
+    lat: -26.8202,
+    lng: -65.7191,
+    nombre: 'Rancho El Tuichy',
+    descripcion: 'Gastronomía regional en Tafí del Valle',
+    tipo: 'destino'
+  },
+  {
+    lat: -27.0213,
+    lng: -65.6738,
+    nombre: 'Quebrada Río Los Sosa',
+    descripcion: 'Las Yungas — Selva de montaña tucumana',
+    tipo: 'destino'
+  },
+  {
+    lat: -26.8595,
+    lng: -65.7172,
+    nombre: 'Museo Jesuítico La Banda',
+    descripcion: 'Museo histórico jesuítico en Tafí del Valle',
     tipo: 'destino'
   }
 ];
@@ -121,7 +142,7 @@ const puntos: Punto[] = [
   :global(.leaflet-popup-content-wrapper) {
     background: var(--color-bg-dark);
     color: var(--crema);
-    border-radius: 12px;
+    border-radius: 0;
     box-shadow: 0 8px 30px rgba(0, 0, 0, 0.3);
   }
 
@@ -194,10 +215,13 @@ const puntos: Punto[] = [
   const puntos = [
     { lat: -26.8241, lng: -65.2226, nombre: 'San Miguel de Tucumán', descripcion: 'Punto de salida de todas las excursiones', tipo: 'salida' },
     { lat: -26.8614, lng: -65.7139, nombre: 'Tafí del Valle', descripcion: 'Valle de altura a 2.000 msnm', tipo: 'destino' },
-    { lat: -26.8667, lng: -65.7500, nombre: 'Parque de los Menhires', descripcion: 'Monolitos de la cultura Tafí (300 AC - 800 DC)', tipo: 'destino' },
+    { lat: -26.9397, lng: -65.7105, nombre: 'Museo Arqueológico Los Menhires', descripcion: 'Monolitos de la cultura Tafí (300 AC - 800 DC)', tipo: 'destino' },
     { lat: -26.4572, lng: -66.0428, nombre: 'Ciudad Sagrada de Quilmes', descripcion: 'Último bastión de la resistencia calchaquí', tipo: 'destino' },
-    { lat: -26.7333, lng: -65.4833, nombre: 'Ruinas de Ibatín', descripcion: 'Primera fundación de Tucumán (1565-1685)', tipo: 'destino' },
-    { lat: -26.7847, lng: -65.6639, nombre: 'Abra del Infiernillo', descripcion: 'Paso de montaña a 3.042 msnm', tipo: 'destino' }
+    { lat: -27.2205, lng: -65.5870, nombre: 'Ruinas de Ibatín', descripcion: 'Primera fundación de Tucumán (1565-1685)', tipo: 'destino' },
+    { lat: -26.7406, lng: -65.7731, nombre: 'Abra del Infiernillo', descripcion: 'Paso de montaña a 3.042 msnm', tipo: 'destino' },
+    { lat: -26.8202, lng: -65.7191, nombre: 'Rancho El Tuichy', descripcion: 'Gastronomía regional en Tafí del Valle', tipo: 'destino' },
+    { lat: -27.0213, lng: -65.6738, nombre: 'Quebrada Río Los Sosa', descripcion: 'Las Yungas — Selva de montaña tucumana', tipo: 'destino' },
+    { lat: -26.8595, lng: -65.7172, nombre: 'Museo Jesuítico La Banda', descripcion: 'Museo histórico jesuítico en Tafí del Valle', tipo: 'destino' }
   ];
 
   // Initialize map
@@ -218,18 +242,51 @@ const puntos: Punto[] = [
       marker.bindPopup(`<h4>${punto.nombre}</h4><p>${punto.descripcion}</p>`);
     });
 
-    // Draw route lines (approximate)
+    // Draw route lines following real driving roads (via OSRM)
+    // Ruta Valles: Tucumán → RN38 → RP307 Quebrada Los Sosa → Tafí → Infiernillo → RN40 → Quilmes
     const rutaValles = [
-      [-26.8241, -65.2226], // Tucumán
-      [-26.8614, -65.7139], // Tafí
-      [-26.7847, -65.6639], // Infiernillo
-      [-26.4572, -66.0428]  // Quilmes
+      [-26.824147, -65.222388], [-26.833468, -65.193024], [-26.860717, -65.192785],
+      [-26.888964, -65.216094], [-26.903734, -65.241479], [-26.959117, -65.295155],
+      [-27.00642, -65.355493], [-27.056986, -65.391968], [-27.125367, -65.468473],
+      [-27.091329, -65.550397], [-27.093192, -65.561611], [-27.104275, -65.574636],
+      [-27.09581, -65.609574], [-27.099707, -65.637482], [-27.09307, -65.659122],
+      [-27.083536, -65.665432], [-27.069438, -65.663529], [-27.06624, -65.669872],
+      [-27.059497, -65.667159], [-27.057718, -65.672225], [-27.043391, -65.666418],
+      [-27.039774, -65.670401], [-27.029412, -65.65564], [-27.024134, -65.662344],
+      [-27.020479, -65.655598], [-27.000008, -65.664273], [-26.977574, -65.663318],
+      [-26.968234, -65.656398], [-26.950705, -65.660911], [-26.940651, -65.673779],
+      [-26.91175, -65.686427], [-26.859171, -65.696475], [-26.852929, -65.708397],
+      [-26.861356, -65.713927], [-26.841911, -65.709911], [-26.838623, -65.702959],
+      [-26.814109, -65.725073], [-26.813844, -65.716789], [-26.797353, -65.722714],
+      [-26.794967, -65.730826], [-26.788239, -65.724627], [-26.769854, -65.72977],
+      [-26.741111, -65.755946], [-26.740613, -65.77312], [-26.736627, -65.785804],
+      [-26.706103, -65.79544], [-26.675052, -65.81533], [-26.674659, -65.821981],
+      [-26.663644, -65.815708], [-26.641813, -65.819817], [-26.632768, -65.836944],
+      [-26.598196, -65.848739], [-26.599331, -65.855085], [-26.590111, -65.872048],
+      [-26.588076, -65.919576], [-26.574415, -65.945405], [-26.541865, -65.965055],
+      [-26.539845, -65.973596], [-26.508043, -66.010713], [-26.485246, -66.000686],
+      [-26.478991, -66.010991], [-26.479803, -66.020218], [-26.465559, -66.036482]
     ];
 
+    // Ruta Colonial: Tucumán → RN38 sur → Ibatín → regreso → RP307 Quebrada Los Sosa → Tafí
     const rutaColonial = [
-      [-26.8241, -65.2226], // Tucumán
-      [-26.7333, -65.4833], // Ibatín
-      [-26.8614, -65.7139]  // Tafí
+      [-26.824147, -65.222388], [-26.833468, -65.193024], [-26.860339, -65.19253],
+      [-26.888964, -65.216094], [-26.903734, -65.241479], [-26.959117, -65.295155],
+      [-27.00642, -65.355493], [-27.04243, -65.383045], [-27.084836, -65.38513],
+      [-27.111178, -65.413663], [-27.182258, -65.433867], [-27.197405, -65.45707],
+      [-27.175524, -65.495038], [-27.219895, -65.526144], [-27.214318, -65.580967],
+      [-27.221471, -65.582804], [-27.221028, -65.587043],
+      [-27.221471, -65.582804], [-27.214318, -65.580967], [-27.219895, -65.526144],
+      [-27.184884, -65.505171], [-27.169869, -65.488814], [-27.147425, -65.484155],
+      [-27.126512, -65.468139], [-27.091329, -65.550397], [-27.093192, -65.561611],
+      [-27.104275, -65.574636], [-27.094911, -65.617459], [-27.099645, -65.637956],
+      [-27.092875, -65.659374], [-27.083536, -65.665432], [-27.069613, -65.663465],
+      [-27.06651, -65.669721], [-27.059789, -65.667059], [-27.05715, -65.67223],
+      [-27.043391, -65.666418], [-27.039774, -65.670401], [-27.029412, -65.65564],
+      [-27.028398, -65.661517], [-27.020479, -65.655598], [-27.000008, -65.664273],
+      [-26.959351, -65.658406], [-26.948889, -65.662036], [-26.940535, -65.673854],
+      [-26.91175, -65.686427], [-26.859171, -65.696475], [-26.852929, -65.708397],
+      [-26.861356, -65.713927]
     ];
 
     L.polyline(rutaValles as L.LatLngExpression[], {

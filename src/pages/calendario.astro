@@ -39,14 +39,14 @@ function formatearFecha(fechaStr: string) {
 function generarWhatsAppLink(salida: FechaSalida) {
   const fecha = new Date(salida.fecha);
   const fechaTexto = fecha.toLocaleDateString('es-AR', { day: 'numeric', month: 'long' });
-  const mensaje = `Hola, quiero reservar para ${salida.excursionNombre} del ${fechaTexto}`;
+  const mensaje = `Hola, quiero consultar disponibilidad para ${salida.excursionNombre} del ${fechaTexto}`;
   return `https://wa.me/5493815702549?text=${encodeURIComponent(mensaje)}`;
 }
 ---
 
 <BaseLayout
   title="Calendario de Salidas"
-  description="Próximas fechas de excursiones arqueológicas en Tucumán. Quilmes, Tafí del Valle, menhires. Consultá disponibilidad y reservá tu lugar."
+  description="Próximas fechas de excursiones arqueológicas en Tucumán. Quilmes, Tafí del Valle, menhires. Consultá disponibilidad y asegurá tu lugar."
 >
   <WhatsAppFloat />
   <Header />
@@ -109,13 +109,12 @@ function generarWhatsAppLink(salida: FechaSalida) {
 
                   <div class="fecha-content">
                     <h3>{salida.excursionNombre}</h3>
-                    <div class="fecha-precio">{salida.precio}</div>
                   </div>
 
                   <div class="fecha-footer">
                     {salida.estado !== 'completo' ? (
                       <a href={whatsappLink} target="_blank" rel="noopener" class="btn btn-primary btn-full">
-                        Reservar
+                        Consultar
                       </a>
                     ) : (
                       <button class="btn btn-disabled btn-full" disabled>
@@ -135,31 +134,31 @@ function generarWhatsAppLink(salida: FechaSalida) {
     <section class="section section-light">
       <div class="wrap">
         <div class="info-box">
-          <h3>Sobre las reservas</h3>
+          <h3>¿Cómo funciona?</h3>
           <div class="info-grid">
             <div class="info-item">
-              <span class="info-icon">💬</span>
+              <span class="info-icon"><svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M20 2H4c-1.1 0-2 .9-2 2v18l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2z"/></svg></span>
               <div>
-                <strong>Reservá por WhatsApp</strong>
+                <strong>Consultá por WhatsApp</strong>
                 <p>Escribinos y te confirmamos disponibilidad al instante.</p>
               </div>
             </div>
             <div class="info-item">
-              <span class="info-icon">💳</span>
+              <span class="info-icon"><svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M20 4H4c-1.11 0-1.99.89-1.99 2L2 18c0 1.11.89 2 2 2h16c1.11 0 2-.89 2-2V6c0-1.11-.89-2-2-2zm0 14H4v-6h16v6zm0-10H4V6h16v2z"/></svg></span>
               <div>
                 <strong>Seña del 30-50%</strong>
                 <p>Para confirmar tu lugar. El saldo se abona 48hs antes.</p>
               </div>
             </div>
             <div class="info-item">
-              <span class="info-icon">🔄</span>
+              <span class="info-icon"><svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M12 4V1L8 5l4 4V6c3.31 0 6 2.69 6 6 0 1.01-.25 1.97-.7 2.8l1.46 1.46C19.54 15.03 20 13.57 20 12c0-4.42-3.58-8-8-8zm0 14c-3.31 0-6-2.69-6-6 0-1.01.25-1.97.7-2.8L5.24 7.74C4.46 8.97 4 10.43 4 12c0 4.42 3.58 8 8 8v3l4-4-4-4v3z"/></svg></span>
               <div>
                 <strong>Reprogramación flexible</strong>
                 <p>Con más de 7 días de anticipación, podés cambiar de fecha sin cargo.</p>
               </div>
             </div>
             <div class="info-item">
-              <span class="info-icon">👥</span>
+              <span class="info-icon"><svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M16 11c1.66 0 2.99-1.34 2.99-3S17.66 5 16 5s-3 1.34-3 3 1.34 3 3 3zm-8 0c1.66 0 2.99-1.34 2.99-3S9.66 5 8 5 5 6.34 5 8s1.34 3 3 3zm0 2c-2.33 0-7 1.17-7 3.5V19h14v-2.5c0-2.33-4.67-3.5-7-3.5zm8 0c-.29 0-.62.02-.97.05 1.16.84 1.97 1.97 1.97 3.45V19h6v-2.5c0-2.33-4.67-3.5-7-3.5z"/></svg></span>
               <div>
                 <strong>Grupos reducidos</strong>
                 <p>Máximo 8 personas por salida para garantizar calidad.</p>
@@ -313,7 +312,7 @@ function generarWhatsAppLink(salida: FechaSalida) {
 
   .estado-badge {
     padding: 4px 10px;
-    border-radius: 20px;
+    border-radius: 0;
     font-size: 11px;
     font-weight: 600;
     text-transform: uppercase;
@@ -343,12 +342,6 @@ function generarWhatsAppLink(salida: FechaSalida) {
     margin: 0 0 8px;
     font-size: 16px;
     line-height: 1.3;
-  }
-
-  .fecha-precio {
-    font-family: var(--font-display);
-    font-size: 22px;
-    color: var(--color-primary);
   }
 
   .btn-disabled {
@@ -386,8 +379,15 @@ function generarWhatsAppLink(salida: FechaSalida) {
   }
 
   .info-icon {
-    font-size: 28px;
     flex-shrink: 0;
+    display: flex;
+    align-items: center;
+  }
+
+  .info-icon svg {
+    width: 24px;
+    height: 24px;
+    fill: var(--terracota);
   }
 
   .info-item strong {

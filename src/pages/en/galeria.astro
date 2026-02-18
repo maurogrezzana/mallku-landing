@@ -1,0 +1,424 @@
+---
+import { Image, getImage } from 'astro:assets';
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import Header from '../../components/Header.astro';
+import Footer from '../../components/Footer.astro';
+import WhatsAppFloat from '../../components/WhatsAppFloat.astro';
+import { whatsappLinks } from '../../data/site';
+import { resolveImage } from '../../utils/images';
+
+const locale = 'en';
+
+const galeriaItems = [
+  {
+    categoria: 'Quilmes',
+    items: [
+      { titulo: 'Sacred City of Quilmes', src: '/images/Quilmes 1.jpg' },
+      { titulo: 'Quilmes Ruins', src: '/images/Quilmes 2.jpg' },
+      { titulo: 'Quilmes - Panoramic View', src: '/images/quilmes 3.jpg' },
+      { titulo: 'Quilmes - Terraces', src: '/images/quilmes 4.jpg' },
+      { titulo: 'Quilmes - Trail', src: '/images/quilmes 5.jpg' },
+      { titulo: 'Quilmes - Ancient Walls', src: '/images/Quilmes 6.jpg' },
+      { titulo: 'Quilmes - Landscape', src: '/images/Quilmes 7.jpg' },
+    ]
+  },
+  {
+    categoria: 'Tafi & Menhirs',
+    items: [
+      { titulo: 'Menhirs - Monoliths', src: '/images/menhires 1.jpg' },
+      { titulo: 'Menhirs - Detail', src: '/images/menhires 2.jpg' },
+      { titulo: 'Menhirs - Park', src: '/images/menhires 3.jpg' },
+      { titulo: 'Menhirs - General View', src: '/images/Menhires 4.jpg' },
+      { titulo: 'Tafi del Valle', src: '/images/Tafi del Valle.jpg' },
+      { titulo: 'Abra del Infiernillo', src: '/images/Infiernillo.jpg' },
+    ]
+  },
+  {
+    categoria: 'Colonial Tucuman',
+    items: [
+      { titulo: 'Ibatin Ruins', src: '/images/Ibatin 1.jpg' },
+      { titulo: 'Ibatin - Excavation', src: '/images/ibatin 2.jpg' },
+      { titulo: 'Ibatin - Remains', src: '/images/Ibatin 3.jpg' },
+      { titulo: 'Ibatin - Site', src: '/images/Ibatin 4.jpg' },
+      { titulo: 'Ibatin - View', src: '/images/Ibatin 5.jpg' },
+      { titulo: 'Jesuit Museum', src: '/images/Museo jesuita 1.jpg' },
+      { titulo: 'Jesuit Museum - Interior', src: '/images/museo jesuita 2.jpg' },
+      { titulo: 'Jesuit Museum - Detail', src: '/images/museo jesuita 3.jpg' },
+      { titulo: 'Lules Mission', src: '/images/reduccion lules 1.jpg' },
+      { titulo: 'Lules Mission - View', src: '/images/reduccion lules 2.jpg' },
+      { titulo: 'Lules Mission - Detail', src: '/images/reduccion lules 3.jpg' },
+      { titulo: 'Lules Mission - Landscape', src: '/images/reduccion lules 4.jpg' },
+    ]
+  },
+  {
+    categoria: 'Puna & 4x4 Experience',
+    items: [
+      { titulo: 'Antofagasta de la Sierra', src: '/images/ANS.jpg' },
+      { titulo: 'ANS - Landscape', src: '/images/ANS 6.jpg' },
+      { titulo: 'ANS - Road', src: '/images/ANS 9.jpg' },
+      { titulo: 'ANS - Panoramic View', src: '/images/ANS 12.jpg' },
+      { titulo: 'ANS - Rock Formations', src: '/images/ANS 15.jpg' },
+      { titulo: 'ANS - Horizon', src: '/images/ANS 18.jpg' },
+      { titulo: 'Confluence', src: '/images/Confluencia 1.JPG' },
+      { titulo: 'Confluence - River', src: '/images/Confluencia 3.JPG' },
+      { titulo: 'Real Grande', src: '/images/real grande.jpg' },
+      { titulo: 'Real Grande - Landscape', src: '/images/Real Grande 5.jpg' },
+      { titulo: 'Real Grande - Valley', src: '/images/Real Grande 9.jpg' },
+      { titulo: 'Real Grande - Mountains', src: '/images/Real Grande 13.jpg' },
+      { titulo: 'Dunes', src: '/images/Dunas.JPG' },
+      { titulo: 'Campo las Tobas', src: '/images/Campo las tobas 1.jpg' },
+      { titulo: 'Pucara los Negros', src: '/images/Pucara los Negros 1.jpg' },
+      { titulo: '4x4 Experience', src: '/images/4x4.png' },
+      { titulo: '4x4 - Adventure', src: '/images/4x4 2.png' },
+      { titulo: '4x4 - Puna', src: '/images/4x4 3.png' },
+    ]
+  }
+];
+
+// Resolve images
+const resolvedGaleria = galeriaItems.map(seccion => ({
+  ...seccion,
+  items: seccion.items.map(item => ({
+    ...item,
+    resolved: resolveImage(item.src),
+  })),
+}));
+const heroBg = await getImage({ src: resolveImage('/images/ANS 15.jpg'), width: 1600 });
+---
+
+<BaseLayout
+  title="Gallery"
+  description="Photos of our archaeological excursions: Quilmes, Tafi del Valle, menhirs, NOA landscapes and more. Discover the destinations you'll explore."
+  locale="en"
+>
+  <WhatsAppFloat locale="en" />
+  <Header locale="en" />
+
+  <main>
+    <!-- HERO -->
+    <section class="hero-galeria" style={`background-image: linear-gradient(to bottom, rgba(6,27,56,0.6), rgba(6,27,56,0.85)), url('${heroBg.src}');`}>
+      <div class="wrap text-center">
+        <h1>Image <span class="accent">Gallery</span></h1>
+        <p class="hero-lead">
+          The landscapes, archaeological sites, and moments you'll experience on our excursions.
+        </p>
+      </div>
+    </section>
+
+    <!-- GALLERY BY CATEGORY -->
+    {resolvedGaleria.map((seccion) => (
+      <section class="section section-dark">
+        <div class="wrap">
+          <h2 class="categoria-title">{seccion.categoria}</h2>
+          <div class="galeria-mosaico">
+            {seccion.items.map((item) => (
+              <div class="mosaico-item" data-lightbox>
+                <Image src={item.resolved} alt={item.titulo} loading="lazy" />
+                <div class="mosaico-overlay">
+                  <span class="mosaico-titulo">{item.titulo}</span>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+    ))}
+
+    <!-- NOTE -->
+    <section class="section section-light">
+      <div class="wrap text-center">
+        <div class="nota-box">
+          <h3>Want to see more?</h3>
+          <p>
+            Follow us on Instagram where we share photos from every trip, stories about the sites we visit, and news about upcoming excursions.
+          </p>
+          <a class="btn btn-primary" href="https://instagram.com/mallkuexcursiones" target="_blank" rel="noopener">
+            @mallkuexcursiones
+          </a>
+        </div>
+      </div>
+    </section>
+
+    <!-- CTA -->
+    <section class="section section-terracota">
+      <div class="wrap text-center">
+        <h2 class="section-title">Would you like to be there?</h2>
+        <p class="section-subtitle" style="color: rgba(255,255,255,0.85);">
+          Check available dates and secure your spot.
+        </p>
+        <a class="btn" href={whatsappLinks.fechas} target="_blank" rel="noopener" style="background: #fff; color: var(--terracota);">
+          Inquire via WhatsApp
+        </a>
+      </div>
+    </section>
+  </main>
+
+  <!-- LIGHTBOX -->
+  <div id="lightbox" class="lightbox" style="display: none;">
+    <button class="lightbox-close" aria-label="Close">&times;</button>
+    <button class="lightbox-prev" aria-label="Previous">&#8249;</button>
+    <button class="lightbox-next" aria-label="Next">&#8250;</button>
+    <img id="lightbox-img" src="" alt="" />
+    <p id="lightbox-caption" class="lightbox-caption"></p>
+  </div>
+
+  <Footer locale="en" />
+</BaseLayout>
+
+<style>
+  .hero-galeria {
+    padding: 80px 0 40px;
+    background-size: cover;
+    background-position: center;
+  }
+
+  .hero-galeria h1 {
+    margin: 0 0 20px;
+    font-size: clamp(40px, 6vw, 56px);
+  }
+
+  .hero-galeria .accent {
+    color: var(--color-primary);
+  }
+
+  .hero-lead {
+    font-size: 18px;
+    color: rgba(239, 227, 214, 0.8);
+    max-width: 60ch;
+    margin: 0 auto;
+  }
+
+  /* Categories */
+  .categoria-title {
+    font-size: 28px;
+    margin: 0 0 var(--space-lg);
+    padding-bottom: var(--space-sm);
+    border-bottom: 2px solid var(--color-primary);
+    display: inline-block;
+  }
+
+  /* Mosaic (CSS columns masonry) */
+  .galeria-mosaico {
+    columns: 4;
+    column-gap: 6px;
+  }
+
+  .mosaico-item {
+    position: relative;
+    break-inside: avoid;
+    margin-bottom: 6px;
+    overflow: hidden;
+    cursor: pointer;
+  }
+
+  .mosaico-item img {
+    width: 100%;
+    display: block;
+    transition: transform 0.5s ease;
+  }
+
+  .mosaico-item:hover img {
+    transform: scale(1.05);
+  }
+
+  .mosaico-overlay {
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(to top, rgba(0, 0, 0, 0.7) 0%, transparent 40%);
+    opacity: 0;
+    transition: opacity 0.3s ease;
+    display: flex;
+    align-items: flex-end;
+    padding: 16px;
+  }
+
+  .mosaico-item:hover .mosaico-overlay {
+    opacity: 1;
+  }
+
+  .mosaico-titulo {
+    font-family: var(--font-display);
+    font-size: 13px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    color: #fff;
+  }
+
+  /* Note Box */
+  .nota-box {
+    max-width: 600px;
+    margin: 0 auto;
+    padding: var(--space-xl);
+    background: #fff;
+    border: 2px solid var(--color-primary);
+  }
+
+  .nota-box h3 {
+    margin: 0 0 var(--space-sm);
+    font-size: 24px;
+    color: var(--azul);
+  }
+
+  .nota-box p {
+    margin: 0 0 var(--space-lg);
+    color: var(--marron);
+  }
+
+  /* Lightbox */
+  .lightbox {
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.95);
+    z-index: 9999;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+  }
+
+  .lightbox img {
+    max-width: 90vw;
+    max-height: 85vh;
+    object-fit: contain;
+  }
+
+  .lightbox-caption {
+    color: rgba(255, 255, 255, 0.8);
+    font-family: var(--font-display);
+    font-size: 13px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    margin-top: 20px;
+    text-align: center;
+  }
+
+  .lightbox-close {
+    position: absolute;
+    top: 20px;
+    right: 30px;
+    background: none;
+    border: none;
+    color: #fff;
+    font-size: 48px;
+    cursor: pointer;
+    line-height: 1;
+    z-index: 10;
+  }
+
+  .lightbox-prev,
+  .lightbox-next {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    background: rgba(255, 255, 255, 0.1);
+    border: none;
+    color: #fff;
+    font-size: 48px;
+    cursor: pointer;
+    padding: 8px 16px;
+    z-index: 10;
+    transition: background 0.2s;
+  }
+
+  .lightbox-prev:hover,
+  .lightbox-next:hover {
+    background: rgba(255, 255, 255, 0.25);
+  }
+
+  .lightbox-prev {
+    left: 20px;
+  }
+
+  .lightbox-next {
+    right: 20px;
+  }
+
+  @media (max-width: 1100px) {
+    .galeria-mosaico {
+      columns: 3;
+    }
+  }
+
+  @media (max-width: 768px) {
+    .galeria-mosaico {
+      columns: 2;
+    }
+  }
+
+  @media (max-width: 480px) {
+    .galeria-mosaico {
+      columns: 1;
+    }
+
+    .hero-galeria {
+      padding: 60px 0 30px;
+    }
+
+    .lightbox-prev,
+    .lightbox-next {
+      font-size: 32px;
+      padding: 4px 12px;
+    }
+  }
+</style>
+
+<script>
+  const lightbox = document.getElementById('lightbox')!;
+  const lightboxImg = document.getElementById('lightbox-img') as HTMLImageElement;
+  const lightboxCaption = document.getElementById('lightbox-caption')!;
+  const items = document.querySelectorAll('[data-lightbox]');
+
+  let currentIndex = 0;
+  const allImages: { src: string; title: string }[] = [];
+
+  items.forEach((item) => {
+    const img = item.querySelector('img');
+    const title = item.querySelector('.mosaico-titulo');
+    if (img) {
+      allImages.push({
+        src: img.getAttribute('src') || '',
+        title: title?.textContent || ''
+      });
+    }
+  });
+
+  function openLightbox(index: number) {
+    currentIndex = index;
+    lightboxImg.src = allImages[index].src;
+    lightboxImg.alt = allImages[index].title;
+    lightboxCaption.textContent = allImages[index].title;
+    lightbox.style.display = 'flex';
+    document.body.style.overflow = 'hidden';
+  }
+
+  function closeLightbox() {
+    lightbox.style.display = 'none';
+    document.body.style.overflow = '';
+  }
+
+  function navigate(dir: number) {
+    currentIndex = (currentIndex + dir + allImages.length) % allImages.length;
+    lightboxImg.src = allImages[currentIndex].src;
+    lightboxImg.alt = allImages[currentIndex].title;
+    lightboxCaption.textContent = allImages[currentIndex].title;
+  }
+
+  items.forEach((item, i) => {
+    item.addEventListener('click', () => openLightbox(i));
+  });
+
+  document.querySelector('.lightbox-close')?.addEventListener('click', closeLightbox);
+  document.querySelector('.lightbox-prev')?.addEventListener('click', () => navigate(-1));
+  document.querySelector('.lightbox-next')?.addEventListener('click', () => navigate(1));
+
+  lightbox.addEventListener('click', (e) => {
+    if (e.target === lightbox) closeLightbox();
+  });
+
+  document.addEventListener('keydown', (e) => {
+    if (lightbox.style.display === 'none') return;
+    if (e.key === 'Escape') closeLightbox();
+    if (e.key === 'ArrowLeft') navigate(-1);
+    if (e.key === 'ArrowRight') navigate(1);
+  });
+</script>

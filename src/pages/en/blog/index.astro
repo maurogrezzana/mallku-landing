@@ -1,0 +1,189 @@
+---
+import BaseLayout from '../../../layouts/BaseLayout.astro';
+import Header from '../../../components/Header.astro';
+import Footer from '../../../components/Footer.astro';
+import WhatsAppFloat from '../../../components/WhatsAppFloat.astro';
+import BlogCard from '../../../components/BlogCard.astro';
+import { getPosts } from '../../../data/get-data';
+import { resolveImage } from '../../../utils/images';
+
+const locale = 'en';
+const posts = await getPosts(locale);
+const sortedPosts = [...posts].sort((a, b) =>
+  new Date(b.fecha).getTime() - new Date(a.fecha).getTime()
+);
+const categorias = [...new Set(posts.map(p => p.categoria))];
+---
+
+<BaseLayout
+  title="Blog"
+  description="Articles about archaeology, history, and heritage of northwestern Argentina. Quilmes, menhirs, Ibatin and more."
+  locale="en"
+>
+  <WhatsAppFloat />
+  <Header locale="en" />
+
+  <main>
+    <!-- HERO -->
+    <section class="hero-blog">
+      <div class="wrap text-center">
+        <h1>Mallku <span class="accent">Blog</span></h1>
+        <p class="hero-lead">
+          Stories, discoveries, and reflections on the archaeology and heritage of northwestern Argentina.
+        </p>
+      </div>
+    </section>
+
+    <!-- CATEGORIES -->
+    <section class="categorias-section">
+      <div class="wrap">
+        <div class="categorias-list">
+          <button class="categoria-btn active" data-categoria="todos">All</button>
+          {categorias.map((cat) => (
+            <button class="categoria-btn" data-categoria={cat}>{cat}</button>
+          ))}
+        </div>
+      </div>
+    </section>
+
+    <!-- POSTS -->
+    <section class="section section-dark">
+      <div class="wrap">
+        <div class="blog-grid">
+          {sortedPosts.map((post) => (
+            <BlogCard
+              slug={post.slug}
+              titulo={post.titulo}
+              excerpt={post.excerpt}
+              fecha={post.fecha}
+              categoria={post.categoria}
+              tiempoLectura={post.tiempoLectura}
+              image={resolveImage(post.imagen)}
+              locale="en"
+            />
+          ))}
+        </div>
+      </div>
+    </section>
+
+    <!-- CTA -->
+    <section class="section section-terracota">
+      <div class="wrap text-center">
+        <h2 class="section-title">Want to experience history in person?</h2>
+        <p class="section-subtitle" style="color: rgba(255,255,255,0.85);">
+          Our excursions take you to the sites described in these articles.
+        </p>
+        <a class="btn" href="/en/excursiones" style="background: #fff; color: var(--terracota);">
+          View excursions
+        </a>
+      </div>
+    </section>
+  </main>
+
+  <Footer locale="en" />
+</BaseLayout>
+
+<style>
+  .hero-blog {
+    padding: 80px 0 40px;
+    background:
+      radial-gradient(ellipse 80% 50% at 50% 0%, rgba(209, 107, 56, 0.15), transparent),
+      var(--color-bg-dark);
+  }
+
+  .hero-blog h1 {
+    margin: 0 0 20px;
+    font-size: clamp(40px, 6vw, 56px);
+  }
+
+  .hero-blog .accent {
+    color: var(--color-primary);
+  }
+
+  .hero-lead {
+    font-size: 18px;
+    color: rgba(239, 227, 214, 0.8);
+    max-width: 55ch;
+    margin: 0 auto;
+  }
+
+  /* Categorias */
+  .categorias-section {
+    padding: 24px 0;
+    background: var(--color-bg-dark);
+    border-bottom: 1px solid var(--color-line-light);
+  }
+
+  .categorias-list {
+    display: flex;
+    gap: 12px;
+    justify-content: center;
+    flex-wrap: wrap;
+  }
+
+  .categoria-btn {
+    padding: 10px 20px;
+    background: transparent;
+    border: 1px solid var(--color-line-light);
+    border-radius: 0;
+    color: var(--crema);
+    font-family: var(--font-display);
+    font-size: 13px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+  }
+
+  .categoria-btn:hover {
+    border-color: var(--color-primary);
+    color: var(--color-primary);
+  }
+
+  .categoria-btn.active {
+    background: var(--color-primary);
+    border-color: var(--color-primary);
+    color: #fff;
+  }
+
+  /* Blog Grid */
+  .blog-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: var(--space-lg);
+  }
+
+  @media (max-width: 800px) {
+    .blog-grid {
+      grid-template-columns: 1fr;
+    }
+  }
+</style>
+
+<script>
+  // Simple category filter (client-side)
+  document.addEventListener('DOMContentLoaded', () => {
+    const buttons = document.querySelectorAll('.categoria-btn');
+    const cards = document.querySelectorAll('.blog-grid > a');
+
+    buttons.forEach(btn => {
+      btn.addEventListener('click', () => {
+        const categoria = btn.getAttribute('data-categoria');
+
+        // Update active button
+        buttons.forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+
+        // Filter cards
+        cards.forEach(card => {
+          const cardCategoria = card.querySelector('.categoria-tag')?.textContent;
+          if (categoria === 'todos' || cardCategoria === categoria) {
+            (card as HTMLElement).style.display = 'block';
+          } else {
+            (card as HTMLElement).style.display = 'none';
+          }
+        });
+      });
+    });
+  });
+</script>

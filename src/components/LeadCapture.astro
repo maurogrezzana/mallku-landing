@@ -1,0 +1,202 @@
+---
+import { useTranslations } from '../i18n/index';
+import { defaultLocale } from '../i18n/locales';
+import type { Locale } from '../i18n/locales';
+
+interface Props {
+  apiUrl?: string;
+  locale?: Locale;
+}
+
+const { apiUrl = 'https://mallku-api.vercel.app', locale = defaultLocale } = Astro.props;
+const t = useTranslations(locale);
+---
+
+<div
+  class="lead-capture"
+  id="lead-capture"
+  data-api-url={apiUrl}
+  data-msg-success={t('lead.success')}
+  data-msg-error={t('lead.error')}
+  data-msg-api={t('lead.apiMessage')}
+>
+  <div class="lead-content">
+    <h3>{t('lead.title')}</h3>
+    <p>{t('lead.subtitle')}</p>
+  </div>
+  <form class="lead-form" id="lead-form">
+    <div class="lead-inputs">
+      <input
+        type="email"
+        name="email"
+        placeholder={t('lead.placeholder')}
+        required
+        autocomplete="email"
+        aria-label={t('lead.placeholder')}
+      />
+      <button type="submit" class="btn btn-primary">
+        <span class="btn-text">{t('lead.button')}</span>
+        <span class="btn-loading" style="display:none;">{t('lead.loading')}</span>
+      </button>
+    </div>
+    <p class="lead-msg" id="lead-msg" style="display:none;"></p>
+  </form>
+  <p class="lead-privacy">Recibí novedades sobre fechas, destinos y promociones. Sin spam, cancelá cuando quieras.</p>
+</div>
+
+<style>
+  .lead-capture {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--space-xl);
+    padding: var(--space-xl);
+    background: rgba(209, 107, 56, 0.08);
+    border: 1px solid rgba(209, 107, 56, 0.2);
+  }
+
+  .lead-content h3 {
+    margin: 0 0 8px;
+    font-size: 20px;
+    color: var(--color-text-light);
+  }
+
+  .lead-content p {
+    margin: 0;
+    font-size: 14px;
+    color: rgba(239, 227, 214, 0.7);
+  }
+
+  .lead-form {
+    flex-shrink: 0;
+  }
+
+  .lead-inputs {
+    display: flex;
+    gap: 12px;
+  }
+
+  .lead-inputs input {
+    padding: 14px 20px;
+    border: 1px solid var(--color-line-light);
+    background: rgba(239, 227, 214, 0.06);
+    color: var(--color-text-light);
+    font-family: var(--font-body);
+    font-size: 14px;
+    width: 260px;
+    outline: none;
+    transition: border-color 0.2s ease;
+  }
+
+  .lead-inputs input::placeholder {
+    color: rgba(239, 227, 214, 0.4);
+  }
+
+  .lead-inputs input:focus {
+    border-color: var(--color-primary);
+  }
+
+  .lead-inputs .btn {
+    white-space: nowrap;
+    padding: 14px 24px;
+  }
+
+  .lead-msg {
+    margin: 10px 0 0;
+    font-size: 13px;
+    text-align: right;
+  }
+
+  .lead-msg.success {
+    color: #22c55e;
+  }
+
+  .lead-msg.error {
+    color: #ef4444;
+  }
+
+  .lead-privacy {
+    margin: var(--space-sm) 0 0;
+    font-size: 11px;
+    color: rgba(239, 227, 214, 0.45);
+    text-align: center;
+  }
+
+  @media (max-width: 768px) {
+    .lead-capture {
+      flex-direction: column;
+      text-align: center;
+    }
+
+    .lead-inputs {
+      flex-direction: column;
+    }
+
+    .lead-inputs input {
+      width: 100%;
+    }
+
+    .lead-msg {
+      text-align: center;
+    }
+  }
+</style>
+
+<script>
+  const form = document.getElementById('lead-form') as HTMLFormElement;
+  const container = document.getElementById('lead-capture') as HTMLElement;
+  const msg = document.getElementById('lead-msg') as HTMLElement;
+
+  if (form && container) {
+    const apiUrl = container.dataset.apiUrl;
+    const msgSuccess = container.dataset.msgSuccess || '';
+    const msgError = container.dataset.msgError || '';
+    const msgApi = container.dataset.msgApi || '';
+
+    form.addEventListener('submit', async (e) => {
+      e.preventDefault();
+
+      const emailInput = form.querySelector('input[name="email"]') as HTMLInputElement;
+      const btnText = form.querySelector('.btn-text') as HTMLElement;
+      const btnLoading = form.querySelector('.btn-loading') as HTMLElement;
+      const submitBtn = form.querySelector('button') as HTMLButtonElement;
+
+      if (!emailInput.value) return;
+
+      btnText.style.display = 'none';
+      btnLoading.style.display = 'inline';
+      submitBtn.disabled = true;
+
+      try {
+        const res = await fetch(`${apiUrl}/api/v1/leads`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            name: '',
+            email: emailInput.value,
+            message: msgApi,
+            source: 'website_lead_capture',
+            referrer: window.location.href
+          })
+        });
+
+        if (res.ok) {
+          msg.textContent = msgSuccess;
+          msg.className = 'lead-msg success';
+          msg.style.display = 'block';
+          emailInput.value = '';
+        } else {
+          throw new Error('Error');
+        }
+      } catch {
+        msg.textContent = msgError;
+        msg.className = 'lead-msg error';
+        msg.style.display = 'block';
+      } finally {
+        btnText.style.display = 'inline';
+        btnLoading.style.display = 'none';
+        submitBtn.disabled = false;
+      }
+    });
+  }
+</script>

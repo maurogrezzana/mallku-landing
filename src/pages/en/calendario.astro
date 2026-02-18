@@ -1,0 +1,426 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import Header from '../../components/Header.astro';
+import Footer from '../../components/Footer.astro';
+import WhatsAppFloat from '../../components/WhatsAppFloat.astro';
+import { getFechas } from '../../data/get-data';
+import type { FechaSalida } from '../../data/fechas';
+
+const locale = 'en';
+const fechasSalidas = await getFechas(locale);
+
+// Group dates by month
+function agruparPorMes(fechas: FechaSalida[]) {
+  const grupos: { [key: string]: { nombre: string; fechas: FechaSalida[] } } = {};
+
+  fechas.forEach(f => {
+    const fecha = new Date(f.fecha);
+    const key = `${fecha.getFullYear()}-${fecha.getMonth()}`;
+    const nombreMes = fecha.toLocaleDateString('en-US', { month: 'long', year: 'numeric' });
+
+    if (!grupos[key]) {
+      grupos[key] = { nombre: nombreMes.charAt(0).toUpperCase() + nombreMes.slice(1), fechas: [] };
+    }
+    grupos[key].fechas.push(f);
+  });
+
+  return Object.values(grupos);
+}
+
+const mesesConFechas = agruparPorMes(fechasSalidas);
+
+// Format individual date
+function formatearFecha(fechaStr: string) {
+  const fecha = new Date(fechaStr);
+  return {
+    dia: fecha.getDate(),
+    diaSemana: fecha.toLocaleDateString('en-US', { weekday: 'long' }),
+    mesCorto: fecha.toLocaleDateString('en-US', { month: 'short' })
+  };
+}
+
+// Generate WhatsApp link with date
+function generarWhatsAppLink(salida: FechaSalida) {
+  const fecha = new Date(salida.fecha);
+  const fechaTexto = fecha.toLocaleDateString('en-US', { day: 'numeric', month: 'long' });
+  const mensaje = `Hi, I'd like to check availability for ${salida.excursionNombre} on ${fechaTexto}`;
+  return `https://wa.me/5493815702549?text=${encodeURIComponent(mensaje)}`;
+}
+---
+
+<BaseLayout
+  title="Departure Calendar"
+  description="Upcoming dates for archaeological excursions in Tucuman. Quilmes, Tafi del Valle, menhirs. Check availability and secure your spot."
+  locale="en"
+>
+  <WhatsAppFloat locale="en" />
+  <Header locale="en" />
+
+  <main>
+    <!-- HERO -->
+    <section class="hero-calendario">
+      <div class="wrap text-center">
+        <h1>Departure <span class="accent">Calendar</span></h1>
+        <p class="hero-lead">
+          Check upcoming dates and secure your spot.
+          Small groups, limited availability.
+        </p>
+      </div>
+    </section>
+
+    <!-- LEGEND -->
+    <section class="leyenda-section">
+      <div class="wrap">
+        <div class="leyenda">
+          <div class="leyenda-item">
+            <span class="estado-dot disponible"></span>
+            <span>Available</span>
+          </div>
+          <div class="leyenda-item">
+            <span class="estado-dot pocos-cupos"></span>
+            <span>Few spots left</span>
+          </div>
+          <div class="leyenda-item">
+            <span class="estado-dot completo"></span>
+            <span>Full</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- CALENDAR BY MONTH -->
+    {mesesConFechas.map((mes) => (
+      <section class="section section-dark">
+        <div class="wrap">
+          <h2 class="mes-titulo">{mes.nombre}</h2>
+          <div class="fechas-grid">
+            {mes.fechas.map((salida) => {
+              const { dia, diaSemana, mesCorto } = formatearFecha(salida.fecha);
+              const whatsappLink = generarWhatsAppLink(salida);
+
+              return (
+                <div class={`fecha-card ${salida.estado}`}>
+                  <div class="fecha-header">
+                    <div class="fecha-dia">
+                      <span class="dia-numero">{dia}</span>
+                      <span class="dia-semana">{diaSemana}</span>
+                    </div>
+                    <span class={`estado-badge ${salida.estado}`}>
+                      {salida.estado === 'disponible' && `${salida.cuposDisponibles} spots`}
+                      {salida.estado === 'pocos-cupos' && `Only ${salida.cuposDisponibles}!`}
+                      {salida.estado === 'completo' && 'Full'}
+                    </span>
+                  </div>
+
+                  <div class="fecha-content">
+                    <h3>{salida.excursionNombre}</h3>
+                  </div>
+
+                  <div class="fecha-footer">
+                    {salida.estado !== 'completo' ? (
+                      <a href={whatsappLink} target="_blank" rel="noopener" class="btn btn-primary btn-full">
+                        Inquire
+                      </a>
+                    ) : (
+                      <button class="btn btn-disabled btn-full" disabled>
+                        No spots
+                      </button>
+                    )}
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+        </div>
+      </section>
+    ))}
+
+    <!-- INFO -->
+    <section class="section section-light">
+      <div class="wrap">
+        <div class="info-box">
+          <h3>How it works</h3>
+          <div class="info-grid">
+            <div class="info-item">
+              <span class="info-icon"><svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M20 2H4c-1.1 0-2 .9-2 2v18l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2z"/></svg></span>
+              <div>
+                <strong>Ask via WhatsApp</strong>
+                <p>Write to us and we'll confirm availability instantly.</p>
+              </div>
+            </div>
+            <div class="info-item">
+              <span class="info-icon"><svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M20 4H4c-1.11 0-1.99.89-1.99 2L2 18c0 1.11.89 2 2 2h16c1.11 0 2-.89 2-2V6c0-1.11-.89-2-2-2zm0 14H4v-6h16v6zm0-10H4V6h16v2z"/></svg></span>
+              <div>
+                <strong>30-50% deposit</strong>
+                <p>To confirm your spot. Balance due 48h before.</p>
+              </div>
+            </div>
+            <div class="info-item">
+              <span class="info-icon"><svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M12 4V1L8 5l4 4V6c3.31 0 6 2.69 6 6 0 1.01-.25 1.97-.7 2.8l1.46 1.46C19.54 15.03 20 13.57 20 12c0-4.42-3.58-8-8-8zm0 14c-3.31 0-6-2.69-6-6 0-1.01.25-1.97.7-2.8L5.24 7.74C4.46 8.97 4 10.43 4 12c0 4.42 3.58 8 8 8v3l4-4-4-4v3z"/></svg></span>
+              <div>
+                <strong>Flexible rescheduling</strong>
+                <p>With 7+ days notice, reschedule at no charge.</p>
+              </div>
+            </div>
+            <div class="info-item">
+              <span class="info-icon"><svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M16 11c1.66 0 2.99-1.34 2.99-3S17.66 5 16 5s-3 1.34-3 3 1.34 3 3 3zm-8 0c1.66 0 2.99-1.34 2.99-3S9.66 5 8 5 5 6.34 5 8s1.34 3 3 3zm0 2c-2.33 0-7 1.17-7 3.5V19h14v-2.5c0-2.33-4.67-3.5-7-3.5zm8 0c-.29 0-.62.02-.97.05 1.16.84 1.97 1.97 1.97 3.45V19h6v-2.5c0-2.33-4.67-3.5-7-3.5z"/></svg></span>
+              <div>
+                <strong>Small groups</strong>
+                <p>Maximum 8 people per departure to ensure quality.</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- CTA -->
+    <section class="section section-terracota">
+      <div class="wrap text-center">
+        <h2 class="section-title">Can't find the date you're looking for?</h2>
+        <p class="section-subtitle" style="color: rgba(255,255,255,0.85);">
+          Write to us and we'll notify you when new dates open.
+        </p>
+        <a class="btn" href="https://wa.me/5493815702549?text=Hi%2C%20I'd%20like%20to%20be%20notified%20about%20new%20dates" target="_blank" rel="noopener" style="background: #fff; color: var(--terracota);">
+          Notify me of new dates
+        </a>
+      </div>
+    </section>
+  </main>
+
+  <Footer locale="en" />
+</BaseLayout>
+
+<style>
+  .hero-calendario {
+    padding: 80px 0 40px;
+    background:
+      radial-gradient(ellipse 80% 50% at 50% 0%, rgba(209, 107, 56, 0.15), transparent),
+      var(--color-bg-dark);
+  }
+
+  .hero-calendario h1 {
+    margin: 0 0 20px;
+    font-size: clamp(40px, 6vw, 56px);
+  }
+
+  .hero-calendario .accent {
+    color: var(--color-primary);
+  }
+
+  .hero-lead {
+    font-size: 18px;
+    color: rgba(239, 227, 214, 0.8);
+    max-width: 55ch;
+    margin: 0 auto;
+  }
+
+  /* Legend */
+  .leyenda-section {
+    padding: 20px 0;
+    background: var(--color-bg-dark);
+    border-bottom: 1px solid var(--color-line-light);
+  }
+
+  .leyenda {
+    display: flex;
+    justify-content: center;
+    gap: 32px;
+    flex-wrap: wrap;
+  }
+
+  .leyenda-item {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 14px;
+    color: rgba(239, 227, 214, 0.8);
+  }
+
+  .estado-dot {
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+  }
+
+  .estado-dot.disponible {
+    background: #22c55e;
+  }
+
+  .estado-dot.pocos-cupos {
+    background: #f59e0b;
+  }
+
+  .estado-dot.completo {
+    background: #6b7280;
+  }
+
+  /* Month */
+  .mes-titulo {
+    font-size: 28px;
+    margin: 0 0 var(--space-lg);
+    padding-bottom: var(--space-sm);
+    border-bottom: 2px solid var(--color-primary);
+    display: inline-block;
+  }
+
+  /* Dates Grid */
+  .fechas-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: var(--space-md);
+  }
+
+  .fecha-card {
+    background: rgba(239, 227, 214, 0.05);
+    border: 1px solid var(--color-line-light);
+    border-radius: var(--radius-xl);
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+  }
+
+  .fecha-card:not(.completo):hover {
+    transform: translateY(-4px);
+    box-shadow: 0 12px 40px rgba(0, 0, 0, 0.25);
+  }
+
+  .fecha-card.completo {
+    opacity: 0.6;
+  }
+
+  .fecha-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 16px;
+  }
+
+  .fecha-dia {
+    display: flex;
+    flex-direction: column;
+  }
+
+  .dia-numero {
+    font-family: var(--font-display);
+    font-size: 36px;
+    line-height: 1;
+    color: var(--color-primary);
+  }
+
+  .dia-semana {
+    font-size: 13px;
+    text-transform: capitalize;
+    color: rgba(239, 227, 214, 0.7);
+  }
+
+  .estado-badge {
+    padding: 4px 10px;
+    border-radius: 0;
+    font-size: 11px;
+    font-weight: 600;
+    text-transform: uppercase;
+  }
+
+  .estado-badge.disponible {
+    background: rgba(34, 197, 94, 0.2);
+    color: #22c55e;
+  }
+
+  .estado-badge.pocos-cupos {
+    background: rgba(245, 158, 11, 0.2);
+    color: #f59e0b;
+  }
+
+  .estado-badge.completo {
+    background: rgba(107, 114, 128, 0.2);
+    color: #9ca3af;
+  }
+
+  .fecha-content {
+    flex-grow: 1;
+    margin-bottom: 16px;
+  }
+
+  .fecha-content h3 {
+    margin: 0 0 8px;
+    font-size: 16px;
+    line-height: 1.3;
+  }
+
+  .btn-disabled {
+    background: #6b7280;
+    cursor: not-allowed;
+    opacity: 0.7;
+  }
+
+  /* Info Box */
+  .info-box {
+    max-width: 900px;
+    margin: 0 auto;
+    padding: var(--space-xl);
+    background: #fff;
+    border: 2px solid var(--color-primary);
+    border-radius: var(--radius-xl);
+  }
+
+  .info-box h3 {
+    margin: 0 0 var(--space-lg);
+    font-size: 24px;
+    color: var(--azul);
+    text-align: center;
+  }
+
+  .info-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: var(--space-lg);
+  }
+
+  .info-item {
+    display: flex;
+    gap: 16px;
+  }
+
+  .info-icon {
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+  }
+
+  .info-icon svg {
+    width: 24px;
+    height: 24px;
+    fill: var(--terracota);
+  }
+
+  .info-item strong {
+    display: block;
+    margin-bottom: 4px;
+    color: var(--azul);
+  }
+
+  .info-item p {
+    margin: 0;
+    font-size: 14px;
+    color: var(--marron);
+    line-height: 1.5;
+  }
+
+  @media (max-width: 1100px) {
+    .fechas-grid {
+      grid-template-columns: repeat(2, 1fr);
+    }
+  }
+
+  @media (max-width: 700px) {
+    .fechas-grid {
+      grid-template-columns: 1fr;
+    }
+
+    .info-grid {
+      grid-template-columns: 1fr;
+    }
+  }
+</style>
