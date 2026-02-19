@@ -43,7 +43,7 @@ function generateBookingNumber(tipo: 'fecha-fija' | 'personalizada'): string {
  */
 app.post('/', async (c) => {
   const db = c.get('db');
-  const adminEmail = c.env.ADMIN_EMAIL || 'mallkuexcursiones@gmail.com';
+  const adminEmail = c.env?.ADMIN_EMAIL || process.env.ADMIN_EMAIL || 'mallkuexcursiones@gmail.com';
   const body = await c.req.json();
 
   // Validar input
@@ -528,7 +528,7 @@ app.get('/admin/:id', async (c) => {
  */
 app.patch('/admin/:id', async (c) => {
   const db = c.get('db');
-  const adminEmail = c.env.ADMIN_EMAIL || 'mallkuexcursiones@gmail.com';
+  const adminEmail = c.env?.ADMIN_EMAIL || process.env.ADMIN_EMAIL || 'mallkuexcursiones@gmail.com';
   const id = c.req.param('id');
   const body = await c.req.json();
 
