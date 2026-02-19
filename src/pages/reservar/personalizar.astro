@@ -328,13 +328,13 @@ import { excursiones } from '../../data/excursiones';
       excursionSlug: formData.get('excursionSlug') as string,
       fechaPropuesta: new Date(fechaPropuestaVal + 'T12:00:00').toISOString(),
       cantidadPersonas: parseInt(formData.get('cantidadPersonas') as string),
-      nombre: formData.get('nombre') as string,
+      nombreCompleto: formData.get('nombre') as string,
       email: formData.get('email') as string,
       telefono: formData.get('telefono') as string,
       notasCliente: formData.get('notasCliente') as string || undefined,
     };
 
-    if (!body.excursionSlug || !fechaPropuestaVal || !body.cantidadPersonas || !body.nombre || !body.email || !body.telefono) {
+    if (!body.excursionSlug || !fechaPropuestaVal || !body.cantidadPersonas || !body.nombreCompleto || !body.email || !body.telefono) {
       formError.textContent = 'Por favor completá todos los campos requeridos.';
       formError.style.display = 'block';
       submitBtn.disabled = false;

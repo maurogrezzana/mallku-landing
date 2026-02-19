@@ -257,7 +257,7 @@ import WhatsAppFloat from '../components/WhatsAppFloat.astro';
     const body = {
       tipo: 'fecha-fija',
       dateId: storedDateId,
-      nombre: formData.get('nombre') as string,
+      nombreCompleto: formData.get('nombre') as string,
       email: formData.get('email') as string,
       telefono: formData.get('telefono') as string,
       dni: formData.get('dni') as string || undefined,
@@ -266,7 +266,7 @@ import WhatsAppFloat from '../components/WhatsAppFloat.astro';
     };
 
     // Basic validation
-    if (!body.nombre || !body.email || !body.telefono || !body.cantidadPersonas) {
+    if (!body.nombreCompleto || !body.email || !body.telefono || !body.cantidadPersonas) {
       formError.textContent = 'Por favor completá todos los campos requeridos.';
       formError.style.display = 'block';
       submitBtn.disabled = false;

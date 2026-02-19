@@ -183,11 +183,16 @@ function generarWhatsAppLink(salida: FechaSalida) {
       <div class="wrap text-center">
         <h2 class="section-title">¿No encontrás la fecha que buscás?</h2>
         <p class="section-subtitle" style="color: rgba(255,255,255,0.85);">
-          Escribinos y te avisamos cuando abramos nuevas fechas.
+          Proponé tu propia fecha y te confirmamos disponibilidad en 24-48hs.
         </p>
-        <a class="btn" href="https://wa.me/5493815702549?text=Hola%2C%20quiero%20que%20me%20avisen%20sobre%20nuevas%20fechas" target="_blank" rel="noopener" style="background: #fff; color: var(--terracota);">
-          Avisarme de nuevas fechas
-        </a>
+        <div class="cta-btns">
+          <a class="btn" href="/reservar/personalizar" style="background: #fff; color: var(--terracota);">
+            Personalizar mi fecha
+          </a>
+          <a class="btn" href="https://wa.me/5493815702549?text=Hola%2C%20quiero%20que%20me%20avisen%20sobre%20nuevas%20fechas" target="_blank" rel="noopener" style="background: transparent; color: #fff; border: 1px solid rgba(255,255,255,0.5);">
+            Consultar por WhatsApp
+          </a>
+        </div>
       </div>
     </section>
   </main>
@@ -540,5 +545,13 @@ function generarWhatsAppLink(salida: FechaSalida) {
     .info-grid {
       grid-template-columns: 1fr;
     }
+  }
+
+  .cta-btns {
+    display: flex;
+    gap: var(--space-md);
+    justify-content: center;
+    flex-wrap: wrap;
+    margin-top: var(--space-lg);
   }
 </style>
