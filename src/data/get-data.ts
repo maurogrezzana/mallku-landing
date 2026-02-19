@@ -44,7 +44,46 @@ export async function getPostBySlug(slug: string, locale: Locale): Promise<Post 
   return data.find(p => p.slug === slug);
 }
 
+// Map API date response to FechaSalida format
+function mapApiDate(d: any): FechaSalida {
+  const precio = d.precioOverride || d.precioBase;
+  const precioFormateado = precio
+    ? `$${Math.round(precio / 100).toLocaleString('es-AR')}`
+    : '';
+  const fechaStr = typeof d.fecha === 'string'
+    ? d.fecha.substring(0, 10)
+    : new Date(d.fecha).toISOString().substring(0, 10);
+  return {
+    id: d.id,
+    excursionSlug: d.excursionSlug,
+    excursionNombre: d.excursionTitulo,
+    fecha: fechaStr,
+    cuposDisponibles: d.cuposDisponibles,
+    cuposTotales: d.cuposTotales,
+    estado: d.estado as FechaSalida['estado'],
+    precio: precioFormateado,
+  };
+}
+
 export async function getFechas(locale: Locale): Promise<FechaSalida[]> {
+  // Try fetching from production API at build time for fresh calendar data
+  try {
+    const controller = new AbortController();
+    const timeout = setTimeout(() => controller.abort(), 5000);
+    const res = await fetch('https://mallku-api.vercel.app/api/v1/dates/calendar', {
+      signal: controller.signal,
+    });
+    clearTimeout(timeout);
+    if (res.ok) {
+      const data = await res.json();
+      if (data.success && Array.isArray(data.data) && data.data.length > 0) {
+        return data.data.map(mapApiDate);
+      }
+    }
+  } catch {
+    // Fall through to hardcoded data
+  }
+  // Fallback to hardcoded data
   switch (locale) {
     case 'en': return (await import('./fechas.en')).fechasSalidas;
     case 'fr': return (await import('./fechas.fr')).fechasSalidas;

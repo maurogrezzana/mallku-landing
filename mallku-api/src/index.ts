@@ -8,6 +8,9 @@ import { initPosthog, shutdown as shutdownPosthog } from './lib/analytics';
 import leadsRouter from './routes/leads';
 import analyticsRouter from './routes/analytics';
 import authRouter from './routes/auth';
+import excursionsRouter from './routes/excursions';
+import datesRouter from './routes/dates';
+import bookingsRouter from './routes/bookings';
 import { authMiddleware } from './lib/auth';
 
 // ==========================================
@@ -61,9 +64,13 @@ app.use(
       const allowedOrigins = [
         'http://localhost:4321', // Astro dev
         'http://localhost:3000', // Dashboard dev
+        'http://localhost:5173', // Vite dev
+        'http://localhost:5174', // Vite dev (puerto alternativo)
+        'http://localhost:5175', // Vite dev (puerto alternativo)
         'https://mallku.com.ar',
         'https://www.mallku.com.ar',
         'https://admin.mallku.com.ar',
+        'https://mallku-admin.vercel.app',
       ];
 
       return allowedOrigins.includes(origin) ? origin : 'https://mallku.com.ar';
@@ -76,25 +83,23 @@ app.use(
   })
 );
 
-// Helper: get env var from c.env (Cloudflare Workers) or process.env (Node.js/Vercel)
-const getEnv = (c: any, key: string): string => {
-  return c.env?.[key] || process.env[key] || '';
-};
-
 // Inicializar servicios y DB en cada request
 app.use('*', async (c, next) => {
+  // Soporte para Cloudflare Workers (c.env) y Node.js/Vercel (process.env)
+  const dbUrl = c.env?.DATABASE_URL || process.env.DATABASE_URL || '';
+  const resendKey = c.env?.RESEND_API_KEY || process.env.RESEND_API_KEY || '';
+  const posthogKey = c.env?.POSTHOG_API_KEY || process.env.POSTHOG_API_KEY || '';
+
   // Inicializar base de datos
-  const db = createDb(getEnv(c, 'DATABASE_URL'));
+  const db = createDb(dbUrl);
   c.set('db', db);
 
   // Inicializar Resend
-  const resendKey = getEnv(c, 'RESEND_API_KEY');
   if (resendKey) {
     initResend(resendKey);
   }
 
   // Inicializar Posthog
-  const posthogKey = getEnv(c, 'POSTHOG_API_KEY');
   if (posthogKey) {
     initPosthog(posthogKey);
   }
@@ -115,7 +120,7 @@ app.get('/', (c) => {
     name: 'Mallku API',
     version: '1.0.0',
     status: 'running',
-    environment: getEnv(c, 'ENVIRONMENT') || 'development',
+    environment: c.env?.ENVIRONMENT || process.env.ENVIRONMENT || 'production',
     timestamp: new Date().toISOString(),
   });
 });
@@ -125,9 +130,9 @@ app.get('/health', (c) => {
   return c.json({
     status: 'healthy',
     services: {
-      database: !!getEnv(c, 'DATABASE_URL'),
-      email: !!getEnv(c, 'RESEND_API_KEY'),
-      analytics: !!getEnv(c, 'POSTHOG_API_KEY'),
+      database: !!(c.env?.DATABASE_URL || process.env.DATABASE_URL),
+      email: !!(c.env?.RESEND_API_KEY || process.env.RESEND_API_KEY),
+      analytics: !!(c.env?.POSTHOG_API_KEY || process.env.POSTHOG_API_KEY),
     },
     timestamp: new Date().toISOString(),
   });
@@ -138,6 +143,10 @@ app.route('/api/v1/auth', authRouter);
 app.post('/api/v1/leads', async (c, next) => await next()); // Lead creation is public
 app.route('/api/v1/leads', leadsRouter);
 app.route('/api/v1/analytics', analyticsRouter);
+app.route('/api/v1/excursions', excursionsRouter);
+app.route('/api/v1/dates', datesRouter);
+app.post('/api/v1/bookings', async (c, next) => await next()); // Booking creation is public
+app.route('/api/v1/bookings', bookingsRouter);
 
 // API v1 - Rutas admin (protegidas)
 app.use('/api/v1/admin/*', authMiddleware());
@@ -247,7 +256,7 @@ app.onError((err, c) => {
     {
       success: false,
       message: 'Error interno del servidor',
-      error: getEnv(c, 'ENVIRONMENT') === 'development' ? err.message : undefined,
+      error: (c.env?.ENVIRONMENT || process.env.ENVIRONMENT) === 'development' ? err.message : undefined,
     },
     500
   );

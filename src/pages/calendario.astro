@@ -3,7 +3,10 @@ import BaseLayout from '../layouts/BaseLayout.astro';
 import Header from '../components/Header.astro';
 import Footer from '../components/Footer.astro';
 import WhatsAppFloat from '../components/WhatsAppFloat.astro';
-import { fechasSalidas, type FechaSalida } from '../data/fechas';
+import { getFechas } from '../data/get-data';
+
+const fechasSalidas = await getFechas('es');
+type FechaSalida = Awaited<ReturnType<typeof getFechas>>[number];
 
 // Group dates by month
 function agruparPorMes(fechas: FechaSalida[]) {
@@ -24,6 +27,8 @@ function agruparPorMes(fechas: FechaSalida[]) {
 }
 
 const mesesConFechas = agruparPorMes(fechasSalidas);
+
+const API_URL = 'https://mallku-api.vercel.app';
 
 // Format individual date
 function formatearFecha(fechaStr: string) {
@@ -84,6 +89,7 @@ function generarWhatsAppLink(salida: FechaSalida) {
     </section>
 
     <!-- CALENDARIO POR MES -->
+    <div id="calendar-root" data-api-url={API_URL} data-locale="es">
     {mesesConFechas.map((mes) => (
       <section class="section section-dark">
         <div class="wrap">
@@ -93,8 +99,9 @@ function generarWhatsAppLink(salida: FechaSalida) {
               const { dia, diaSemana, mesCorto } = formatearFecha(salida.fecha);
               const whatsappLink = generarWhatsAppLink(salida);
 
+              const fechaNorm = salida.fecha.substring(0, 10);
               return (
-                <div class={`fecha-card ${salida.estado}`}>
+                <div class={`fecha-card ${salida.estado}`} data-slug={salida.excursionSlug} data-fecha={fechaNorm}>
                   <div class="fecha-header">
                     <div class="fecha-dia">
                       <span class="dia-numero">{dia}</span>
@@ -129,6 +136,8 @@ function generarWhatsAppLink(salida: FechaSalida) {
         </div>
       </section>
     ))}
+
+    </div>{/* calendar-root */}
 
     <!-- INFO -->
     <section class="section section-light">
@@ -174,17 +183,136 @@ function generarWhatsAppLink(salida: FechaSalida) {
       <div class="wrap text-center">
         <h2 class="section-title">¿No encontrás la fecha que buscás?</h2>
         <p class="section-subtitle" style="color: rgba(255,255,255,0.85);">
-          Escribinos y te avisamos cuando abramos nuevas fechas.
+          Proponé tu propia fecha y te confirmamos disponibilidad en 24-48hs.
         </p>
-        <a class="btn" href="https://wa.me/5493815702549?text=Hola%2C%20quiero%20que%20me%20avisen%20sobre%20nuevas%20fechas" target="_blank" rel="noopener" style="background: #fff; color: var(--terracota);">
-          Avisarme de nuevas fechas
-        </a>
+        <div class="cta-btns">
+          <a class="btn" href="/reservar/personalizar" style="background: #fff; color: var(--terracota);">
+            Personalizar mi fecha
+          </a>
+          <a class="btn" href="https://wa.me/5493815702549?text=Hola%2C%20quiero%20que%20me%20avisen%20sobre%20nuevas%20fechas" target="_blank" rel="noopener" style="background: transparent; color: #fff; border: 1px solid rgba(255,255,255,0.5);">
+            Consultar por WhatsApp
+          </a>
+        </div>
       </div>
     </section>
   </main>
 
   <Footer />
 </BaseLayout>
+
+<script>
+  const root = document.getElementById('calendar-root') as HTMLElement;
+  const API_URL = root?.dataset.apiUrl || 'https://mallku-api.vercel.app';
+
+  function getLang(locale: string): string {
+    if (locale === 'en') return 'en-US';
+    if (locale === 'fr') return 'fr-FR';
+    return 'es-AR';
+  }
+
+  function buildBadgeText(estado: string, cupos: number, locale: string): string {
+    if (locale === 'en') {
+      if (estado === 'disponible') return `${cupos} spots`;
+      if (estado === 'pocos-cupos') return `Only ${cupos}!`;
+      return 'Full';
+    }
+    if (locale === 'fr') {
+      if (estado === 'disponible') return `${cupos} places`;
+      if (estado === 'pocos-cupos') return `Plus que ${cupos}!`;
+      return 'Complet';
+    }
+    if (estado === 'disponible') return `${cupos} cupos`;
+    if (estado === 'pocos-cupos') return `¡Solo ${cupos}!`;
+    return 'Completo';
+  }
+
+  function buildButtonLabel(estado: string, locale: string): string {
+    if (locale === 'en') return estado !== 'completo' ? 'Inquire' : 'No spots';
+    if (locale === 'fr') return estado !== 'completo' ? 'Renseigner' : 'Complet';
+    return estado !== 'completo' ? 'Consultar' : 'Sin cupos';
+  }
+
+  function renderCalendar(dates: any[], locale: string): string {
+    if (!dates.length) return '';
+
+    const lang = getLang(locale);
+
+    // Group by month
+    const meses: Map<string, { nombre: string; fechas: any[] }> = new Map();
+    dates.forEach((d: any) => {
+      const fecha = new Date(d.fecha);
+      const key = `${fecha.getFullYear()}-${String(fecha.getMonth()).padStart(2, '0')}`;
+      if (!meses.has(key)) {
+        const nombreMes = fecha.toLocaleDateString(lang, { month: 'long', year: 'numeric' });
+        meses.set(key, {
+          nombre: nombreMes.charAt(0).toUpperCase() + nombreMes.slice(1),
+          fechas: [],
+        });
+      }
+      meses.get(key)!.fechas.push(d);
+    });
+
+    // Sort months chronologically
+    const sortedMeses = [...meses.entries()].sort(([a], [b]) => a.localeCompare(b));
+
+    return sortedMeses.map(([, mes]) => {
+      const fechasHtml = mes.fechas.map((d: any) => {
+        const fecha = new Date(d.fecha);
+        const dia = fecha.getDate();
+        const diaSemana = fecha.toLocaleDateString(lang, { weekday: 'long' });
+        const fechaNorm = fecha.toISOString().substring(0, 10);
+        const badgeText = buildBadgeText(d.estado, d.cuposDisponibles, locale);
+        const btnLabel = buildButtonLabel(d.estado, locale);
+
+        const footerBtn = d.estado !== 'completo'
+          ? `<a href="/reservar?dateId=${d.id}" class="btn btn-primary btn-full">${btnLabel}</a>`
+          : `<button class="btn btn-disabled btn-full" disabled>${btnLabel}</button>`;
+
+        return `
+          <div class="fecha-card ${d.estado}" data-slug="${d.excursionSlug}" data-fecha="${fechaNorm}">
+            <div class="fecha-header">
+              <div class="fecha-dia">
+                <span class="dia-numero">${dia}</span>
+                <span class="dia-semana">${diaSemana}</span>
+              </div>
+              <span class="estado-badge ${d.estado}">${badgeText}</span>
+            </div>
+            <div class="fecha-content">
+              <h3>${d.excursionTitulo}</h3>
+            </div>
+            <div class="fecha-footer">${footerBtn}</div>
+          </div>`;
+      }).join('');
+
+      return `
+        <section class="section section-dark">
+          <div class="wrap">
+            <h2 class="mes-titulo">${mes.nombre}</h2>
+            <div class="fechas-grid">${fechasHtml}</div>
+          </div>
+        </section>`;
+    }).join('');
+  }
+
+  async function actualizarCalendario() {
+    try {
+      const res = await fetch(`${API_URL}/api/v1/dates/calendar`);
+      if (!res.ok) return;
+      const json = await res.json();
+      if (!json.success || !Array.isArray(json.data)) return;
+
+      const locale = root?.dataset.locale || 'es';
+      const html = renderCalendar(json.data, locale);
+      if (html && root) root.innerHTML = html;
+    } catch {
+      // Silently fail — SSG fallback remains visible
+    }
+  }
+
+  // Update on page load and every 60 seconds
+  actualizarCalendario();
+  setInterval(actualizarCalendario, 60000);
+</script>
 
 <style>
   .hero-calendario {
@@ -417,5 +545,13 @@ function generarWhatsAppLink(salida: FechaSalida) {
     .info-grid {
       grid-template-columns: 1fr;
     }
+  }
+
+  .cta-btns {
+    display: flex;
+    gap: var(--space-md);
+    justify-content: center;
+    flex-wrap: wrap;
+    margin-top: var(--space-lg);
   }
 </style>
