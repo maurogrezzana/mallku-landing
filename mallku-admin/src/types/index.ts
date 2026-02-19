@@ -65,7 +65,7 @@ export interface Date {
   cuposTotales: number;
   cuposReservados: number;
   cuposDisponibles?: number;
-  estado: 'disponible' | 'pocos-cupos' | 'completo';
+  estado: 'disponible' | 'pocos-cupos' | 'completo' | 'cancelado';
   precioOverride: number | null;
   precioBase?: number;
   notas: string | null;

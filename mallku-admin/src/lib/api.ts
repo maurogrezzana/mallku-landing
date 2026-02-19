@@ -5,8 +5,6 @@ import type {
   Date,
   CreateDateInput,
   Booking,
-  CreateBookingFechaFijaInput,
-  CreateBookingPersonalizadaInput,
   ReviewPropuestaInput,
   LoginInput,
   AuthResponse,

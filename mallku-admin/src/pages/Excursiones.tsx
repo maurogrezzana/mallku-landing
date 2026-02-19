@@ -11,7 +11,6 @@ import {
 } from '@/components/ui/table';
 import { excursionesApi } from '@/lib/api';
 import { Pencil, Trash2, Plus } from 'lucide-react';
-import type { Excursion } from '@/types';
 
 export function ExcursionesPage() {
   const queryClient = useQueryClient();

@@ -84,7 +84,7 @@ interface FechaFormDialogProps {
   onClose: () => void;
   initialData?: FechaSalida | null;
   excursiones: { id: string; titulo: string }[];
-  onSubmit: (data: CreateDateInput) => Promise<void>;
+  onSubmit: (data: CreateDateInput) => Promise<unknown>;
   isSubmitting: boolean;
 }
 
