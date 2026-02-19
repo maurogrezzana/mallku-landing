@@ -205,37 +205,60 @@ function generarWhatsAppLink(salida: FechaSalida) {
     return 'Complet';
   }
 
+  function renderCalendar(dates: any[]): string {
+    if (!dates.length) return '';
+    const meses: Map<string, { nombre: string; fechas: any[] }> = new Map();
+    dates.forEach((d: any) => {
+      const fecha = new Date(d.fecha);
+      const key = `${fecha.getFullYear()}-${String(fecha.getMonth()).padStart(2, '0')}`;
+      if (!meses.has(key)) {
+        const nombreMes = fecha.toLocaleDateString('fr-FR', { month: 'long', year: 'numeric' });
+        meses.set(key, { nombre: nombreMes.charAt(0).toUpperCase() + nombreMes.slice(1), fechas: [] });
+      }
+      meses.get(key)!.fechas.push(d);
+    });
+    const sorted = [...meses.entries()].sort(([a], [b]) => a.localeCompare(b));
+    return sorted.map(([, mes]) => {
+      const fechasHtml = mes.fechas.map((d: any) => {
+        const fecha = new Date(d.fecha);
+        const dia = fecha.getDate();
+        const diaSemana = fecha.toLocaleDateString('fr-FR', { weekday: 'long' });
+        const fechaNorm = fecha.toISOString().substring(0, 10);
+        const badge = buildBadgeText(d.estado, d.cuposDisponibles);
+        const footerBtn = d.estado !== 'completo'
+          ? `<a href="/reservar?dateId=${d.id}" class="btn btn-primary btn-full">Réserver</a>`
+          : `<button class="btn btn-disabled btn-full" disabled>Sans places</button>`;
+        return `
+          <div class="fecha-card ${d.estado}" data-slug="${d.excursionSlug}" data-fecha="${fechaNorm}">
+            <div class="fecha-header">
+              <div class="fecha-dia">
+                <span class="dia-numero">${dia}</span>
+                <span class="dia-semana">${diaSemana}</span>
+              </div>
+              <span class="estado-badge ${d.estado}">${badge}</span>
+            </div>
+            <div class="fecha-content"><h3>${d.excursionTitulo}</h3></div>
+            <div class="fecha-footer">${footerBtn}</div>
+          </div>`;
+      }).join('');
+      return `
+        <section class="section section-dark">
+          <div class="wrap">
+            <h2 class="mes-titulo">${mes.nombre}</h2>
+            <div class="fechas-grid">${fechasHtml}</div>
+          </div>
+        </section>`;
+    }).join('');
+  }
+
   async function actualizarCalendario() {
     try {
       const res = await fetch(`${API_URL}/api/v1/dates/calendar`);
       if (!res.ok) return;
       const json = await res.json();
       if (!json.success || !Array.isArray(json.data)) return;
-
-      json.data.forEach((date: any) => {
-        const fechaNorm = new Date(date.fecha).toISOString().substring(0, 10);
-        const card = root?.querySelector(
-          `[data-slug="${date.excursionSlug}"][data-fecha="${fechaNorm}"]`
-        ) as HTMLElement | null;
-        if (!card) return;
-
-        card.className = `fecha-card ${date.estado}`;
-
-        const badge = card.querySelector('.estado-badge') as HTMLElement | null;
-        if (badge) {
-          badge.className = `estado-badge ${date.estado}`;
-          badge.textContent = buildBadgeText(date.estado, date.cuposDisponibles);
-        }
-
-        const footer = card.querySelector('.fecha-footer') as HTMLElement | null;
-        if (footer) {
-          if (date.estado !== 'completo') {
-            footer.innerHTML = `<a href="/reservar?dateId=${date.id}" class="btn btn-primary btn-full">Réserver</a>`;
-          } else {
-            footer.innerHTML = `<button class="btn btn-disabled btn-full" disabled>Sans places</button>`;
-          }
-        }
-      });
+      const html = renderCalendar(json.data);
+      if (html && root) root.innerHTML = html;
     } catch {
       // Silently fail — SSG fallback remains
     }

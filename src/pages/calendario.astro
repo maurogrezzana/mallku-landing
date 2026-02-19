@@ -199,6 +199,12 @@ function generarWhatsAppLink(salida: FechaSalida) {
   const root = document.getElementById('calendar-root') as HTMLElement;
   const API_URL = root?.dataset.apiUrl || 'https://mallku-api.vercel.app';
 
+  function getLang(locale: string): string {
+    if (locale === 'en') return 'en-US';
+    if (locale === 'fr') return 'fr-FR';
+    return 'es-AR';
+  }
+
   function buildBadgeText(estado: string, cupos: number, locale: string): string {
     if (locale === 'en') {
       if (estado === 'disponible') return `${cupos} spots`;
@@ -210,30 +216,77 @@ function generarWhatsAppLink(salida: FechaSalida) {
       if (estado === 'pocos-cupos') return `Plus que ${cupos}!`;
       return 'Complet';
     }
-    // es
     if (estado === 'disponible') return `${cupos} cupos`;
     if (estado === 'pocos-cupos') return `¡Solo ${cupos}!`;
     return 'Completo';
-  }
-
-  function buildWhatsAppMsg(excursionNombre: string, fechaStr: string, locale: string): string {
-    const fecha = new Date(fechaStr);
-    if (locale === 'en') {
-      const fechaTexto = fecha.toLocaleDateString('en-US', { day: 'numeric', month: 'long' });
-      return `Hi, I'd like to check availability for ${excursionNombre} on ${fechaTexto}`;
-    }
-    if (locale === 'fr') {
-      const fechaTexto = fecha.toLocaleDateString('fr-FR', { day: 'numeric', month: 'long' });
-      return `Bonjour, je souhaite vérifier la disponibilité pour ${excursionNombre} le ${fechaTexto}`;
-    }
-    const fechaTexto = fecha.toLocaleDateString('es-AR', { day: 'numeric', month: 'long' });
-    return `Hola, quiero consultar disponibilidad para ${excursionNombre} del ${fechaTexto}`;
   }
 
   function buildButtonLabel(estado: string, locale: string): string {
     if (locale === 'en') return estado !== 'completo' ? 'Inquire' : 'No spots';
     if (locale === 'fr') return estado !== 'completo' ? 'Renseigner' : 'Complet';
     return estado !== 'completo' ? 'Consultar' : 'Sin cupos';
+  }
+
+  function renderCalendar(dates: any[], locale: string): string {
+    if (!dates.length) return '';
+
+    const lang = getLang(locale);
+
+    // Group by month
+    const meses: Map<string, { nombre: string; fechas: any[] }> = new Map();
+    dates.forEach((d: any) => {
+      const fecha = new Date(d.fecha);
+      const key = `${fecha.getFullYear()}-${String(fecha.getMonth()).padStart(2, '0')}`;
+      if (!meses.has(key)) {
+        const nombreMes = fecha.toLocaleDateString(lang, { month: 'long', year: 'numeric' });
+        meses.set(key, {
+          nombre: nombreMes.charAt(0).toUpperCase() + nombreMes.slice(1),
+          fechas: [],
+        });
+      }
+      meses.get(key)!.fechas.push(d);
+    });
+
+    // Sort months chronologically
+    const sortedMeses = [...meses.entries()].sort(([a], [b]) => a.localeCompare(b));
+
+    return sortedMeses.map(([, mes]) => {
+      const fechasHtml = mes.fechas.map((d: any) => {
+        const fecha = new Date(d.fecha);
+        const dia = fecha.getDate();
+        const diaSemana = fecha.toLocaleDateString(lang, { weekday: 'long' });
+        const fechaNorm = fecha.toISOString().substring(0, 10);
+        const badgeText = buildBadgeText(d.estado, d.cuposDisponibles, locale);
+        const btnLabel = buildButtonLabel(d.estado, locale);
+
+        const footerBtn = d.estado !== 'completo'
+          ? `<a href="/reservar?dateId=${d.id}" class="btn btn-primary btn-full">${btnLabel}</a>`
+          : `<button class="btn btn-disabled btn-full" disabled>${btnLabel}</button>`;
+
+        return `
+          <div class="fecha-card ${d.estado}" data-slug="${d.excursionSlug}" data-fecha="${fechaNorm}">
+            <div class="fecha-header">
+              <div class="fecha-dia">
+                <span class="dia-numero">${dia}</span>
+                <span class="dia-semana">${diaSemana}</span>
+              </div>
+              <span class="estado-badge ${d.estado}">${badgeText}</span>
+            </div>
+            <div class="fecha-content">
+              <h3>${d.excursionTitulo}</h3>
+            </div>
+            <div class="fecha-footer">${footerBtn}</div>
+          </div>`;
+      }).join('');
+
+      return `
+        <section class="section section-dark">
+          <div class="wrap">
+            <h2 class="mes-titulo">${mes.nombre}</h2>
+            <div class="fechas-grid">${fechasHtml}</div>
+          </div>
+        </section>`;
+    }).join('');
   }
 
   async function actualizarCalendario() {
@@ -244,36 +297,8 @@ function generarWhatsAppLink(salida: FechaSalida) {
       if (!json.success || !Array.isArray(json.data)) return;
 
       const locale = root?.dataset.locale || 'es';
-
-      json.data.forEach((date: any) => {
-        const fechaNorm = new Date(date.fecha).toISOString().substring(0, 10);
-        const card = root?.querySelector(
-          `[data-slug="${date.excursionSlug}"][data-fecha="${fechaNorm}"]`
-        ) as HTMLElement | null;
-        if (!card) return;
-
-        // Update card estado class
-        card.className = `fecha-card ${date.estado}`;
-
-        // Update badge
-        const badge = card.querySelector('.estado-badge') as HTMLElement | null;
-        if (badge) {
-          badge.className = `estado-badge ${date.estado}`;
-          badge.textContent = buildBadgeText(date.estado, date.cuposDisponibles, locale);
-        }
-
-        // Update footer button — link to online booking form
-        const footer = card.querySelector('.fecha-footer') as HTMLElement | null;
-        if (footer) {
-          if (date.estado !== 'completo') {
-            const btnLabel = buildButtonLabel(date.estado, locale);
-            footer.innerHTML = `<a href="/reservar?dateId=${date.id}" class="btn btn-primary btn-full">${btnLabel}</a>`;
-          } else {
-            const btnLabel = buildButtonLabel('completo', locale);
-            footer.innerHTML = `<button class="btn btn-disabled btn-full" disabled>${btnLabel}</button>`;
-          }
-        }
-      });
+      const html = renderCalendar(json.data, locale);
+      if (html && root) root.innerHTML = html;
     } catch {
       // Silently fail — SSG fallback remains visible
     }
