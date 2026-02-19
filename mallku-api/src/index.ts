@@ -70,6 +70,7 @@ app.use(
         'https://mallku.com.ar',
         'https://www.mallku.com.ar',
         'https://admin.mallku.com.ar',
+        'https://mallku-admin.vercel.app',
       ];
 
       return allowedOrigins.includes(origin) ? origin : 'https://mallku.com.ar';
