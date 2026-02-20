@@ -137,11 +137,11 @@ export const createBookingSchema = z.discriminatedUnion('tipo', [
 export const reviewPropuestaSchema = z.discriminatedUnion('estadoPropuesta', [
   z.object({
     estadoPropuesta: z.literal('aprobada'),
-    dateId: z.string().uuid('ID de fecha inválido'), // La fecha creada para esta propuesta
+    dateId: z.string().uuid('ID de fecha inválido').optional(), // Opcional: si se asigna vincula a un slot del calendario
   }),
   z.object({
     estadoPropuesta: z.literal('rechazada'),
-    motivoRechazo: z.string().min(10, 'El motivo debe tener al menos 10 caracteres'),
+    motivoRechazo: z.string().min(1, 'Ingresá un motivo de rechazo'),
   }),
 ]);
 

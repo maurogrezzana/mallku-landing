@@ -559,17 +559,6 @@ app.patch('/admin/:id', async (c) => {
     const data = validation.data;
 
     if (data.estadoPropuesta === 'aprobada') {
-      // Verificar que la fecha existe
-      const [date] = await db
-        .select()
-        .from(dates)
-        .where(eq(dates.id, data.dateId));
-
-      if (!date) {
-        return c.json({ success: false, message: 'Fecha no encontrada' }, 404);
-      }
-
-      // Calcular precio
       if (!booking.excursionId) {
         return c.json({ success: false, message: 'Booking no tiene excursión asignada' }, 400);
       }
@@ -579,15 +568,50 @@ app.patch('/admin/:id', async (c) => {
         .from(excursions)
         .where(eq(excursions.id, booking.excursionId));
 
-      const precioUnitario = date.precioOverride || excursion.precioBase || 0;
-      const precioTotal = precioUnitario * booking.cantidadPersonas;
+      let precioTotal = booking.precioTotal || 0;
+      let fechaConfirmada: string | null = null;
+
+      // Si se asigna un slot del calendario: vincular, actualizar cupos y calcular precio
+      if (data.dateId) {
+        const [date] = await db
+          .select()
+          .from(dates)
+          .where(eq(dates.id, data.dateId));
+
+        if (!date) {
+          return c.json({ success: false, message: 'Fecha no encontrada' }, 404);
+        }
+
+        const precioUnitario = date.precioOverride || excursion.precioBase || 0;
+        precioTotal = precioUnitario * booking.cantidadPersonas;
+        fechaConfirmada = new Date(date.fecha).toLocaleDateString('es-AR', {
+          year: 'numeric', month: 'long', day: 'numeric'
+        });
+
+        await db
+          .update(dates)
+          .set({
+            cuposReservados: date.cuposReservados + booking.cantidadPersonas,
+            updatedAt: new Date(),
+          })
+          .where(eq(dates.id, data.dateId));
+      } else {
+        // Sin slot: usar fechaPropuesta del cliente y precio base de la excursión
+        const precioUnitario = excursion?.precioBase || 0;
+        precioTotal = precioUnitario * booking.cantidadPersonas;
+        fechaConfirmada = booking.fechaPropuesta
+          ? new Date(booking.fechaPropuesta).toLocaleDateString('es-AR', {
+              year: 'numeric', month: 'long', day: 'numeric'
+            })
+          : 'A confirmar';
+      }
 
       // Actualizar booking
       const [updated] = await db
         .update(bookings)
         .set({
           estadoPropuesta: 'aprobada',
-          dateId: data.dateId,
+          ...(data.dateId ? { dateId: data.dateId } : {}),
           precioTotal,
           status: 'confirmed',
           confirmedAt: new Date(),
@@ -595,15 +619,6 @@ app.patch('/admin/:id', async (c) => {
         })
         .where(eq(bookings.id, id))
         .returning();
-
-      // Actualizar cupos de la fecha
-      await db
-        .update(dates)
-        .set({
-          cuposReservados: date.cuposReservados + booking.cantidadPersonas,
-          updatedAt: new Date(),
-        })
-        .where(eq(dates.id, data.dateId));
 
       // Email al cliente
       try {
@@ -619,17 +634,13 @@ app.patch('/admin/:id', async (c) => {
             <ul>
               <li><strong>Número de reserva:</strong> ${booking.bookingNumber}</li>
               <li><strong>Excursión:</strong> ${excursion.titulo}</li>
-              <li><strong>Fecha confirmada:</strong> ${new Date(date.fecha).toLocaleDateString('es-AR', {
-                year: 'numeric', month: 'long', day: 'numeric'
-              })}</li>
+              <li><strong>Fecha confirmada:</strong> ${fechaConfirmada}</li>
               <li><strong>Cantidad de personas:</strong> ${booking.cantidadPersonas}</li>
-              <li><strong>Precio total:</strong> $${(precioTotal / 100).toLocaleString('es-AR')}</li>
+              ${precioTotal ? `<li><strong>Precio total:</strong> $${(precioTotal / 100).toLocaleString('es-AR')}</li>` : ''}
             </ul>
 
             <h3>Próximos pasos:</h3>
-            <p>1. Realizá una seña del 30% ($${(precioTotal * 0.3 / 100).toLocaleString('es-AR')}) para asegurar tu lugar</p>
-            <p>2. Te contactaremos por WhatsApp al ${booking.telefono} para coordinar el pago</p>
-            <p>3. El saldo restante se abona el día de la excursión</p>
+            <p>Te contactaremos por WhatsApp al ${booking.telefono} para coordinar los detalles de pago.</p>
 
             <p>¡Nos vemos en la excursión!</p>
             <p>Equipo Mallku</p>

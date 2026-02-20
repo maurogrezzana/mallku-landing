@@ -36,8 +36,8 @@ export function ReservasPage() {
 
   // Aprobar mutation
   const aprobarMutation = useMutation({
-    mutationFn: async ({ id, dateId }: { id: string; dateId: string }) =>
-      reservasApi.reviewPropuesta(id, { estadoPropuesta: 'aprobada', dateId }),
+    mutationFn: async ({ id }: { id: string }) =>
+      reservasApi.reviewPropuesta(id, { estadoPropuesta: 'aprobada' }),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['reservas'] });
     },
@@ -53,28 +53,26 @@ export function ReservasPage() {
   });
 
   const handleAprobar = async (booking: Booking) => {
-    const dateId = prompt(
-      `Para aprobar "${booking.nombreCompleto}", ingresa el ID de la fecha a asignar:`
+    const ok = window.confirm(
+      `¿Aprobar la propuesta de ${booking.nombreCompleto}?\n\nExcursión: ${booking.excursionTitulo}\nFecha propuesta: ${formatFecha(booking.fechaPropuesta)}\nPersonas: ${booking.cantidadPersonas}`
     );
-    if (dateId) {
-      try {
-        await aprobarMutation.mutateAsync({ id: booking.id, dateId });
-        alert('Propuesta aprobada exitosamente');
-      } catch (error: any) {
-        alert(error.response?.data?.message || 'Error al aprobar');
-      }
+    if (!ok) return;
+    try {
+      await aprobarMutation.mutateAsync({ id: booking.id });
+      alert('Propuesta aprobada. Se envió email de confirmación al cliente.');
+    } catch (error: any) {
+      alert(error.response?.data?.message || 'Error al aprobar');
     }
   };
 
   const handleRechazar = async (booking: Booking) => {
     const motivo = prompt(`Motivo de rechazo para "${booking.nombreCompleto}":`);
-    if (motivo) {
-      try {
-        await rechazarMutation.mutateAsync({ id: booking.id, motivo });
-        alert('Propuesta rechazada');
-      } catch (error: any) {
-        alert(error.response?.data?.message || 'Error al rechazar');
-      }
+    if (!motivo) return;
+    try {
+      await rechazarMutation.mutateAsync({ id: booking.id, motivo });
+      alert('Propuesta rechazada. Se notificó al cliente.');
+    } catch (error: any) {
+      alert(error.response?.data?.message || 'Error al rechazar');
     }
   };
 
