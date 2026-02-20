@@ -217,6 +217,38 @@ export interface ApiError {
 }
 
 // ==========================================
+// ALERTAS / PRÓXIMAS SALIDAS
+// ==========================================
+
+export interface UpcomingBooking {
+  id: string;
+  nombreCompleto: string;
+  email: string;
+  telefono: string;
+  cantidadPersonas: number;
+  status: string;
+  paymentStatus: string;
+}
+
+export interface UpcomingDate {
+  date: {
+    id: string;
+    fecha: string;
+    horaSalida: string | null;
+    cuposTotales: number;
+    cuposReservados: number;
+    estado: string;
+    notas: string | null;
+  };
+  excursion: {
+    id: string | null;
+    titulo: string | null;
+    slug: string | null;
+  };
+  bookings: UpcomingBooking[];
+}
+
+// ==========================================
 // STATS
 // ==========================================
 

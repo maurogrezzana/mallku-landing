@@ -1,19 +1,36 @@
 import { Link, Outlet, useLocation, useNavigate } from 'react-router-dom';
-import { Calendar, Home, MapPin, FileText, LogOut } from 'lucide-react';
+import { Calendar, Home, MapPin, FileText, LogOut, Bell } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import { authApi } from '@/lib/api';
+import { useQuery } from '@tanstack/react-query';
+import { authApi, alertasApi } from '@/lib/api';
 
 const navItems = [
   { path: '/', label: 'Dashboard', icon: Home },
   { path: '/excursiones', label: 'Excursiones', icon: MapPin },
   { path: '/fechas', label: 'Fechas', icon: Calendar },
   { path: '/reservas', label: 'Reservas', icon: FileText },
+  { path: '/alertas', label: 'Alertas', icon: Bell },
 ];
 
 export function Layout() {
   const location = useLocation();
   const navigate = useNavigate();
   const user = authApi.getCurrentUser();
+
+  // Badge: contar fechas urgentes (hoy/mañana) con al menos 1 cliente
+  const { data: upcoming = [] } = useQuery({
+    queryKey: ['alertas-upcoming'],
+    queryFn: () => alertasApi.getUpcoming(7),
+    staleTime: 5 * 60 * 1000,
+    retry: false,
+  });
+
+  const urgentCount = upcoming.filter((item) => {
+    const days = Math.ceil(
+      (new Date(item.date.fecha).getTime() - Date.now()) / (1000 * 60 * 60 * 24)
+    );
+    return days <= 1 && item.bookings.length > 0;
+  }).length;
 
   const handleLogout = () => {
     authApi.logout();
@@ -37,6 +54,8 @@ export function Layout() {
               const Icon = item.icon;
               const isActive = location.pathname === item.path;
 
+              const showBadge = item.path === '/alertas' && urgentCount > 0;
+
               return (
                 <Link
                   key={item.path}
@@ -51,7 +70,12 @@ export function Layout() {
                   `}
                 >
                   <Icon className="w-5 h-5" />
-                  <span className="font-medium">{item.label}</span>
+                  <span className="font-medium flex-1">{item.label}</span>
+                  {showBadge && (
+                    <span className="inline-flex items-center justify-center w-5 h-5 text-xs font-bold text-white bg-red-500 rounded-full">
+                      {urgentCount}
+                    </span>
+                  )}
                 </Link>
               );
             })}

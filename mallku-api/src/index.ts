@@ -11,7 +11,9 @@ import authRouter from './routes/auth';
 import excursionsRouter from './routes/excursions';
 import datesRouter from './routes/dates';
 import bookingsRouter from './routes/bookings';
+import adminRouter from './routes/admin';
 import { authMiddleware } from './lib/auth';
+import { getReminderEmailHtml, sendEmail } from './lib/email';
 
 // ==========================================
 // TIPOS DE ENTORNO
@@ -150,6 +152,7 @@ app.route('/api/v1/bookings', bookingsRouter);
 
 // API v1 - Rutas admin (protegidas)
 app.use('/api/v1/admin/*', authMiddleware());
+app.route('/api/v1/admin', adminRouter);
 app.get('/api/v1/admin/leads', async (c) => {
   const db = c.get('db');
   const { leads } = await import('./db/schema');
@@ -230,6 +233,164 @@ app.get('/api/v1/admin/stats', async (c) => {
         converted: allLeads.filter((l) => l.status === 'converted').length,
         lost: allLeads.filter((l) => l.status === 'lost').length,
       },
+    },
+  });
+});
+
+// ==========================================
+// WEBHOOKS (públicos, validados internamente)
+// ==========================================
+
+// POST /api/v1/webhooks/mercadopago — Notificaciones de pago de MercadoPago
+app.post('/api/v1/webhooks/mercadopago', async (c) => {
+  const db = c.get('db');
+
+  const mpAccessToken =
+    (c.env as any)?.MP_ACCESS_TOKEN ||
+    process.env.MP_ACCESS_TOKEN ||
+    '';
+
+  try {
+    const body = await c.req.json();
+
+    // MP envía { type: 'payment', data: { id: '...' } }
+    const paymentId = body?.data?.id;
+
+    if (!paymentId || !mpAccessToken) {
+      return c.json({ received: true });
+    }
+
+    // Obtener detalles del pago desde MP
+    const { MercadoPagoConfig, Payment } = await import('mercadopago');
+    const client = new MercadoPagoConfig({ accessToken: mpAccessToken });
+    const paymentApi = new Payment(client);
+    const payment = await paymentApi.get({ id: String(paymentId) });
+
+    if (payment.status !== 'approved') {
+      console.log(`[Webhook MP] Payment ${paymentId} status: ${payment.status} — skipping`);
+      return c.json({ received: true });
+    }
+
+    const bookingNumber = payment.external_reference;
+    if (!bookingNumber) {
+      return c.json({ received: true });
+    }
+
+    // Actualizar el booking a pagado
+    const { bookings } = await import('./db/schema');
+    const { eq } = await import('drizzle-orm');
+
+    await db
+      .update(bookings)
+      .set({
+        paymentStatus: 'paid',
+        status: 'paid',
+        paymentReference: `MP-${paymentId}`,
+        updatedAt: new Date(),
+      })
+      .where(eq(bookings.bookingNumber, bookingNumber));
+
+    console.log(`[Webhook MP] Booking ${bookingNumber} marcado como pagado (MP-${paymentId})`);
+    return c.json({ received: true });
+  } catch (err: any) {
+    console.error('[Webhook MP] Error:', err.message);
+    // Siempre 200 para evitar reintentos de MP
+    return c.json({ received: true });
+  }
+});
+
+// ==========================================
+// CRON JOBS (autenticado con CRON_SECRET)
+// ==========================================
+
+// GET /api/v1/cron/reminders — Recordatorios automáticos 48h antes
+// Vercel agrega Authorization: Bearer CRON_SECRET si está configurado
+app.get('/api/v1/cron/reminders', async (c) => {
+  const cronSecret = process.env.CRON_SECRET;
+  const authHeader = c.req.header('Authorization');
+
+  if (cronSecret && authHeader !== `Bearer ${cronSecret}`) {
+    return c.json({ error: 'Unauthorized' }, 401);
+  }
+
+  const db = c.get('db');
+  const { dates, excursions, bookings } = await import('./db/schema');
+  const { and, gte, lte, eq, ne, or, asc } = await import('drizzle-orm');
+
+  const now = new Date();
+  // Buscar fechas entre 24h y 72h desde ahora (ventana alrededor de 48h)
+  const windowStart = new Date(now.getTime() + 24 * 60 * 60 * 1000);
+  const windowEnd = new Date(now.getTime() + 72 * 60 * 60 * 1000);
+
+  const upcomingDates = await db
+    .select({
+      id: dates.id,
+      fecha: dates.fecha,
+      horaSalida: dates.horaSalida,
+      notas: dates.notas,
+      excursionTitulo: excursions.titulo,
+    })
+    .from(dates)
+    .leftJoin(excursions, eq(dates.excursionId, excursions.id))
+    .where(
+      and(
+        gte(dates.fecha, windowStart),
+        lte(dates.fecha, windowEnd),
+        ne(dates.estado, 'cancelado' as any)
+      )
+    )
+    .orderBy(asc(dates.fecha));
+
+  let totalSent = 0;
+  let totalProcessed = 0;
+
+  for (const dateRow of upcomingDates) {
+    const confirmedBookings = await db
+      .select({
+        nombreCompleto: bookings.nombreCompleto,
+        email: bookings.email,
+      })
+      .from(bookings)
+      .where(
+        and(
+          eq(bookings.dateId, dateRow.id),
+          or(
+            eq(bookings.status, 'confirmed' as any),
+            eq(bookings.status, 'paid' as any)
+          )
+        )
+      );
+
+    totalProcessed += confirmedBookings.length;
+
+    for (const booking of confirmedBookings) {
+      const html = getReminderEmailHtml({
+        nombreCliente: booking.nombreCompleto,
+        excursionTitulo: dateRow.excursionTitulo || 'Excursión',
+        fecha: dateRow.fecha.toISOString(),
+        horaSalida: dateRow.horaSalida || undefined,
+        puntoEncuentro: dateRow.notas || undefined,
+      });
+
+      const ok = await sendEmail({
+        to: booking.email,
+        subject: `Recordatorio: tu excursión "${dateRow.excursionTitulo}" - Mallku`,
+        html,
+      });
+
+      if (ok) totalSent++;
+    }
+  }
+
+  console.log(`[CRON] Reminders processed: ${totalProcessed}, sent: ${totalSent}`);
+
+  return c.json({
+    success: true,
+    data: {
+      datesFound: upcomingDates.length,
+      processed: totalProcessed,
+      sent: totalSent,
+      timestamp: new Date().toISOString(),
     },
   });
 });

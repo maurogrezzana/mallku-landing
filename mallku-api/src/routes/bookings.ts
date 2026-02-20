@@ -1,7 +1,7 @@
 import { Hono } from 'hono';
 import { eq, desc, and, sql } from 'drizzle-orm';
 import { bookings, dates, excursions, leads, type Booking } from '../db/schema';
-import { createBookingSchema, reviewPropuestaSchema } from '../lib/validation';
+import { createBookingSchema, reviewPropuestaSchema, adminCreateBookingSchema } from '../lib/validation';
 import { authMiddleware } from '../lib/auth';
 import { sendEmail } from '../lib/email';
 import type { Database } from '../db';
@@ -734,6 +734,233 @@ app.patch('/admin/:id', async (c) => {
     message: 'Reserva actualizada',
     data: updated,
   });
+});
+
+/**
+ * POST /api/v1/bookings/admin
+ * Crea una reserva manual (desde el admin, sin restricciones de fecha)
+ */
+app.post('/admin', authMiddleware(), async (c) => {
+  const db = c.get('db');
+  const adminEmail = c.env?.ADMIN_EMAIL || process.env.ADMIN_EMAIL || 'mallkuexcursiones@gmail.com';
+  const body = await c.req.json();
+
+  const validation = adminCreateBookingSchema.safeParse(body);
+  if (!validation.success) {
+    return c.json({ success: false, message: 'Datos inválidos', errors: validation.error.format() }, 400);
+  }
+
+  const data = validation.data;
+
+  // Verificar que la excursión existe
+  const [excursion] = await db
+    .select()
+    .from(excursions)
+    .where(eq(excursions.id, data.excursionId));
+
+  if (!excursion) {
+    return c.json({ success: false, message: 'Excursión no encontrada' }, 404);
+  }
+
+  // Si fecha-fija con dateId, verificar y actualizar cupos
+  let dateData: any = null;
+  if (data.tipo === 'fecha-fija' && data.dateId) {
+    const [foundDate] = await db
+      .select()
+      .from(dates)
+      .where(eq(dates.id, data.dateId));
+
+    if (!foundDate) {
+      return c.json({ success: false, message: 'Fecha no encontrada' }, 404);
+    }
+
+    const cuposDisponibles = foundDate.cuposTotales - foundDate.cuposReservados;
+    if (cuposDisponibles < data.cantidadPersonas) {
+      return c.json({
+        success: false,
+        message: `Solo quedan ${cuposDisponibles} cupos disponibles`,
+      }, 409);
+    }
+    dateData = foundDate;
+  }
+
+  // Calcular precio si no se pasó manualmente
+  let precioTotal = data.precioTotal;
+  if (!precioTotal) {
+    const precioBase = dateData?.precioOverride || excursion.precioBase || 0;
+    precioTotal = precioBase * data.cantidadPersonas;
+  }
+
+  const bookingNumber = generateBookingNumber(data.tipo);
+
+  const [newBooking] = await db
+    .insert(bookings)
+    .values({
+      bookingNumber,
+      tipo: data.tipo,
+      dateId: data.dateId || null,
+      excursionId: data.excursionId,
+      nombreCompleto: data.nombreCompleto,
+      email: data.email,
+      telefono: data.telefono,
+      dni: data.dni,
+      cantidadPersonas: data.cantidadPersonas,
+      precioTotal,
+      fechaPropuesta: data.fechaPropuesta ? new Date(data.fechaPropuesta) : null,
+      estadoPropuesta: data.tipo === 'personalizada' ? 'aprobada' : null,
+      status: data.status,
+      paymentStatus: data.paymentStatus,
+      seniaPagada: data.seniaPagada || 0,
+      paymentReference: data.paymentReference || null,
+      notasInternas: data.notasInternas || null,
+      confirmedAt: data.status === 'confirmed' || data.status === 'paid' ? new Date() : null,
+    })
+    .returning();
+
+  // Actualizar cupos si fecha-fija
+  if (data.tipo === 'fecha-fija' && data.dateId && dateData) {
+    const nuevoCuposReservados = dateData.cuposReservados + data.cantidadPersonas;
+    const nuevoEstado =
+      nuevoCuposReservados >= dateData.cuposTotales ? 'completo' :
+      dateData.cuposTotales - nuevoCuposReservados <= 3 ? 'pocos-cupos' :
+      'disponible';
+
+    await db
+      .update(dates)
+      .set({ cuposReservados: nuevoCuposReservados, estado: nuevoEstado as any })
+      .where(eq(dates.id, data.dateId));
+  }
+
+  // Enviar email si se solicitó
+  if (data.sendEmail) {
+    try {
+      const fechaStr = dateData?.fecha
+        ? new Date(dateData.fecha).toLocaleDateString('es-AR', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' })
+        : data.fechaPropuesta
+        ? new Date(data.fechaPropuesta).toLocaleDateString('es-AR', { year: 'numeric', month: 'long', day: 'numeric' })
+        : 'A confirmar';
+
+      await sendEmail({
+        to: data.email,
+        subject: `Confirmación de reserva — ${excursion.titulo}`,
+        html: `
+          <h2>¡Tu reserva está confirmada!</h2>
+          <p>Hola ${data.nombreCompleto},</p>
+          <p>Te confirmamos tu reserva en <strong>${excursion.titulo}</strong>.</p>
+          <ul>
+            <li><strong>N° de reserva:</strong> ${bookingNumber}</li>
+            <li><strong>Fecha:</strong> ${fechaStr}</li>
+            <li><strong>Personas:</strong> ${data.cantidadPersonas}</li>
+            <li><strong>Precio total:</strong> $${((precioTotal || 0) / 100).toLocaleString('es-AR')}</li>
+          </ul>
+          <p>Ante cualquier consulta, no dudes en contactarnos por WhatsApp al +54 9 3815 70-2549.</p>
+          <p>¡Muchas gracias y hasta pronto!</p>
+          <p>Equipo Mallku</p>
+        `,
+      });
+    } catch (emailError) {
+      console.error('Error enviando email:', emailError);
+    }
+  }
+
+  return c.json({ success: true, message: 'Reserva creada', data: newBooking }, 201);
+});
+
+// ==========================================
+// CHECKOUT MERCADOPAGO
+// ==========================================
+
+/**
+ * POST /api/v1/bookings/:bookingNumber/checkout
+ * Crea una preferencia de pago en MercadoPago (público)
+ */
+app.post('/:bookingNumber/checkout', async (c) => {
+  const db = c.get('db');
+  const bookingNumber = c.req.param('bookingNumber');
+
+  const mpAccessToken =
+    (c.env as any)?.MP_ACCESS_TOKEN ||
+    process.env.MP_ACCESS_TOKEN ||
+    '';
+
+  if (!mpAccessToken) {
+    return c.json(
+      { success: false, message: 'MercadoPago no está configurado en este servidor' },
+      503
+    );
+  }
+
+  // Buscar la reserva
+  const [booking] = await db
+    .select({
+      id: bookings.id,
+      bookingNumber: bookings.bookingNumber,
+      nombreCompleto: bookings.nombreCompleto,
+      email: bookings.email,
+      cantidadPersonas: bookings.cantidadPersonas,
+      precioTotal: bookings.precioTotal,
+      paymentStatus: bookings.paymentStatus,
+      status: bookings.status,
+      excursionTitulo: excursions.titulo,
+    })
+    .from(bookings)
+    .innerJoin(excursions, eq(bookings.excursionId, excursions.id))
+    .where(eq(bookings.bookingNumber, bookingNumber));
+
+  if (!booking) {
+    return c.json({ success: false, message: 'Reserva no encontrada' }, 404);
+  }
+
+  if (booking.paymentStatus === 'paid') {
+    return c.json({ success: false, message: 'Esta reserva ya fue pagada' }, 409);
+  }
+
+  if (!booking.precioTotal || booking.precioTotal === 0) {
+    return c.json({ success: false, message: 'Esta reserva no tiene precio asignado' }, 400);
+  }
+
+  try {
+    const { MercadoPagoConfig, Preference } = await import('mercadopago');
+
+    const client = new MercadoPagoConfig({ accessToken: mpAccessToken });
+    const preference = new Preference(client);
+
+    const result = await preference.create({
+      body: {
+        items: [
+          {
+            id: booking.bookingNumber,
+            title: booking.excursionTitulo || 'Excursión Mallku',
+            description: `Reserva ${booking.bookingNumber} — ${booking.cantidadPersonas ?? 1} persona(s)`,
+            unit_price: Math.round(booking.precioTotal / 100), // centavos → pesos
+            quantity: 1,
+            currency_id: 'ARS',
+          } as any,
+        ],
+        payer: {
+          name: booking.nombreCompleto.split(' ')[0],
+          surname: booking.nombreCompleto.split(' ').slice(1).join(' ') || '',
+          email: booking.email,
+        },
+        external_reference: booking.bookingNumber,
+        back_urls: {
+          success: `https://mallku.com.ar/reservas/${booking.bookingNumber}?pago=exitoso`,
+          failure: `https://mallku.com.ar/reservas/${booking.bookingNumber}?pago=fallido`,
+          pending: `https://mallku.com.ar/reservas/${booking.bookingNumber}?pago=pendiente`,
+        },
+        auto_return: 'approved',
+        notification_url: 'https://mallku-api.vercel.app/api/v1/webhooks/mercadopago',
+      },
+    });
+
+    return c.json({ success: true, init_point: result.init_point });
+  } catch (err: any) {
+    console.error('Error creando preferencia MP:', err);
+    return c.json(
+      { success: false, message: 'Error al crear el link de pago', error: err.message },
+      500
+    );
+  }
 });
 
 export default app;
