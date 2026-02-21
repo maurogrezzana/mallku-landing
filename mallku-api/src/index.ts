@@ -11,7 +11,6 @@ import authRouter from './routes/auth';
 import excursionsRouter from './routes/excursions';
 import datesRouter from './routes/dates';
 import bookingsRouter from './routes/bookings';
-import adminRouter from './routes/admin';
 import { authMiddleware } from './lib/auth';
 import { getReminderEmailHtml, sendEmail } from './lib/email';
 
@@ -152,7 +151,110 @@ app.route('/api/v1/bookings', bookingsRouter);
 
 // API v1 - Rutas admin (protegidas)
 app.use('/api/v1/admin/*', authMiddleware());
-app.route('/api/v1/admin', adminRouter);
+
+// ==========================================
+// GET /api/v1/admin/upcoming?days=7
+// Próximas fechas con clientes confirmados
+// ==========================================
+app.get('/api/v1/admin/upcoming', async (c) => {
+  const db = c.get('db');
+  const { dates, excursions, bookings } = await import('./db/schema');
+  const { and, gte, lte, eq, ne, or, asc } = await import('drizzle-orm');
+
+  const days = Math.min(parseInt(c.req.query('days') || '7'), 30);
+  const now = new Date();
+  const future = new Date(now.getTime() + days * 24 * 60 * 60 * 1000);
+
+  const upcomingDates = await db
+    .select({
+      id: dates.id,
+      fecha: dates.fecha,
+      horaSalida: dates.horaSalida,
+      cuposTotales: dates.cuposTotales,
+      cuposReservados: dates.cuposReservados,
+      estado: dates.estado,
+      notas: dates.notas,
+      excursionId: excursions.id,
+      excursionTitulo: excursions.titulo,
+      excursionSlug: excursions.slug,
+    })
+    .from(dates)
+    .leftJoin(excursions, eq(dates.excursionId, excursions.id))
+    .where(and(gte(dates.fecha, now), lte(dates.fecha, future), ne(dates.estado, 'cancelado' as any)))
+    .orderBy(asc(dates.fecha));
+
+  const result = await Promise.all(
+    upcomingDates.map(async (d) => {
+      const dateBookings = await db
+        .select({
+          id: bookings.id,
+          nombreCompleto: bookings.nombreCompleto,
+          email: bookings.email,
+          telefono: bookings.telefono,
+          cantidadPersonas: bookings.cantidadPersonas,
+          status: bookings.status,
+          paymentStatus: bookings.paymentStatus,
+        })
+        .from(bookings)
+        .where(and(eq(bookings.dateId, d.id), or(eq(bookings.status, 'confirmed' as any), eq(bookings.status, 'paid' as any))));
+
+      return {
+        date: { id: d.id, fecha: d.fecha, horaSalida: d.horaSalida, cuposTotales: d.cuposTotales, cuposReservados: d.cuposReservados, estado: d.estado, notas: d.notas },
+        excursion: { id: d.excursionId, titulo: d.excursionTitulo, slug: d.excursionSlug },
+        bookings: dateBookings,
+      };
+    })
+  );
+
+  return c.json({ success: true, data: result });
+});
+
+// ==========================================
+// POST /api/v1/admin/send-reminder/:dateId
+// Enviar recordatorio a clientes de una fecha
+// ==========================================
+app.post('/api/v1/admin/send-reminder/:dateId', async (c) => {
+  const db = c.get('db');
+  const { dates, excursions, bookings } = await import('./db/schema');
+  const { and, eq, or } = await import('drizzle-orm');
+  const dateId = c.req.param('dateId');
+
+  const [dateRow] = await db
+    .select({ id: dates.id, fecha: dates.fecha, horaSalida: dates.horaSalida, notas: dates.notas, excursionTitulo: excursions.titulo })
+    .from(dates)
+    .leftJoin(excursions, eq(dates.excursionId, excursions.id))
+    .where(eq(dates.id, dateId));
+
+  if (!dateRow) return c.json({ success: false, message: 'Fecha no encontrada' }, 404);
+
+  const confirmedBookings = await db
+    .select({ id: bookings.id, nombreCompleto: bookings.nombreCompleto, email: bookings.email, cantidadPersonas: bookings.cantidadPersonas })
+    .from(bookings)
+    .where(and(eq(bookings.dateId, dateId), or(eq(bookings.status, 'confirmed' as any), eq(bookings.status, 'paid' as any))));
+
+  if (confirmedBookings.length === 0) {
+    return c.json({ success: true, data: { sent: 0, errors: [], total: 0, message: 'No hay clientes confirmados para esta fecha' } });
+  }
+
+  let sent = 0;
+  const errors: string[] = [];
+
+  for (const booking of confirmedBookings) {
+    const html = getReminderEmailHtml({
+      nombreCliente: booking.nombreCompleto,
+      excursionTitulo: dateRow.excursionTitulo || 'Excursión',
+      fecha: dateRow.fecha.toISOString(),
+      horaSalida: dateRow.horaSalida || undefined,
+      puntoEncuentro: dateRow.notas || undefined,
+    });
+    const ok = await sendEmail({ to: booking.email, subject: `Recordatorio: tu excursión "${dateRow.excursionTitulo}" - Mallku`, html });
+    if (ok) sent++;
+    else errors.push(booking.email);
+  }
+
+  return c.json({ success: true, data: { sent, errors, total: confirmedBookings.length } });
+});
+
 app.get('/api/v1/admin/leads', async (c) => {
   const db = c.get('db');
   const { leads } = await import('./db/schema');
