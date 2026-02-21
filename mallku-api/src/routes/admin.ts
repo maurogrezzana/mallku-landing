@@ -1,7 +1,6 @@
 import { Hono } from 'hono';
 import { and, gte, lte, eq, ne, or, asc } from 'drizzle-orm';
 import { dates, excursions, bookings } from '../db/schema';
-import { authMiddleware } from '../lib/auth';
 import { sendEmail, getReminderEmailHtml } from '../lib/email';
 import type { Database } from '../db';
 
@@ -14,7 +13,7 @@ const app = new Hono<{ Variables: Variables }>();
 // Próximas fechas con clientes confirmados
 // ==========================================
 
-app.get('/upcoming', authMiddleware(), async (c) => {
+app.get('/upcoming', async (c) => {
   const db = c.get('db');
   const days = Math.min(parseInt(c.req.query('days') || '7'), 30);
 
@@ -98,7 +97,7 @@ app.get('/upcoming', authMiddleware(), async (c) => {
 // Enviar recordatorio a clientes de una fecha
 // ==========================================
 
-app.post('/send-reminder/:dateId', authMiddleware(), async (c) => {
+app.post('/send-reminder/:dateId', async (c) => {
   const db = c.get('db');
   const dateId = c.req.param('dateId');
 
