@@ -119,7 +119,7 @@ app.use('*', async (c, next) => {
 app.get('/', (c) => {
   return c.json({
     name: 'Mallku API',
-    version: '1.0.0',
+    version: '2.0.0',
     status: 'running',
     environment: c.env?.ENVIRONMENT || process.env.ENVIRONMENT || 'production',
     timestamp: new Date().toISOString(),
