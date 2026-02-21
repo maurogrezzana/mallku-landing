@@ -189,6 +189,93 @@ export async function sendLeadConfirmation(lead: Lead): Promise<boolean> {
 }
 
 // ==========================================
+// REMINDER EMAIL TEMPLATE
+// ==========================================
+
+interface ReminderEmailParams {
+  nombreCliente: string;
+  excursionTitulo: string;
+  fecha: string; // ISO string
+  horaSalida?: string;
+  puntoEncuentro?: string;
+}
+
+export function getReminderEmailHtml(params: ReminderEmailParams): string {
+  const { nombreCliente, excursionTitulo, fecha, horaSalida, puntoEncuentro } = params;
+
+  const fechaFormateada = new Date(fecha).toLocaleDateString('es-AR', {
+    timeZone: 'America/Argentina/Buenos_Aires',
+    weekday: 'long',
+    year: 'numeric',
+    month: 'long',
+    day: 'numeric',
+  });
+
+  return `
+    <!DOCTYPE html>
+    <html>
+    <head>
+      <style>
+        body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; color: #333; }
+        .container { max-width: 600px; margin: 0 auto; padding: 20px; }
+        .header { background: #1a1a2e; color: white; padding: 24px; text-align: center; }
+        .header h1 { margin: 0; font-size: 22px; }
+        .content { background: #f8f9fa; padding: 28px; }
+        .highlight { background: white; border-left: 4px solid #c9a227; padding: 16px 20px; margin: 20px 0; border-radius: 0 4px 4px 0; }
+        .highlight p { margin: 6px 0; font-size: 15px; }
+        .highlight strong { color: #1a1a2e; }
+        .info-row { display: flex; gap: 8px; margin: 6px 0; }
+        .label { font-weight: bold; min-width: 130px; color: #555; }
+        .footer { text-align: center; padding: 20px; color: #666; font-size: 13px; }
+        .footer a { color: #c9a227; text-decoration: none; }
+        .cta { display: inline-block; background: #c9a227; color: white; padding: 12px 28px;
+               text-decoration: none; font-weight: bold; margin-top: 20px; }
+      </style>
+    </head>
+    <body>
+      <div class="container">
+        <div class="header">
+          <h1>Mallku — Turismo Arqueologico NOA</h1>
+        </div>
+        <div class="content">
+          <p>Hola <strong>${nombreCliente}</strong>,</p>
+          <p>Te recordamos que tenes una excursion programada. Aqui los detalles:</p>
+
+          <div class="highlight">
+            <p><strong>${excursionTitulo}</strong></p>
+            <p><span class="label">Fecha:</span> ${fechaFormateada}</p>
+            ${horaSalida ? `<p><span class="label">Hora de salida:</span> ${horaSalida} hs</p>` : ''}
+            ${puntoEncuentro ? `<p><span class="label">Punto de encuentro:</span> ${puntoEncuentro}</p>` : ''}
+          </div>
+
+          <p><strong>Recordaciones importantes:</strong></p>
+          <ul>
+            <li>Llegar 10 minutos antes de la hora de salida</li>
+            <li>Traer ropa comoda y calzado cerrado</li>
+            <li>Llevar agua y protector solar</li>
+            <li>Ante cualquier consulta, escribinos por WhatsApp</li>
+          </ul>
+
+          <p style="margin-top: 24px;">
+            <a href="https://wa.me/5493815825570" class="cta">Consultar por WhatsApp</a>
+          </p>
+
+          <p style="margin-top: 20px;">iNos vemos pronto en el camino!</p>
+          <p><strong>Equipo Mallku</strong></p>
+        </div>
+        <div class="footer">
+          <a href="https://mallku.com.ar">mallku.com.ar</a> &bull;
+          <a href="https://instagram.com/mallku.noa">@mallku.noa</a> &bull;
+          <a href="https://wa.me/5493815825570">WhatsApp</a>
+          <p style="margin-top: 8px; color: #999;">San Miguel de Tucuman, Argentina</p>
+        </div>
+      </div>
+    </body>
+    </html>
+  `;
+}
+
+// ==========================================
 // GENERIC EMAIL FUNCTION
 // ==========================================
 

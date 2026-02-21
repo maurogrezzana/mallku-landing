@@ -11,6 +11,7 @@ import type {
   ApiResponse,
   PaginatedResponse,
   DashboardStats,
+  UpcomingDate,
 } from '@/types';
 
 // API Base URL
@@ -176,6 +177,35 @@ export const reservasApi = {
     const response = await api.patch<ApiResponse<Booking>>(`/bookings/admin/${id}`, data);
     return response.data.data;
   },
+
+  createManual: async (data: {
+    tipo: 'fecha-fija' | 'personalizada';
+    dateId?: string;
+    excursionId: string;
+    nombreCompleto: string;
+    email: string;
+    telefono: string;
+    dni?: string;
+    cantidadPersonas: number;
+    precioTotal?: number;
+    status?: string;
+    paymentStatus?: string;
+    seniaPagada?: number;
+    paymentReference?: string;
+    notasInternas?: string;
+    sendEmail?: boolean;
+    fechaPropuesta?: string;
+  }): Promise<Booking> => {
+    const response = await api.post<ApiResponse<Booking>>('/bookings/admin', data);
+    return response.data.data;
+  },
+
+  generatePaymentLink: async (bookingNumber: string): Promise<{ init_point: string }> => {
+    const response = await api.post<{ init_point: string }>(
+      `/bookings/${bookingNumber}/checkout`
+    );
+    return response.data;
+  },
 };
 
 // ==========================================
@@ -185,6 +215,28 @@ export const reservasApi = {
 export const statsApi = {
   getDashboard: async (): Promise<DashboardStats> => {
     const response = await api.get<ApiResponse<DashboardStats>>('/admin/stats');
+    return response.data.data;
+  },
+};
+
+// ==========================================
+// ALERTAS / PRÓXIMAS SALIDAS
+// ==========================================
+
+export const alertasApi = {
+  getUpcoming: async (days = 7): Promise<UpcomingDate[]> => {
+    const response = await api.get<ApiResponse<UpcomingDate[]>>('/admin/upcoming', {
+      params: { days },
+    });
+    return response.data.data;
+  },
+
+  sendReminder: async (
+    dateId: string
+  ): Promise<{ sent: number; errors: string[]; total: number }> => {
+    const response = await api.post<
+      ApiResponse<{ sent: number; errors: string[]; total: number }>
+    >(`/admin/send-reminder/${dateId}`);
     return response.data.data;
   },
 };

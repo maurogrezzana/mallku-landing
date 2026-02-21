@@ -137,16 +137,38 @@ export const createBookingSchema = z.discriminatedUnion('tipo', [
 export const reviewPropuestaSchema = z.discriminatedUnion('estadoPropuesta', [
   z.object({
     estadoPropuesta: z.literal('aprobada'),
-    dateId: z.string().uuid('ID de fecha inválido'), // La fecha creada para esta propuesta
+    dateId: z.string().uuid('ID de fecha inválido').optional(), // Opcional: si se asigna vincula a un slot del calendario
   }),
   z.object({
     estadoPropuesta: z.literal('rechazada'),
-    motivoRechazo: z.string().min(10, 'El motivo debe tener al menos 10 caracteres'),
+    motivoRechazo: z.string().min(1, 'Ingresá un motivo de rechazo'),
   }),
 ]);
 
 export type CreateBookingInput = z.infer<typeof createBookingSchema>;
 export type ReviewPropuestaInput = z.infer<typeof reviewPropuestaSchema>;
+
+// Schema para creación de booking por admin (sin restricciones de fecha)
+export const adminCreateBookingSchema = z.object({
+  tipo: z.enum(['fecha-fija', 'personalizada']),
+  dateId: z.string().uuid().optional(),
+  excursionId: z.string().uuid('ID de excursión inválido'),
+  nombreCompleto: z.string().min(3, 'Nombre completo requerido'),
+  email: z.string().email('Email inválido'),
+  telefono: z.string().min(8, 'Teléfono inválido'),
+  dni: z.string().optional(),
+  cantidadPersonas: z.number().int().min(1).max(30, 'Máximo 30 personas'),
+  precioTotal: z.number().int().optional(),
+  fechaPropuesta: z.string().datetime().optional(),
+  status: z.enum(['pending', 'confirmed', 'paid']).default('confirmed'),
+  paymentStatus: z.enum(['pending', 'partial', 'paid']).default('pending'),
+  seniaPagada: z.number().int().optional(),
+  paymentReference: z.string().optional(),
+  notasInternas: z.string().optional(),
+  sendEmail: z.boolean().optional().default(false),
+});
+
+export type AdminCreateBookingInput = z.infer<typeof adminCreateBookingSchema>;
 
 // ==========================================
 // NEWSLETTER

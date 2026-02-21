@@ -6,6 +6,7 @@ import { DashboardPage } from '@/pages/Dashboard';
 import { ExcursionesPage } from '@/pages/Excursiones';
 import { FechasPage } from '@/pages/Fechas';
 import { ReservasPage } from '@/pages/Reservas';
+import { AlertasPage } from '@/pages/Alertas';
 import { authApi } from '@/lib/api';
 
 // Create QueryClient instance
@@ -51,6 +52,7 @@ function App() {
             <Route path="/excursiones" element={<ExcursionesPage />} />
             <Route path="/fechas" element={<FechasPage />} />
             <Route path="/reservas" element={<ReservasPage />} />
+            <Route path="/alertas" element={<AlertasPage />} />
           </Route>
 
           {/* Catch all */}
