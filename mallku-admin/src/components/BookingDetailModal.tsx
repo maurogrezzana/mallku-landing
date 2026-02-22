@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { useMutation, useQueryClient } from '@tanstack/react-query';
+import { useQueryClient } from '@tanstack/react-query';
 import {
   Dialog,
   DialogContent,
@@ -48,19 +48,16 @@ export function BookingDetailModal({ booking, isOpen, onClose }: BookingDetailMo
     }
   }, [booking]);
 
-  const updateMutation = useMutation({
-    mutationFn: (data: Parameters<typeof reservasApi.updateStatus>[1]) =>
-      reservasApi.updateStatus(booking!.id, data),
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['reservas'] });
-      onClose();
-    },
-  });
+  const [saving, setSaving] = useState(false);
 
   const handleSave = async () => {
     if (!booking) return;
+    setSaving(true);
     try {
-      await updateMutation.mutateAsync(
+      const previousStatus = booking.status;
+
+      await reservasApi.updateStatus(
+        booking.id,
         isPaid
           ? { notasInternas: notasInternas || undefined }
           : {
@@ -71,8 +68,22 @@ export function BookingDetailModal({ booking, isOpen, onClose }: BookingDetailMo
               notasInternas: notasInternas || undefined,
             }
       );
+
+      // Auto-enviar email de confirmación si el status pasó a "confirmed"
+      if (status === 'confirmed' && previousStatus !== 'confirmed') {
+        try {
+          await alertasApi.sendBookingEmail(booking.id, 'confirmation');
+        } catch {
+          // Email no crítico — no bloquear el guardado
+        }
+      }
+
+      queryClient.invalidateQueries({ queryKey: ['reservas'] });
+      onClose();
     } catch (error: any) {
       alert(error.response?.data?.message || 'Error al guardar cambios');
+    } finally {
+      setSaving(false);
     }
   };
 
@@ -394,11 +405,11 @@ export function BookingDetailModal({ booking, isOpen, onClose }: BookingDetailMo
         </div>
 
         <DialogFooter>
-          <Button variant="outline" onClick={onClose} disabled={updateMutation.isPending}>
+          <Button variant="outline" onClick={onClose} disabled={saving}>
             Cancelar
           </Button>
-          <Button onClick={handleSave} disabled={updateMutation.isPending}>
-            {updateMutation.isPending ? 'Guardando...' : 'Guardar cambios'}
+          <Button onClick={handleSave} disabled={saving}>
+            {saving ? 'Guardando...' : 'Guardar cambios'}
           </Button>
         </DialogFooter>
       </DialogContent>

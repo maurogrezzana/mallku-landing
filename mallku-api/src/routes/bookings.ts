@@ -723,6 +723,14 @@ app.patch('/admin/:id', async (c) => {
   if (body.seniaPagada !== undefined) updateData.seniaPagada = body.seniaPagada;
   if (body.paymentReference !== undefined) updateData.paymentReference = body.paymentReference;
 
+  // Timestamps automáticos según transición de estado
+  if (body.status === 'confirmed' && booking.status !== 'confirmed') {
+    updateData.confirmedAt = new Date();
+  }
+  if (body.status === 'completed' && booking.status !== 'completed') {
+    updateData.completedAt = new Date();
+  }
+
   // Si se está cancelando: liberar cupos de la fecha si corresponde
   if (body.status === 'cancelled' && booking.status !== 'cancelled') {
     updateData.cancelledAt = new Date();
