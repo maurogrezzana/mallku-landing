@@ -584,11 +584,18 @@ export function getCompletionEmailHtml(params: CompletionEmailParams): string {
 
           <p>Si tenes fotos del dia o queres contarnos como te fue, podes escribirnos por WhatsApp o Instagram. iNos encanta saber de ustedes!</p>
 
+          <p style="margin-top: 20px;"><strong>iTu opinion nos ayuda mucho!</strong><br>
+          Si tenes un minuto, te pedimos que nos dejes una reseña en Google Maps. Es la mejor forma de ayudarnos a crecer y que mas personas puedan conocer el NOA con nosotros:</p>
+
           <p>
-            <a href="https://mallku.com.ar/excursiones" class="cta">Ver mas excursiones</a>
+            <a href="https://www.google.com/maps/place/Mallku+Excursiones+Arqueol%C3%B3gicas/@-26.8392521,-65.2217321,17z/data=!3m1!4b1!4m6!3m5!1s0x94225da72e1d27ad:0xcea1991ea737322a!8m2!3d-26.8392569!4d-65.2191572!16s%2Fg%2F11y_vzrm8t?entry=ttu&g_ep=EgoyMDI2MDIxOC4wIKXMDSoASAFQAw%3D%3D" class="cta" style="background:#4285F4;">⭐ Dejar reseña en Google Maps</a>
           </p>
 
-          <p style="margin-top: 24px;">iHasta la proxima aventura!</p>
+          <p style="margin-top: 24px;">
+            <a href="https://mallku.com.ar/excursiones" style="color:#c9a227;">Ver mas excursiones</a>
+          </p>
+
+          <p style="margin-top: 20px;">iHasta la proxima aventura!</p>
           <p><strong>Equipo Mallku</strong></p>
         </div>
         <div class="footer">
