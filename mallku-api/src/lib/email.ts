@@ -472,6 +472,138 @@ export function getExcursionInfoEmailHtml(params: ExcursionInfoEmailParams): str
 }
 
 // ==========================================
+// CANCELLATION EMAIL TEMPLATE
+// ==========================================
+
+interface CancellationEmailParams {
+  nombreCliente: string;
+  excursionTitulo: string;
+  fecha?: string;
+}
+
+export function getCancellationEmailHtml(params: CancellationEmailParams): string {
+  const { nombreCliente, excursionTitulo, fecha } = params;
+
+  const fechaStr = fecha
+    ? new Date(fecha).toLocaleDateString('es-AR', {
+        timeZone: 'America/Argentina/Buenos_Aires',
+        weekday: 'long',
+        year: 'numeric',
+        month: 'long',
+        day: 'numeric',
+      })
+    : null;
+
+  return `
+    <!DOCTYPE html>
+    <html>
+    <head>
+      <style>
+        body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; color: #333; }
+        .container { max-width: 600px; margin: 0 auto; padding: 20px; }
+        .header { background: #1a1a2e; color: white; padding: 24px; text-align: center; }
+        .header h1 { margin: 0; font-size: 22px; }
+        .content { background: #f8f9fa; padding: 28px; }
+        .highlight { background: white; border-left: 4px solid #c9a227; padding: 16px 20px; margin: 20px 0; border-radius: 0 4px 4px 0; }
+        .footer { text-align: center; padding: 20px; color: #666; font-size: 13px; }
+        .footer a { color: #c9a227; text-decoration: none; }
+        .cta { display: inline-block; background: #c9a227; color: white; padding: 12px 28px;
+               text-decoration: none; font-weight: bold; margin-top: 20px; }
+      </style>
+    </head>
+    <body>
+      <div class="container">
+        <div class="header">
+          <h1>Mallku — Turismo Arqueologico NOA</h1>
+        </div>
+        <div class="content">
+          <p>Hola <strong>${nombreCliente}</strong>,</p>
+          <p>Te informamos que tu reserva para la excursion <strong>${excursionTitulo}</strong>${fechaStr ? ` del ${fechaStr}` : ''} ha sido cancelada.</p>
+
+          <p>Lamentamos los inconvenientes. Si tenes dudas o queres reagendar para otra fecha, no dudes en contactarnos:</p>
+
+          <p>
+            <a href="https://wa.me/5493815825570" class="cta">Consultar por WhatsApp</a>
+          </p>
+
+          <p style="margin-top: 20px;">Tambien podes ver nuestras fechas disponibles en <a href="https://mallku.com.ar/calendario" style="color:#c9a227;">mallku.com.ar/calendario</a> para elegir una nueva salida.</p>
+
+          <p style="margin-top: 24px;">Esperamos poder acompanarte pronto.</p>
+          <p><strong>Equipo Mallku</strong></p>
+        </div>
+        <div class="footer">
+          <a href="https://mallku.com.ar">mallku.com.ar</a> &bull;
+          <a href="https://instagram.com/mallku.noa">@mallku.noa</a> &bull;
+          <a href="https://wa.me/5493815825570">WhatsApp</a>
+          <p style="margin-top: 8px; color: #999;">San Miguel de Tucuman, Argentina</p>
+        </div>
+      </div>
+    </body>
+    </html>
+  `;
+}
+
+// ==========================================
+// COMPLETION EMAIL TEMPLATE
+// ==========================================
+
+interface CompletionEmailParams {
+  nombreCliente: string;
+  excursionTitulo: string;
+}
+
+export function getCompletionEmailHtml(params: CompletionEmailParams): string {
+  const { nombreCliente, excursionTitulo } = params;
+
+  return `
+    <!DOCTYPE html>
+    <html>
+    <head>
+      <style>
+        body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; color: #333; }
+        .container { max-width: 600px; margin: 0 auto; padding: 20px; }
+        .header { background: #1a1a2e; color: white; padding: 24px; text-align: center; }
+        .header h1 { margin: 0; font-size: 22px; }
+        .content { background: #f8f9fa; padding: 28px; }
+        .footer { text-align: center; padding: 20px; color: #666; font-size: 13px; }
+        .footer a { color: #c9a227; text-decoration: none; }
+        .cta { display: inline-block; background: #c9a227; color: white; padding: 12px 28px;
+               text-decoration: none; font-weight: bold; margin-top: 20px; }
+      </style>
+    </head>
+    <body>
+      <div class="container">
+        <div class="header">
+          <h1>Mallku — Turismo Arqueologico NOA</h1>
+        </div>
+        <div class="content">
+          <p>Hola <strong>${nombreCliente}</strong>,</p>
+          <p>iGracias por elegirnos! Fue un placer haber compartido <strong>${excursionTitulo}</strong> con vos.</p>
+
+          <p>Esperamos que hayas disfrutado la experiencia y que te hayas llevado un recuerdo inolvidable del NOA.</p>
+
+          <p>Si tenes fotos del dia o queres contarnos como te fue, podes escribirnos por WhatsApp o Instagram. iNos encanta saber de ustedes!</p>
+
+          <p>
+            <a href="https://mallku.com.ar/excursiones" class="cta">Ver mas excursiones</a>
+          </p>
+
+          <p style="margin-top: 24px;">iHasta la proxima aventura!</p>
+          <p><strong>Equipo Mallku</strong></p>
+        </div>
+        <div class="footer">
+          <a href="https://mallku.com.ar">mallku.com.ar</a> &bull;
+          <a href="https://instagram.com/mallku.noa">@mallku.noa</a> &bull;
+          <a href="https://wa.me/5493815825570">WhatsApp</a>
+          <p style="margin-top: 8px; color: #999;">San Miguel de Tucuman, Argentina</p>
+        </div>
+      </div>
+    </body>
+    </html>
+  `;
+}
+
+// ==========================================
 // GENERIC EMAIL FUNCTION
 // ==========================================
 
@@ -497,7 +629,7 @@ export async function sendEmail(options: SendEmailOptions): Promise<boolean> {
     });
 
     if (error) {
-      console.error('Error sending email:', error);
+      console.error('Error sending email:', JSON.stringify(error));
       return false;
     }
 
@@ -505,5 +637,27 @@ export async function sendEmail(options: SendEmailOptions): Promise<boolean> {
   } catch (err) {
     console.error('Error sending email:', err);
     return false;
+  }
+}
+
+export async function sendEmailGetError(options: SendEmailOptions): Promise<string | null> {
+  if (!resend) return 'Resend no inicializado (falta RESEND_API_KEY)';
+
+  try {
+    const { error } = await resend.emails.send({
+      from: options.from || 'Mallku <onboarding@resend.dev>',
+      to: options.to,
+      subject: options.subject,
+      html: options.html,
+    });
+
+    if (error) {
+      const resendError = error as any;
+      return resendError?.message || JSON.stringify(error);
+    }
+
+    return null; // null = éxito
+  } catch (err: any) {
+    return err?.message || String(err);
   }
 }

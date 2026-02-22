@@ -251,7 +251,7 @@ export const alertasApi = {
 
   sendBookingEmail: async (
     id: string,
-    template: 'confirmation' | 'balance' | 'info'
+    template: 'confirmation' | 'balance' | 'info' | 'cancelled' | 'completed'
   ): Promise<{ ok: boolean; template: string; sentTo: string }> => {
     const response = await api.post<
       ApiResponse<{ ok: boolean; template: string; sentTo: string }>

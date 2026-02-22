@@ -12,7 +12,7 @@ import excursionsRouter from './routes/excursions';
 import datesRouter from './routes/dates';
 import bookingsRouter from './routes/bookings';
 import { authMiddleware } from './lib/auth';
-import { getReminderEmailHtml, getBalanceReminderEmailHtml, getExcursionInfoEmailHtml, sendEmail } from './lib/email';
+import { getReminderEmailHtml, getBalanceReminderEmailHtml, getExcursionInfoEmailHtml, getCancellationEmailHtml, getCompletionEmailHtml, sendEmail, sendEmailGetError } from './lib/email';
 
 // ==========================================
 // TIPOS DE ENTORNO
@@ -350,10 +350,10 @@ app.post('/api/v1/admin/bookings/:id/send-email', async (c) => {
 
   const id = c.req.param('id');
   const body = await c.req.json();
-  const template = body.template as 'confirmation' | 'balance' | 'info';
+  const template = body.template as 'confirmation' | 'balance' | 'info' | 'cancelled' | 'completed';
 
-  if (!['confirmation', 'balance', 'info'].includes(template)) {
-    return c.json({ success: false, message: 'Template inválido. Usar: confirmation, balance, info' }, 400);
+  if (!['confirmation', 'balance', 'info', 'cancelled', 'completed'].includes(template)) {
+    return c.json({ success: false, message: 'Template inválido. Usar: confirmation, balance, info, cancelled, completed' }, 400);
   }
 
   const [row] = await db
@@ -402,6 +402,19 @@ app.post('/api/v1/admin/bookings/:id/send-email', async (c) => {
       saldoPendiente: precioTotal - seniaPagada,
     });
     subject = `Recordatorio de pago — ${excursionNombre} - Mallku`;
+  } else if (template === 'cancelled') {
+    html = getCancellationEmailHtml({
+      nombreCliente: row.nombreCompleto,
+      excursionTitulo: excursionNombre,
+      fecha: row.fecha ? fechaISO : undefined,
+    });
+    subject = `Cancelación de reserva — ${excursionNombre} - Mallku`;
+  } else if (template === 'completed') {
+    html = getCompletionEmailHtml({
+      nombreCliente: row.nombreCompleto,
+      excursionTitulo: excursionNombre,
+    });
+    subject = `¡Gracias por tu excursión! — ${excursionNombre} - Mallku`;
   } else {
     html = getExcursionInfoEmailHtml({
       nombreCliente: row.nombreCompleto,
@@ -413,8 +426,8 @@ app.post('/api/v1/admin/bookings/:id/send-email', async (c) => {
     subject = `Información para tu excursión — ${excursionNombre} - Mallku`;
   }
 
-  const ok = await sendEmail({ to: row.email, subject, html });
-  if (!ok) return c.json({ success: false, message: 'Error al enviar email' }, 500);
+  const sendError = await sendEmailGetError({ to: row.email, subject, html });
+  if (sendError) return c.json({ success: false, message: sendError }, 500);
 
   return c.json({ success: true, data: { ok: true, template, sentTo: row.email } });
 });

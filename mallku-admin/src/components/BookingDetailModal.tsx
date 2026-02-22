@@ -69,10 +69,16 @@ export function BookingDetailModal({ booking, isOpen, onClose }: BookingDetailMo
             }
       );
 
-      // Auto-enviar email de confirmación si el status pasó a "confirmed"
-      if (status === 'confirmed' && previousStatus !== 'confirmed') {
+      // Auto-enviar email según transición de estado
+      const emailPorEstado: Record<string, 'confirmation' | 'cancelled' | 'completed'> = {
+        confirmed: 'confirmation',
+        cancelled: 'cancelled',
+        completed: 'completed',
+      };
+      const emailTemplate = emailPorEstado[status];
+      if (emailTemplate && status !== previousStatus) {
         try {
-          await alertasApi.sendBookingEmail(booking.id, 'confirmation');
+          await alertasApi.sendBookingEmail(booking.id, emailTemplate);
         } catch {
           // Email no crítico — no bloquear el guardado
         }
