@@ -29,21 +29,21 @@ function getUrgencyInfo(fecha: string): {
     return {
       label: 'URGENTE',
       borderClass: 'border-l-4 border-l-red-500',
-      badgeClass: 'bg-red-100 text-red-700',
+      badgeClass: 'bg-red-100 text-red-700 dark:bg-red-900/40 dark:text-red-400',
       daysUntil,
     };
   } else if (daysUntil <= 3) {
     return {
       label: 'PRÓXIMO',
       borderClass: 'border-l-4 border-l-orange-400',
-      badgeClass: 'bg-orange-100 text-orange-700',
+      badgeClass: 'bg-orange-100 text-orange-700 dark:bg-orange-900/40 dark:text-orange-400',
       daysUntil,
     };
   } else {
     return {
       label: 'ESTA SEMANA',
       borderClass: 'border-l-4 border-l-green-500',
-      badgeClass: 'bg-green-100 text-green-700',
+      badgeClass: 'bg-green-100 text-green-700 dark:bg-green-900/40 dark:text-green-400',
       daysUntil,
     };
   }
@@ -59,9 +59,9 @@ function formatFecha(fecha: string) {
 }
 
 function paymentBadge(status: string) {
-  if (status === 'paid') return 'bg-green-100 text-green-700';
-  if (status === 'partial') return 'bg-blue-100 text-blue-700';
-  return 'bg-yellow-100 text-yellow-700';
+  if (status === 'paid') return 'bg-green-100 text-green-700 dark:bg-green-900/40 dark:text-green-400';
+  if (status === 'partial') return 'bg-blue-100 text-blue-700 dark:bg-blue-900/40 dark:text-blue-400';
+  return 'bg-yellow-100 text-yellow-700 dark:bg-yellow-900/40 dark:text-yellow-400';
 }
 
 function paymentLabel(status: string) {
@@ -161,7 +161,7 @@ function DateCard({ item }: { item: UpcomingDate }) {
                       href={`https://wa.me/${booking.telefono.replace(/\D/g, '')}`}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="text-blue-600 hover:underline"
+                      className="text-blue-600 dark:text-blue-400 hover:underline"
                     >
                       {booking.telefono}
                     </a>

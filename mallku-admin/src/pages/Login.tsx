@@ -35,7 +35,7 @@ export function LoginPage() {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-50 p-4">
+    <div className="min-h-screen flex items-center justify-center bg-gray-50 dark:bg-gray-950 p-4">
       <Card className="w-full max-w-md">
         <CardHeader className="space-y-1">
           <CardTitle className="text-2xl font-bold">Mallku Admin</CardTitle>
@@ -70,7 +70,7 @@ export function LoginPage() {
             </div>
 
             {error && (
-              <div className="text-sm text-red-600 bg-red-50 p-3 rounded-md">{error}</div>
+              <div className="text-sm text-red-600 dark:text-red-400 bg-red-50 dark:bg-red-900/30 p-3 rounded-md">{error}</div>
             )}
 
             <Button type="submit" className="w-full" disabled={loading}>

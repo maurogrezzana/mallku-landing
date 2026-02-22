@@ -12,7 +12,7 @@ import {
   TableRow,
 } from '@/components/ui/table';
 import { reservasApi } from '@/lib/api';
-import { Check, X, Eye, Plus } from 'lucide-react';
+import { Check, X, Plus } from 'lucide-react';
 import type { Booking } from '@/types';
 import { BookingDetailModal } from '@/components/BookingDetailModal';
 import { AddBookingModal } from '@/components/AddBookingModal';
@@ -110,17 +110,17 @@ export function ReservasPage() {
   };
 
   const estadoPropuestaBadge = (estado: string | null) => {
-    if (estado === 'aprobada') return 'bg-green-50 text-green-700';
-    if (estado === 'rechazada') return 'bg-red-50 text-red-700';
-    return 'bg-yellow-50 text-yellow-700';
+    if (estado === 'aprobada') return 'bg-green-50 text-green-700 dark:bg-green-900/30 dark:text-green-400';
+    if (estado === 'rechazada') return 'bg-red-50 text-red-700 dark:bg-red-900/30 dark:text-red-400';
+    return 'bg-yellow-50 text-yellow-700 dark:bg-yellow-900/30 dark:text-yellow-400';
   };
 
   const statusBadge = (status: string) => {
-    if (status === 'confirmed') return 'bg-green-50 text-green-700';
-    if (status === 'pending') return 'bg-yellow-50 text-yellow-700';
-    if (status === 'paid') return 'bg-blue-50 text-blue-700';
-    if (status === 'completed') return 'bg-gray-50 text-gray-700';
-    return 'bg-red-50 text-red-700';
+    if (status === 'confirmed') return 'bg-green-50 text-green-700 dark:bg-green-900/30 dark:text-green-400';
+    if (status === 'pending') return 'bg-yellow-50 text-yellow-700 dark:bg-yellow-900/30 dark:text-yellow-400';
+    if (status === 'paid') return 'bg-blue-50 text-blue-700 dark:bg-blue-900/30 dark:text-blue-400';
+    if (status === 'completed') return 'bg-gray-50 text-gray-700 dark:bg-gray-800 dark:text-gray-300';
+    return 'bg-red-50 text-red-700 dark:bg-red-900/30 dark:text-red-400';
   };
 
   const statusLabel: Record<string, string> = {
@@ -174,12 +174,15 @@ export function ReservasPage() {
                       <TableHead>Personas</TableHead>
                       <TableHead>Precio</TableHead>
                       <TableHead>Estado</TableHead>
-                      <TableHead className="text-right">Acciones</TableHead>
                     </TableRow>
                   </TableHeader>
                   <TableBody>
                     {fechaFijaData.data.map((booking) => (
-                      <TableRow key={booking.id}>
+                      <TableRow
+                        key={booking.id}
+                        onClick={() => handleVerDetalle(booking)}
+                        className="cursor-pointer hover:bg-muted/50"
+                      >
                         <TableCell className="font-mono text-xs">
                           {booking.bookingNumber}
                         </TableCell>
@@ -199,16 +202,6 @@ export function ReservasPage() {
                           >
                             {statusLabel[booking.status] || booking.status}
                           </span>
-                        </TableCell>
-                        <TableCell className="text-right">
-                          <Button
-                            size="sm"
-                            variant="outline"
-                            onClick={() => handleVerDetalle(booking)}
-                          >
-                            <Eye className="w-4 h-4 mr-1" />
-                            Ver / Editar
-                          </Button>
                         </TableCell>
                       </TableRow>
                     ))}
@@ -242,7 +235,11 @@ export function ReservasPage() {
                   </TableHeader>
                   <TableBody>
                     {propuestasPendientes.map((booking) => (
-                      <TableRow key={booking.id}>
+                      <TableRow
+                        key={booking.id}
+                        onClick={() => handleVerDetalle(booking)}
+                        className="cursor-pointer hover:bg-muted/50"
+                      >
                         <TableCell className="font-mono text-xs">
                           {booking.bookingNumber}
                         </TableCell>
@@ -266,7 +263,7 @@ export function ReservasPage() {
                             <Button
                               size="sm"
                               variant="outline"
-                              onClick={() => handleAprobar(booking)}
+                              onClick={(e) => { e.stopPropagation(); handleAprobar(booking); }}
                               disabled={
                                 aprobarMutation.isPending || rechazarMutation.isPending
                               }
@@ -277,7 +274,7 @@ export function ReservasPage() {
                             <Button
                               size="sm"
                               variant="outline"
-                              onClick={() => handleRechazar(booking)}
+                              onClick={(e) => { e.stopPropagation(); handleRechazar(booking); }}
                               disabled={
                                 aprobarMutation.isPending || rechazarMutation.isPending
                               }
@@ -317,12 +314,15 @@ export function ReservasPage() {
                       <TableHead>Personas</TableHead>
                       <TableHead>Precio</TableHead>
                       <TableHead>Estado</TableHead>
-                      <TableHead className="text-right">Acciones</TableHead>
                     </TableRow>
                   </TableHeader>
                   <TableBody>
                     {propuestasRevisadas.map((booking) => (
-                      <TableRow key={booking.id}>
+                      <TableRow
+                        key={booking.id}
+                        onClick={() => handleVerDetalle(booking)}
+                        className="cursor-pointer hover:bg-muted/50"
+                      >
                         <TableCell className="font-mono text-xs">
                           {booking.bookingNumber}
                         </TableCell>
@@ -343,16 +343,6 @@ export function ReservasPage() {
                           >
                             {booking.estadoPropuesta}
                           </span>
-                        </TableCell>
-                        <TableCell className="text-right">
-                          <Button
-                            size="sm"
-                            variant="outline"
-                            onClick={() => handleVerDetalle(booking)}
-                          >
-                            <Eye className="w-4 h-4 mr-1" />
-                            Ver / Editar
-                          </Button>
                         </TableCell>
                       </TableRow>
                     ))}

@@ -133,10 +133,10 @@ export function DashboardPage() {
                     <p
                       className={`text-xs ${
                         fecha.estado === 'disponible'
-                          ? 'text-green-600'
+                          ? 'text-green-600 dark:text-green-400'
                           : fecha.estado === 'pocos-cupos'
-                            ? 'text-orange-600'
-                            : 'text-red-600'
+                            ? 'text-orange-600 dark:text-orange-400'
+                            : 'text-red-600 dark:text-red-400'
                       }`}
                     >
                       {fecha.estado}

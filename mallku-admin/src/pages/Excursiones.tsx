@@ -95,10 +95,10 @@ export function ExcursionesPage() {
                       <span
                         className={`inline-flex items-center rounded-full px-2 py-1 text-xs font-medium ${
                           excursion.dificultad === 'baja'
-                            ? 'bg-green-50 text-green-700'
+                            ? 'bg-green-50 text-green-700 dark:bg-green-900/30 dark:text-green-400'
                             : excursion.dificultad === 'media'
-                              ? 'bg-yellow-50 text-yellow-700'
-                              : 'bg-red-50 text-red-700'
+                              ? 'bg-yellow-50 text-yellow-700 dark:bg-yellow-900/30 dark:text-yellow-400'
+                              : 'bg-red-50 text-red-700 dark:bg-red-900/30 dark:text-red-400'
                         }`}
                       >
                         {excursion.dificultad}
@@ -108,8 +108,8 @@ export function ExcursionesPage() {
                       <span
                         className={`inline-flex items-center rounded-full px-2 py-1 text-xs font-medium ${
                           excursion.isActive
-                            ? 'bg-green-50 text-green-700'
-                            : 'bg-gray-50 text-gray-700'
+                            ? 'bg-green-50 text-green-700 dark:bg-green-900/30 dark:text-green-400'
+                            : 'bg-gray-50 text-gray-700 dark:bg-gray-800 dark:text-gray-300'
                         }`}
                       >
                         {excursion.isActive ? 'Activa' : 'Inactiva'}

@@ -55,13 +55,17 @@ export function BookingDetailModal({ booking, isOpen, onClose }: BookingDetailMo
   const handleSave = async () => {
     if (!booking) return;
     try {
-      await updateMutation.mutateAsync({
-        status: status as any,
-        paymentStatus: paymentStatus as any,
-        seniaPagada: seniaPagada ? Math.round(parseFloat(seniaPagada) * 100) : undefined,
-        paymentReference: paymentReference || undefined,
-        notasInternas: notasInternas || undefined,
-      });
+      await updateMutation.mutateAsync(
+        isPaid
+          ? { notasInternas: notasInternas || undefined }
+          : {
+              status: status as any,
+              paymentStatus: paymentStatus as any,
+              seniaPagada: seniaPagada ? Math.round(parseFloat(seniaPagada) * 100) : undefined,
+              paymentReference: paymentReference || undefined,
+              notasInternas: notasInternas || undefined,
+            }
+      );
     } catch (error: any) {
       alert(error.response?.data?.message || 'Error al guardar cambios');
     }
@@ -178,21 +182,30 @@ export function BookingDetailModal({ booking, isOpen, onClose }: BookingDetailMo
             <h3 className="text-sm font-semibold text-muted-foreground uppercase tracking-wide mb-3">
               Estado de la reserva
             </h3>
-            <div className="space-y-2">
-              <Label htmlFor="status">Estado</Label>
-              <select
-                id="status"
-                value={status}
-                onChange={(e) => setStatus(e.target.value)}
-                className="w-full h-9 rounded-md border border-input bg-transparent px-3 py-1 text-sm shadow-sm focus:outline-none focus:ring-1 focus:ring-ring"
-              >
-                <option value="pending">Pendiente</option>
-                <option value="confirmed">Confirmada</option>
-                <option value="paid">Pagada</option>
-                <option value="completed">Completada</option>
-                <option value="cancelled">Cancelada</option>
-              </select>
-            </div>
+            {isPaid ? (
+              <div className="flex items-center gap-2 text-sm">
+                <span className="inline-flex items-center rounded-full px-2.5 py-1 text-xs font-medium bg-blue-50 text-blue-700 dark:bg-blue-900/30 dark:text-blue-400">
+                  Pagada
+                </span>
+                <span className="text-xs text-muted-foreground">— No se puede modificar una reserva completamente abonada</span>
+              </div>
+            ) : (
+              <div className="space-y-2">
+                <Label htmlFor="status">Estado</Label>
+                <select
+                  id="status"
+                  value={status}
+                  onChange={(e) => setStatus(e.target.value)}
+                  className="w-full h-9 rounded-md border border-input bg-transparent px-3 py-1 text-sm shadow-sm focus:outline-none focus:ring-1 focus:ring-ring"
+                >
+                  <option value="pending">Pendiente</option>
+                  <option value="confirmed">Confirmada</option>
+                  <option value="paid">Pagada</option>
+                  <option value="completed">Completada</option>
+                  <option value="cancelled">Cancelada</option>
+                </select>
+              </div>
+            )}
           </div>
 
           <hr />
@@ -202,88 +215,106 @@ export function BookingDetailModal({ booking, isOpen, onClose }: BookingDetailMo
             <h3 className="text-sm font-semibold text-muted-foreground uppercase tracking-wide mb-3">
               Información de pago
             </h3>
-            <div className="space-y-4">
-              <div className="space-y-2">
-                <Label htmlFor="paymentStatus">Estado de pago</Label>
-                <select
-                  id="paymentStatus"
-                  value={paymentStatus}
-                  onChange={(e) => setPaymentStatus(e.target.value)}
-                  className="w-full h-9 rounded-md border border-input bg-transparent px-3 py-1 text-sm shadow-sm focus:outline-none focus:ring-1 focus:ring-ring"
-                >
-                  <option value="pending">Sin pago</option>
-                  <option value="partial">Seña / Pago parcial</option>
-                  <option value="paid">Pago completo</option>
-                  <option value="refunded">Reembolsado</option>
-                </select>
-              </div>
-
-              <div className="grid grid-cols-2 gap-4">
-                <div className="space-y-2">
-                  <Label htmlFor="seniaPagada">Seña / Pago ($ARS)</Label>
-                  <Input
-                    id="seniaPagada"
-                    type="number"
-                    placeholder="0.00"
-                    value={seniaPagada}
-                    onChange={(e) => setSeniaPagada(e.target.value)}
-                    min="0"
-                    step="1"
-                  />
+            {isPaid ? (
+              <div className="grid grid-cols-2 gap-3 text-sm">
+                <div>
+                  <span className="text-muted-foreground">Estado de pago:</span>
+                  <p className="font-medium mt-0.5">
+                    <span className="inline-flex items-center rounded-full px-2 py-0.5 text-xs font-medium bg-green-50 text-green-700 dark:bg-green-900/30 dark:text-green-400">
+                      Pago completo
+                    </span>
+                  </p>
                 </div>
-                <div className="space-y-2">
-                  <Label htmlFor="paymentReference">Referencia de pago</Label>
-                  <Input
-                    id="paymentReference"
-                    placeholder="Ej: MP-TXN-123, Transferencia Banco X"
-                    value={paymentReference}
-                    onChange={(e) => setPaymentReference(e.target.value)}
-                  />
+                <div>
+                  <span className="text-muted-foreground">Monto abonado:</span>
+                  <p className="font-medium mt-0.5">{seniaPagada ? `$${parseFloat(seniaPagada).toLocaleString('es-AR')}` : formatPrecio(booking.precioTotal)}</p>
                 </div>
+                {paymentReference && (
+                  <div className="col-span-2">
+                    <span className="text-muted-foreground">Referencia:</span>
+                    <p className="font-medium font-mono text-xs mt-0.5">{paymentReference}</p>
+                  </div>
+                )}
               </div>
+            ) : (
+              <div className="space-y-4">
+                <div className="space-y-2">
+                  <Label htmlFor="paymentStatus">Estado de pago</Label>
+                  <select
+                    id="paymentStatus"
+                    value={paymentStatus}
+                    onChange={(e) => setPaymentStatus(e.target.value)}
+                    className="w-full h-9 rounded-md border border-input bg-transparent px-3 py-1 text-sm shadow-sm focus:outline-none focus:ring-1 focus:ring-ring"
+                  >
+                    <option value="pending">Sin pago</option>
+                    <option value="partial">Seña / Pago parcial</option>
+                    <option value="paid">Pago completo</option>
+                    <option value="refunded">Reembolsado</option>
+                  </select>
+                </div>
 
-              {/* Botón MercadoPago */}
-              <div className="space-y-2 pt-1">
-                <Label>Link de pago MercadoPago</Label>
-                {!mpLinkUrl ? (
-                  <div>
+                <div className="grid grid-cols-2 gap-4">
+                  <div className="space-y-2">
+                    <Label htmlFor="seniaPagada">Seña / Pago ($ARS)</Label>
+                    <Input
+                      id="seniaPagada"
+                      type="number"
+                      placeholder="0.00"
+                      value={seniaPagada}
+                      onChange={(e) => setSeniaPagada(e.target.value)}
+                      min="0"
+                      step="1"
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <Label htmlFor="paymentReference">Referencia de pago</Label>
+                    <Input
+                      id="paymentReference"
+                      placeholder="Ej: MP-TXN-123, Transferencia Banco X"
+                      value={paymentReference}
+                      onChange={(e) => setPaymentReference(e.target.value)}
+                    />
+                  </div>
+                </div>
+
+                {/* Botón MercadoPago */}
+                <div className="space-y-2 pt-1">
+                  <Label>Link de pago MercadoPago</Label>
+                  {!mpLinkUrl ? (
                     <Button
                       type="button"
                       variant="outline"
                       size="sm"
                       onClick={handleGenerateMpLink}
-                      disabled={generatingLink || isPaid}
+                      disabled={generatingLink}
                     >
                       {generatingLink ? 'Generando...' : '🔗 Generar link de pago MP'}
                     </Button>
-                    {isPaid && (
-                      <p className="text-xs text-muted-foreground mt-1">Esta reserva ya está pagada</p>
-                    )}
-                  </div>
-                ) : (
-                  <div className="flex gap-2 items-center">
-                    <Input
-                      value={mpLinkUrl}
-                      readOnly
-                      className="text-xs font-mono"
-                    />
-                    <Button
-                      type="button"
-                      size="sm"
-                      variant="outline"
-                      onClick={handleCopyLink}
-                    >
-                      {copied ? '✓ Copiado' : 'Copiar'}
-                    </Button>
-                  </div>
-                )}
-                {mpLinkUrl && (
-                  <p className="text-xs text-muted-foreground">
-                    Enviá este link al cliente por WhatsApp para que pague online con tarjeta, débito o transferencia.
-                  </p>
-                )}
+                  ) : (
+                    <div className="flex gap-2 items-center">
+                      <Input
+                        value={mpLinkUrl}
+                        readOnly
+                        className="text-xs font-mono"
+                      />
+                      <Button
+                        type="button"
+                        size="sm"
+                        variant="outline"
+                        onClick={handleCopyLink}
+                      >
+                        {copied ? '✓ Copiado' : 'Copiar'}
+                      </Button>
+                    </div>
+                  )}
+                  {mpLinkUrl && (
+                    <p className="text-xs text-muted-foreground">
+                      Enviá este link al cliente por WhatsApp para que pague online con tarjeta, débito o transferencia.
+                    </p>
+                  )}
+                </div>
               </div>
-            </div>
+            )}
           </div>
 
           <hr />

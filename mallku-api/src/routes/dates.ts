@@ -1,5 +1,5 @@
 import { Hono } from 'hono';
-import { eq, desc, and, gte, lte, sql } from 'drizzle-orm';
+import { eq, desc, and, gte, lte, sql, notInArray } from 'drizzle-orm';
 import { dates, excursions, type DateSalida } from '../db/schema';
 import { createDateSchema, updateDateSchema } from '../lib/validation';
 import { authMiddleware } from '../lib/auth';
@@ -27,27 +27,32 @@ app.get('/calendar', async (c) => {
   const from = c.req.query('from');
   const to = c.req.query('to');
 
+  const EXCLUDED_ESTADOS = ['cancelado', 'completo'] as ('cancelado' | 'completo')[];
+
+  const baseSelect = {
+    id: dates.id,
+    excursionId: dates.excursionId,
+    excursionSlug: excursions.slug,
+    excursionTitulo: excursions.titulo,
+    fecha: dates.fecha,
+    horaSalida: dates.horaSalida,
+    cuposTotales: dates.cuposTotales,
+    cuposReservados: dates.cuposReservados,
+    cuposDisponibles: sql<number>`${dates.cuposTotales} - ${dates.cuposReservados}`,
+    estado: dates.estado,
+    precioOverride: dates.precioOverride,
+    precioBase: excursions.precioBase,
+  };
+
   let query = db
-    .select({
-      id: dates.id,
-      excursionId: dates.excursionId,
-      excursionSlug: excursions.slug,
-      excursionTitulo: excursions.titulo,
-      fecha: dates.fecha,
-      horaSalida: dates.horaSalida,
-      cuposTotales: dates.cuposTotales,
-      cuposReservados: dates.cuposReservados,
-      cuposDisponibles: sql<number>`${dates.cuposTotales} - ${dates.cuposReservados}`,
-      estado: dates.estado,
-      precioOverride: dates.precioOverride,
-      precioBase: excursions.precioBase,
-    })
+    .select(baseSelect)
     .from(dates)
     .innerJoin(excursions, eq(dates.excursionId, excursions.id))
     .where(
       and(
         eq(excursions.isActive, true),
-        gte(dates.fecha, new Date())
+        gte(dates.fecha, new Date()),
+        notInArray(dates.estado, EXCLUDED_ESTADOS)
       )
     )
     .orderBy(dates.fecha);
@@ -55,27 +60,15 @@ app.get('/calendar', async (c) => {
   // Filtrar por excursión si se especifica
   if (excursionSlug) {
     query = db
-      .select({
-        id: dates.id,
-        excursionId: dates.excursionId,
-        excursionSlug: excursions.slug,
-        excursionTitulo: excursions.titulo,
-        fecha: dates.fecha,
-        horaSalida: dates.horaSalida,
-        cuposTotales: dates.cuposTotales,
-        cuposReservados: dates.cuposReservados,
-        cuposDisponibles: sql<number>`${dates.cuposTotales} - ${dates.cuposReservados}`,
-        estado: dates.estado,
-        precioOverride: dates.precioOverride,
-        precioBase: excursions.precioBase,
-      })
+      .select(baseSelect)
       .from(dates)
       .innerJoin(excursions, eq(dates.excursionId, excursions.id))
       .where(
         and(
           eq(excursions.isActive, true),
           eq(excursions.slug, excursionSlug),
-          gte(dates.fecha, new Date())
+          gte(dates.fecha, new Date()),
+          notInArray(dates.estado, EXCLUDED_ESTADOS)
         )
       )
       .orderBy(dates.fecha) as any;
@@ -85,26 +78,14 @@ app.get('/calendar', async (c) => {
   if (from) {
     const fromDate = new Date(from);
     query = db
-      .select({
-        id: dates.id,
-        excursionId: dates.excursionId,
-        excursionSlug: excursions.slug,
-        excursionTitulo: excursions.titulo,
-        fecha: dates.fecha,
-        horaSalida: dates.horaSalida,
-        cuposTotales: dates.cuposTotales,
-        cuposReservados: dates.cuposReservados,
-        cuposDisponibles: sql<number>`${dates.cuposTotales} - ${dates.cuposReservados}`,
-        estado: dates.estado,
-        precioOverride: dates.precioOverride,
-        precioBase: excursions.precioBase,
-      })
+      .select(baseSelect)
       .from(dates)
       .innerJoin(excursions, eq(dates.excursionId, excursions.id))
       .where(
         and(
           eq(excursions.isActive, true),
           gte(dates.fecha, fromDate),
+          notInArray(dates.estado, EXCLUDED_ESTADOS),
           excursionSlug ? eq(excursions.slug, excursionSlug) : undefined
         )
       )
@@ -114,20 +95,7 @@ app.get('/calendar', async (c) => {
   if (to) {
     const toDate = new Date(to);
     query = db
-      .select({
-        id: dates.id,
-        excursionId: dates.excursionId,
-        excursionSlug: excursions.slug,
-        excursionTitulo: excursions.titulo,
-        fecha: dates.fecha,
-        horaSalida: dates.horaSalida,
-        cuposTotales: dates.cuposTotales,
-        cuposReservados: dates.cuposReservados,
-        cuposDisponibles: sql<number>`${dates.cuposTotales} - ${dates.cuposReservados}`,
-        estado: dates.estado,
-        precioOverride: dates.precioOverride,
-        precioBase: excursions.precioBase,
-      })
+      .select(baseSelect)
       .from(dates)
       .innerJoin(excursions, eq(dates.excursionId, excursions.id))
       .where(
@@ -135,6 +103,7 @@ app.get('/calendar', async (c) => {
           eq(excursions.isActive, true),
           gte(dates.fecha, from ? new Date(from) : new Date()),
           lte(dates.fecha, toDate),
+          notInArray(dates.estado, EXCLUDED_ESTADOS),
           excursionSlug ? eq(excursions.slug, excursionSlug) : undefined
         )
       )

@@ -52,14 +52,14 @@ function toInputDate(isoStr: string) {
 
 function EstadoBadge({ estado }: { estado: string }) {
   const styles: Record<string, string> = {
-    disponible: 'bg-green-50 text-green-700',
-    'pocos-cupos': 'bg-orange-50 text-orange-700',
-    completo: 'bg-red-50 text-red-700',
-    cancelado: 'bg-gray-100 text-gray-500',
+    disponible: 'bg-green-50 text-green-700 dark:bg-green-900/30 dark:text-green-400',
+    'pocos-cupos': 'bg-orange-50 text-orange-700 dark:bg-orange-900/30 dark:text-orange-400',
+    completo: 'bg-red-50 text-red-700 dark:bg-red-900/30 dark:text-red-400',
+    cancelado: 'bg-gray-100 text-gray-500 dark:bg-gray-800 dark:text-gray-400',
   };
   return (
     <span
-      className={`inline-flex items-center rounded-full px-2 py-1 text-xs font-medium ${styles[estado] || 'bg-gray-100 text-gray-600'}`}
+      className={`inline-flex items-center rounded-full px-2 py-1 text-xs font-medium ${styles[estado] || 'bg-gray-100 text-gray-600 dark:bg-gray-800 dark:text-gray-400'}`}
     >
       {estado}
     </span>
@@ -278,7 +278,7 @@ function FechaFormDialog({
           </div>
 
           {error && (
-            <div className="text-sm text-red-600 bg-red-50 p-3 rounded-md">{error}</div>
+            <div className="text-sm text-red-600 dark:text-red-400 bg-red-50 dark:bg-red-900/30 p-3 rounded-md">{error}</div>
           )}
 
           <DialogFooter>
@@ -304,6 +304,7 @@ export function FechasPage() {
   const [showCreate, setShowCreate] = useState(false);
   const [editingDate, setEditingDate] = useState<FechaSalida | null>(null);
   const [filterExcursion, setFilterExcursion] = useState('');
+  const [filterEstado, setFilterEstado] = useState('');
 
   // Queries
   const { data: fechas = [], isLoading: loadingFechas } = useQuery({
@@ -345,9 +346,12 @@ export function FechasPage() {
   };
 
   // Filtered list
-  const filtered = filterExcursion
-    ? fechas.filter((f) => f.excursionId === filterExcursion)
-    : fechas;
+  const filtered = fechas.filter((f) => {
+    if (filterExcursion && f.excursionId !== filterExcursion) return false;
+    if (filterEstado === 'pasada') return new Date(f.fecha) < new Date();
+    if (filterEstado && f.estado !== filterEstado) return false;
+    return true;
+  });
 
   const disponibles = fechas.filter((f) => f.estado === 'disponible').length;
   const pocosQupos = fechas.filter((f) => f.estado === 'pocos-cupos').length;
@@ -371,19 +375,19 @@ export function FechasPage() {
       <div className="grid grid-cols-3 gap-4">
         <Card>
           <CardContent className="pt-4 pb-4">
-            <div className="text-2xl font-bold text-green-600">{disponibles}</div>
+            <div className="text-2xl font-bold text-green-600 dark:text-green-400">{disponibles}</div>
             <p className="text-sm text-muted-foreground">Disponibles</p>
           </CardContent>
         </Card>
         <Card>
           <CardContent className="pt-4 pb-4">
-            <div className="text-2xl font-bold text-orange-600">{pocosQupos}</div>
+            <div className="text-2xl font-bold text-orange-600 dark:text-orange-400">{pocosQupos}</div>
             <p className="text-sm text-muted-foreground">Pocos cupos</p>
           </CardContent>
         </Card>
         <Card>
           <CardContent className="pt-4 pb-4">
-            <div className="text-2xl font-bold text-red-600">{completas}</div>
+            <div className="text-2xl font-bold text-red-600 dark:text-red-400">{completas}</div>
             <p className="text-sm text-muted-foreground">Completas</p>
           </CardContent>
         </Card>
@@ -392,26 +396,39 @@ export function FechasPage() {
       {/* Table */}
       <Card>
         <CardHeader>
-          <div className="flex items-center justify-between">
+          <div className="flex items-center justify-between gap-4">
             <div>
               <CardTitle>Todas las fechas</CardTitle>
               <CardDescription>
-                {filtered.length} fecha(s)
-                {filterExcursion ? ' filtradas' : ' en total'}
+                {filtered.length} de {fechas.length} fecha(s)
               </CardDescription>
             </div>
-            <select
-              value={filterExcursion}
-              onChange={(e) => setFilterExcursion(e.target.value)}
-              className="h-9 rounded-md border border-input bg-transparent px-3 py-1 text-sm shadow-sm focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring"
-            >
-              <option value="">Todas las excursiones</option>
-              {excursiones.map((exc) => (
-                <option key={exc.id} value={exc.id}>
-                  {exc.titulo}
-                </option>
-              ))}
-            </select>
+            <div className="flex gap-2">
+              <select
+                value={filterEstado}
+                onChange={(e) => setFilterEstado(e.target.value)}
+                className="h-9 rounded-md border border-input bg-transparent px-3 py-1 text-sm shadow-sm focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring"
+              >
+                <option value="">Todos los estados</option>
+                <option value="disponible">Disponible</option>
+                <option value="pocos-cupos">Pocos cupos</option>
+                <option value="completo">Completo</option>
+                <option value="cancelado">Cancelado</option>
+                <option value="pasada">Pasadas</option>
+              </select>
+              <select
+                value={filterExcursion}
+                onChange={(e) => setFilterExcursion(e.target.value)}
+                className="h-9 rounded-md border border-input bg-transparent px-3 py-1 text-sm shadow-sm focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring"
+              >
+                <option value="">Todas las excursiones</option>
+                {excursiones.map((exc) => (
+                  <option key={exc.id} value={exc.id}>
+                    {exc.titulo}
+                  </option>
+                ))}
+              </select>
+            </div>
           </div>
         </CardHeader>
         <CardContent>
@@ -424,7 +441,7 @@ export function FechasPage() {
                   <TableHead>Fecha</TableHead>
                   <TableHead>Excursión</TableHead>
                   <TableHead>Hora</TableHead>
-                  <TableHead>Cupos</TableHead>
+                  <TableHead>Reservados</TableHead>
                   <TableHead>Precio</TableHead>
                   <TableHead>Estado</TableHead>
                   <TableHead>Notas</TableHead>
@@ -433,12 +450,18 @@ export function FechasPage() {
               </TableHeader>
               <TableBody>
                 {filtered.map((fecha) => {
-                  const disponibles =
-                    fecha.cuposDisponibles ?? fecha.cuposTotales - fecha.cuposReservados;
+                  const isPast = new Date(fecha.fecha) < new Date();
+                  const isCancelled = fecha.estado === 'cancelado';
                   return (
                     <TableRow
                       key={fecha.id}
-                      className={fecha.estado === 'cancelado' ? 'opacity-50' : ''}
+                      className={
+                        isCancelled
+                          ? 'opacity-40'
+                          : isPast
+                          ? 'bg-muted/40 text-muted-foreground'
+                          : ''
+                      }
                     >
                       <TableCell className="font-medium whitespace-nowrap">
                         {formatFecha(fecha.fecha)}
@@ -447,9 +470,9 @@ export function FechasPage() {
                       <TableCell>{fecha.horaSalida}</TableCell>
                       <TableCell>
                         <span
-                          className={`text-sm font-medium ${disponibles === 0 ? 'text-red-600' : 'text-green-700'}`}
+                          className={`text-sm font-medium ${fecha.cuposReservados >= fecha.cuposTotales ? 'text-red-600 dark:text-red-400' : isPast ? 'text-muted-foreground' : 'text-green-700 dark:text-green-400'}`}
                         >
-                          {disponibles}/{fecha.cuposTotales}
+                          {fecha.cuposReservados}/{fecha.cuposTotales}
                         </span>
                       </TableCell>
                       <TableCell>
@@ -460,7 +483,14 @@ export function FechasPage() {
                         )}
                       </TableCell>
                       <TableCell>
-                        <EstadoBadge estado={fecha.estado} />
+                        <div className="flex items-center gap-1.5">
+                          <EstadoBadge estado={fecha.estado} />
+                          {isPast && !isCancelled && (
+                            <span className="inline-flex items-center rounded-full px-2 py-0.5 text-xs font-medium bg-gray-100 text-gray-500 dark:bg-gray-800 dark:text-gray-400">
+                              Pasada
+                            </span>
+                          )}
+                        </div>
                       </TableCell>
                       <TableCell>
                         <span className="text-xs text-muted-foreground">
@@ -473,7 +503,7 @@ export function FechasPage() {
                             variant="ghost"
                             size="icon"
                             onClick={() => setEditingDate(fecha)}
-                            disabled={fecha.estado === 'cancelado'}
+                            disabled={isCancelled || isPast}
                             title="Editar"
                           >
                             <Pencil className="w-4 h-4" />
@@ -482,9 +512,9 @@ export function FechasPage() {
                             variant="ghost"
                             size="icon"
                             onClick={() => handleCancel(fecha)}
-                            disabled={fecha.estado === 'cancelado' || deleteMutation.isPending}
+                            disabled={isCancelled || isPast || deleteMutation.isPending}
                             title="Cancelar fecha"
-                            className="text-red-600 hover:text-red-700 hover:bg-red-50"
+                            className="text-red-600 dark:text-red-400 hover:text-red-700 dark:hover:text-red-300 hover:bg-red-50 dark:hover:bg-red-900/30"
                           >
                             <Trash2 className="w-4 h-4" />
                           </Button>
