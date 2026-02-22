@@ -723,6 +723,35 @@ app.patch('/admin/:id', async (c) => {
   if (body.seniaPagada !== undefined) updateData.seniaPagada = body.seniaPagada;
   if (body.paymentReference !== undefined) updateData.paymentReference = body.paymentReference;
 
+  // Si se está cancelando: liberar cupos de la fecha si corresponde
+  if (body.status === 'cancelled' && booking.status !== 'cancelled') {
+    updateData.cancelledAt = new Date();
+
+    if (booking.dateId && booking.cantidadPersonas) {
+      const [date] = await db
+        .select()
+        .from(dates)
+        .where(eq(dates.id, booking.dateId));
+
+      if (date) {
+        const nuevoCuposReservados = Math.max(0, date.cuposReservados - booking.cantidadPersonas);
+        const nuevoEstado =
+          nuevoCuposReservados >= date.cuposTotales ? 'completo' :
+          date.cuposTotales - nuevoCuposReservados <= 3 ? 'pocos-cupos' :
+          'disponible';
+
+        await db
+          .update(dates)
+          .set({
+            cuposReservados: nuevoCuposReservados,
+            estado: nuevoEstado as any,
+            updatedAt: new Date(),
+          })
+          .where(eq(dates.id, booking.dateId));
+      }
+    }
+  }
+
   const [updated] = await db
     .update(bookings)
     .set(updateData)
