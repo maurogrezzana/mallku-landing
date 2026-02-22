@@ -3,7 +3,7 @@ import { eq, desc, and, sql } from 'drizzle-orm';
 import { bookings, dates, excursions, leads, type Booking } from '../db/schema';
 import { createBookingSchema, reviewPropuestaSchema, adminCreateBookingSchema } from '../lib/validation';
 import { authMiddleware } from '../lib/auth';
-import { sendEmail } from '../lib/email';
+import { sendEmail, getPaymentConfirmedEmailHtml } from '../lib/email';
 import type { Database } from '../db';
 
 type Bindings = {
@@ -765,6 +765,42 @@ app.patch('/admin/:id', async (c) => {
     .set(updateData)
     .where(eq(bookings.id, id))
     .returning();
+
+  // Enviar email de pago confirmado cuando admin seta manualmente paymentStatus → paid
+  if (body.paymentStatus === 'paid' && booking.paymentStatus !== 'paid') {
+    try {
+      const [excursion] = await db
+        .select({ titulo: excursions.titulo })
+        .from(excursions)
+        .where(eq(excursions.id, booking.excursionId!));
+
+      let dateRow: { fecha: Date; horaSalida: string | null } | null = null;
+      if (booking.dateId) {
+        const [d] = await db
+          .select({ fecha: dates.fecha, horaSalida: dates.horaSalida })
+          .from(dates)
+          .where(eq(dates.id, booking.dateId));
+        if (d) dateRow = d;
+      }
+
+      const html = getPaymentConfirmedEmailHtml({
+        nombreCliente: booking.nombreCompleto,
+        excursionTitulo: excursion?.titulo || 'Excursión',
+        precioTotal: body.seniaPagada || booking.precioTotal || 0,
+        fecha: dateRow?.fecha.toISOString(),
+        horaSalida: dateRow?.horaSalida || undefined,
+        bookingNumber: booking.bookingNumber,
+      });
+
+      await sendEmail({
+        to: booking.email,
+        subject: `Pago confirmado — ${excursion?.titulo || 'Excursión'} - Mallku`,
+        html,
+      });
+    } catch (emailErr) {
+      console.error('[PATCH] Error enviando email de pago:', emailErr);
+    }
+  }
 
   return c.json({
     success: true,

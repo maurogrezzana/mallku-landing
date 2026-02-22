@@ -12,7 +12,7 @@ import excursionsRouter from './routes/excursions';
 import datesRouter from './routes/dates';
 import bookingsRouter from './routes/bookings';
 import { authMiddleware } from './lib/auth';
-import { getReminderEmailHtml, getBalanceReminderEmailHtml, getExcursionInfoEmailHtml, getCancellationEmailHtml, getCompletionEmailHtml, sendEmail, sendEmailGetError } from './lib/email';
+import { getReminderEmailHtml, getBalanceReminderEmailHtml, getExcursionInfoEmailHtml, getCancellationEmailHtml, getCompletionEmailHtml, getPaymentConfirmedEmailHtml, sendEmail, sendEmailGetError } from './lib/email';
 
 // ==========================================
 // TIPOS DE ENTORNO
@@ -350,10 +350,10 @@ app.post('/api/v1/admin/bookings/:id/send-email', async (c) => {
 
   const id = c.req.param('id');
   const body = await c.req.json();
-  const template = body.template as 'confirmation' | 'balance' | 'info' | 'cancelled' | 'completed';
+  const template = body.template as 'confirmation' | 'balance' | 'info' | 'cancelled' | 'completed' | 'payment';
 
-  if (!['confirmation', 'balance', 'info', 'cancelled', 'completed'].includes(template)) {
-    return c.json({ success: false, message: 'Template inválido. Usar: confirmation, balance, info, cancelled, completed' }, 400);
+  if (!['confirmation', 'balance', 'info', 'cancelled', 'completed', 'payment'].includes(template)) {
+    return c.json({ success: false, message: 'Template inválido. Usar: confirmation, balance, info, cancelled, completed, payment' }, 400);
   }
 
   const [row] = await db
@@ -402,6 +402,15 @@ app.post('/api/v1/admin/bookings/:id/send-email', async (c) => {
       saldoPendiente: precioTotal - seniaPagada,
     });
     subject = `Recordatorio de pago — ${excursionNombre} - Mallku`;
+  } else if (template === 'payment') {
+    html = getPaymentConfirmedEmailHtml({
+      nombreCliente: row.nombreCompleto,
+      excursionTitulo: excursionNombre,
+      precioTotal: row.precioTotal || 0,
+      fecha: row.fecha ? fechaISO : undefined,
+      horaSalida: row.horaSalida || undefined,
+    });
+    subject = `Pago confirmado — ${excursionNombre} - Mallku`;
   } else if (template === 'cancelled') {
     html = getCancellationEmailHtml({
       nombreCliente: row.nombreCompleto,
@@ -552,6 +561,45 @@ app.post('/api/v1/webhooks/mercadopago', async (c) => {
       .where(eq(bookings.bookingNumber, bookingNumber));
 
     console.log(`[Webhook MP] Booking ${bookingNumber} marcado como pagado (MP-${paymentId})`);
+
+    // Enviar email de pago confirmado al cliente
+    try {
+      const { excursions, dates } = await import('./db/schema');
+      const [bookingRow] = await db
+        .select({
+          nombreCompleto: bookings.nombreCompleto,
+          email: bookings.email,
+          precioTotal: bookings.precioTotal,
+          bookingNumber: bookings.bookingNumber,
+          excursionTitulo: excursions.titulo,
+          fecha: dates.fecha,
+          horaSalida: dates.horaSalida,
+        })
+        .from(bookings)
+        .leftJoin(excursions, eq(bookings.excursionId, excursions.id))
+        .leftJoin(dates, eq(bookings.dateId, dates.id))
+        .where(eq(bookings.bookingNumber, bookingNumber));
+
+      if (bookingRow) {
+        const html = getPaymentConfirmedEmailHtml({
+          nombreCliente: bookingRow.nombreCompleto,
+          excursionTitulo: bookingRow.excursionTitulo || 'Excursión',
+          precioTotal: bookingRow.precioTotal || 0,
+          fecha: bookingRow.fecha?.toISOString(),
+          horaSalida: bookingRow.horaSalida || undefined,
+          bookingNumber: bookingRow.bookingNumber,
+        });
+        await sendEmail({
+          to: bookingRow.email,
+          subject: `Pago confirmado — ${bookingRow.excursionTitulo || 'Excursión'} - Mallku`,
+          html,
+        });
+        console.log(`[Webhook MP] Email de pago enviado a ${bookingRow.email}`);
+      }
+    } catch (emailErr: any) {
+      console.error('[Webhook MP] Error enviando email de pago:', emailErr.message);
+    }
+
     return c.json({ received: true });
   } catch (err: any) {
     console.error('[Webhook MP] Error:', err.message);

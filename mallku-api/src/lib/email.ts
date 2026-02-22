@@ -544,6 +544,94 @@ export function getCancellationEmailHtml(params: CancellationEmailParams): strin
 }
 
 // ==========================================
+// PAYMENT CONFIRMED EMAIL TEMPLATE
+// ==========================================
+
+interface PaymentConfirmedEmailParams {
+  nombreCliente: string;
+  excursionTitulo: string;
+  precioTotal: number; // en centavos
+  fecha?: string;
+  horaSalida?: string;
+  bookingNumber?: string;
+}
+
+export function getPaymentConfirmedEmailHtml(params: PaymentConfirmedEmailParams): string {
+  const { nombreCliente, excursionTitulo, precioTotal, fecha, horaSalida, bookingNumber } = params;
+
+  const formatARS = (centavos: number) =>
+    `$${(centavos / 100).toLocaleString('es-AR')}`;
+
+  const fechaStr = fecha
+    ? new Date(fecha).toLocaleDateString('es-AR', {
+        timeZone: 'America/Argentina/Buenos_Aires',
+        weekday: 'long',
+        year: 'numeric',
+        month: 'long',
+        day: 'numeric',
+      })
+    : null;
+
+  return `
+    <!DOCTYPE html>
+    <html>
+    <head>
+      <style>
+        body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; color: #333; }
+        .container { max-width: 600px; margin: 0 auto; padding: 20px; }
+        .header { background: #1a1a2e; color: white; padding: 24px; text-align: center; }
+        .header h1 { margin: 0; font-size: 22px; }
+        .content { background: #f8f9fa; padding: 28px; }
+        .badge { display: inline-block; background: #22c55e; color: white; padding: 6px 16px;
+                 font-weight: bold; font-size: 13px; border-radius: 4px; margin-bottom: 16px; }
+        .summary { background: white; border: 1px solid #e5e7eb; padding: 16px 20px; margin: 20px 0; border-radius: 4px; }
+        .summary p { margin: 6px 0; font-size: 15px; }
+        .footer { text-align: center; padding: 20px; color: #666; font-size: 13px; }
+        .footer a { color: #c9a227; text-decoration: none; }
+        .cta { display: inline-block; background: #c9a227; color: white; padding: 12px 28px;
+               text-decoration: none; font-weight: bold; margin-top: 20px; }
+      </style>
+    </head>
+    <body>
+      <div class="container">
+        <div class="header">
+          <h1>Mallku — Turismo Arqueologico NOA</h1>
+        </div>
+        <div class="content">
+          <span class="badge">✓ Pago confirmado</span>
+          <p>Hola <strong>${nombreCliente}</strong>,</p>
+          <p>Recibimos tu pago exitosamente. Tu lugar en la excursion esta asegurado.</p>
+
+          <div class="summary">
+            <p><strong>${excursionTitulo}</strong></p>
+            ${bookingNumber ? `<p><span style="color:#555;">N° reserva:</span> <strong>${bookingNumber}</strong></p>` : ''}
+            ${fechaStr ? `<p><span style="color:#555;">Fecha:</span> ${fechaStr}</p>` : ''}
+            ${horaSalida ? `<p><span style="color:#555;">Hora de salida:</span> ${horaSalida} hs</p>` : ''}
+            <p><span style="color:#555;">Monto abonado:</span> <strong style="color:#22c55e;">${formatARS(precioTotal)}</strong></p>
+          </div>
+
+          <p>Guarda este email como comprobante. Ante cualquier duda podes contactarnos:</p>
+
+          <p>
+            <a href="https://wa.me/5493815825570" class="cta">Consultar por WhatsApp</a>
+          </p>
+
+          <p style="margin-top: 24px;">iNos vemos pronto!</p>
+          <p><strong>Equipo Mallku</strong></p>
+        </div>
+        <div class="footer">
+          <a href="https://mallku.com.ar">mallku.com.ar</a> &bull;
+          <a href="https://instagram.com/mallku.noa">@mallku.noa</a> &bull;
+          <a href="https://wa.me/5493815825570">WhatsApp</a>
+          <p style="margin-top: 8px; color: #999;">San Miguel de Tucuman, Argentina</p>
+        </div>
+      </div>
+    </body>
+    </html>
+  `;
+}
+
+// ==========================================
 // COMPLETION EMAIL TEMPLATE
 // ==========================================
 
