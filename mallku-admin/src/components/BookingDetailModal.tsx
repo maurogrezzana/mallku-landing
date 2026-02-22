@@ -10,7 +10,7 @@ import {
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { reservasApi } from '@/lib/api';
+import { reservasApi, alertasApi } from '@/lib/api';
 import type { Booking } from '@/types';
 
 interface BookingDetailModalProps {
@@ -30,6 +30,9 @@ export function BookingDetailModal({ booking, isOpen, onClose }: BookingDetailMo
   const [mpLinkUrl, setMpLinkUrl] = useState<string | null>(null);
   const [generatingLink, setGeneratingLink] = useState(false);
   const [copied, setCopied] = useState(false);
+  const [emailTemplate, setEmailTemplate] = useState<'confirmation' | 'balance' | 'info'>('confirmation');
+  const [emailSent, setEmailSent] = useState(false);
+  const [emailSending, setEmailSending] = useState(false);
 
   useEffect(() => {
     if (booking) {
@@ -40,6 +43,8 @@ export function BookingDetailModal({ booking, isOpen, onClose }: BookingDetailMo
       setNotasInternas(booking.notasInternas || '');
       setMpLinkUrl(null);
       setCopied(false);
+      setEmailSent(false);
+      setEmailTemplate('confirmation');
     }
   }, [booking]);
 
@@ -81,6 +86,19 @@ export function BookingDetailModal({ booking, isOpen, onClose }: BookingDetailMo
       alert(error.response?.data?.message || 'Error al generar link de MercadoPago');
     } finally {
       setGeneratingLink(false);
+    }
+  };
+
+  const handleSendEmail = async () => {
+    if (!booking) return;
+    setEmailSending(true);
+    try {
+      await alertasApi.sendBookingEmail(booking.id, emailTemplate);
+      setEmailSent(true);
+    } catch (error: any) {
+      alert(error.response?.data?.message || 'Error al enviar email');
+    } finally {
+      setEmailSending(false);
     }
   };
 
@@ -335,6 +353,43 @@ export function BookingDetailModal({ booking, isOpen, onClose }: BookingDetailMo
                 className="w-full rounded-md border border-input bg-transparent px-3 py-2 text-sm shadow-sm focus:outline-none focus:ring-1 focus:ring-ring resize-none"
               />
             </div>
+          </div>
+
+          <hr />
+
+          {/* Sección 5: Enviar email al cliente */}
+          <div>
+            <h3 className="text-sm font-semibold text-muted-foreground uppercase tracking-wide mb-3">
+              Enviar email al cliente
+            </h3>
+            <div className="flex items-center gap-3">
+              <select
+                value={emailTemplate}
+                onChange={(e) => {
+                  setEmailTemplate(e.target.value as 'confirmation' | 'balance' | 'info');
+                  setEmailSent(false);
+                }}
+                className="flex-1 h-9 rounded-md border border-input bg-transparent px-3 py-1 text-sm shadow-sm focus:outline-none focus:ring-1 focus:ring-ring"
+                disabled={emailSending}
+              >
+                <option value="confirmation">Confirmación de reserva</option>
+                <option value="balance">Recordatorio de saldo pendiente</option>
+                <option value="info">Información de la excursión</option>
+              </select>
+              <Button
+                type="button"
+                variant="outline"
+                size="sm"
+                onClick={handleSendEmail}
+                disabled={emailSending || emailSent}
+                className="shrink-0"
+              >
+                {emailSent ? '✓ Enviado' : emailSending ? 'Enviando...' : 'Enviar email'}
+              </Button>
+            </div>
+            <p className="text-xs text-muted-foreground mt-1.5">
+              Se enviará a: {booking.email}
+            </p>
           </div>
         </div>
 

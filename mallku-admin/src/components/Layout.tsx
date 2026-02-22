@@ -33,10 +33,17 @@ export function Layout() {
     }
   }, [isDark]);
 
-  // Badge: contar fechas urgentes (hoy/mañana) con al menos 1 cliente
+  // Badge: contar fechas urgentes (hoy/mañana) + saldos urgentes (≤3 días)
   const { data: upcoming = [] } = useQuery({
     queryKey: ['alertas-upcoming'],
     queryFn: () => alertasApi.getUpcoming(7),
+    staleTime: 5 * 60 * 1000,
+    retry: false,
+  });
+
+  const { data: pendingBalances = [] } = useQuery({
+    queryKey: ['alertas-pending-balances'],
+    queryFn: () => alertasApi.getPendingBalances(14),
     staleTime: 5 * 60 * 1000,
     retry: false,
   });
@@ -47,6 +54,15 @@ export function Layout() {
     );
     return days <= 1 && item.bookings.length > 0;
   }).length;
+
+  const saldosUrgentCount = pendingBalances.filter((item) => {
+    const days = Math.ceil(
+      (new Date(item.date.fecha).getTime() - Date.now()) / (1000 * 60 * 60 * 24)
+    );
+    return days <= 3;
+  }).length;
+
+  const totalAlertCount = urgentCount + saldosUrgentCount;
 
   const handleLogout = () => {
     authApi.logout();
@@ -69,7 +85,7 @@ export function Layout() {
             {navItems.map((item) => {
               const Icon = item.icon;
               const isActive = location.pathname === item.path;
-              const showBadge = item.path === '/alertas' && urgentCount > 0;
+              const showBadge = item.path === '/alertas' && totalAlertCount > 0;
 
               return (
                 <Link
@@ -88,7 +104,7 @@ export function Layout() {
                   <span className="font-medium flex-1">{item.label}</span>
                   {showBadge && (
                     <span className="inline-flex items-center justify-center w-5 h-5 text-xs font-bold text-white bg-red-500 rounded-full">
-                      {urgentCount}
+                      {totalAlertCount}
                     </span>
                   )}
                 </Link>

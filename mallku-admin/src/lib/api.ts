@@ -12,6 +12,7 @@ import type {
   PaginatedResponse,
   DashboardStats,
   UpcomingDate,
+  PendingBalanceDate,
 } from '@/types';
 
 // API Base URL
@@ -237,6 +238,24 @@ export const alertasApi = {
     const response = await api.post<
       ApiResponse<{ sent: number; errors: string[]; total: number }>
     >(`/admin/send-reminder/${dateId}`);
+    return response.data.data;
+  },
+
+  getPendingBalances: async (days = 14): Promise<PendingBalanceDate[]> => {
+    const response = await api.get<ApiResponse<PendingBalanceDate[]>>(
+      '/admin/pending-balances',
+      { params: { days } }
+    );
+    return response.data.data;
+  },
+
+  sendBookingEmail: async (
+    id: string,
+    template: 'confirmation' | 'balance' | 'info'
+  ): Promise<{ ok: boolean; template: string; sentTo: string }> => {
+    const response = await api.post<
+      ApiResponse<{ ok: boolean; template: string; sentTo: string }>
+    >(`/admin/bookings/${id}/send-email`, { template });
     return response.data.data;
   },
 };

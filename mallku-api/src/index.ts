@@ -12,7 +12,7 @@ import excursionsRouter from './routes/excursions';
 import datesRouter from './routes/dates';
 import bookingsRouter from './routes/bookings';
 import { authMiddleware } from './lib/auth';
-import { getReminderEmailHtml, sendEmail } from './lib/email';
+import { getReminderEmailHtml, getBalanceReminderEmailHtml, getExcursionInfoEmailHtml, sendEmail } from './lib/email';
 
 // ==========================================
 // TIPOS DE ENTORNO
@@ -340,6 +340,152 @@ app.get('/api/v1/admin/stats', async (c) => {
 });
 
 // ==========================================
+// POST /api/v1/admin/bookings/:id/send-email
+// Enviar email manual al cliente de una reserva
+// ==========================================
+app.post('/api/v1/admin/bookings/:id/send-email', async (c) => {
+  const db = c.get('db');
+  const { bookings, dates, excursions } = await import('./db/schema');
+  const { eq } = await import('drizzle-orm');
+
+  const id = c.req.param('id');
+  const body = await c.req.json();
+  const template = body.template as 'confirmation' | 'balance' | 'info';
+
+  if (!['confirmation', 'balance', 'info'].includes(template)) {
+    return c.json({ success: false, message: 'Template inválido. Usar: confirmation, balance, info' }, 400);
+  }
+
+  const [row] = await db
+    .select({
+      nombreCompleto: bookings.nombreCompleto,
+      email: bookings.email,
+      precioTotal: bookings.precioTotal,
+      seniaPagada: bookings.seniaPagada,
+      fecha: dates.fecha,
+      horaSalida: dates.horaSalida,
+      notas: dates.notas,
+      excursionTitulo: excursions.titulo,
+    })
+    .from(bookings)
+    .leftJoin(dates, eq(bookings.dateId, dates.id))
+    .leftJoin(excursions, eq(bookings.excursionId, excursions.id))
+    .where(eq(bookings.id, id));
+
+  if (!row) return c.json({ success: false, message: 'Reserva no encontrada' }, 404);
+
+  const excursionNombre = row.excursionTitulo || 'Excursión';
+  const fechaISO = row.fecha?.toISOString() || new Date().toISOString();
+
+  let html: string;
+  let subject: string;
+
+  if (template === 'confirmation') {
+    html = getReminderEmailHtml({
+      nombreCliente: row.nombreCompleto,
+      excursionTitulo: excursionNombre,
+      fecha: fechaISO,
+      horaSalida: row.horaSalida || undefined,
+      puntoEncuentro: row.notas || undefined,
+    });
+    subject = `Confirmación de tu reserva — ${excursionNombre} - Mallku`;
+  } else if (template === 'balance') {
+    const precioTotal = row.precioTotal || 0;
+    const seniaPagada = row.seniaPagada || 0;
+    html = getBalanceReminderEmailHtml({
+      nombreCliente: row.nombreCompleto,
+      excursionTitulo: excursionNombre,
+      fecha: fechaISO,
+      horaSalida: row.horaSalida || undefined,
+      precioTotal,
+      seniaPagada,
+      saldoPendiente: precioTotal - seniaPagada,
+    });
+    subject = `Recordatorio de pago — ${excursionNombre} - Mallku`;
+  } else {
+    html = getExcursionInfoEmailHtml({
+      nombreCliente: row.nombreCompleto,
+      excursionTitulo: excursionNombre,
+      fecha: fechaISO,
+      horaSalida: row.horaSalida || undefined,
+      puntoEncuentro: row.notas || undefined,
+    });
+    subject = `Información para tu excursión — ${excursionNombre} - Mallku`;
+  }
+
+  const ok = await sendEmail({ to: row.email, subject, html });
+  if (!ok) return c.json({ success: false, message: 'Error al enviar email' }, 500);
+
+  return c.json({ success: true, data: { ok: true, template, sentTo: row.email } });
+});
+
+// ==========================================
+// GET /api/v1/admin/pending-balances?days=14
+// Reservas con saldo pendiente en los próximos N días
+// ==========================================
+app.get('/api/v1/admin/pending-balances', async (c) => {
+  const db = c.get('db');
+  const { dates, excursions, bookings } = await import('./db/schema');
+  const { and, gte, lte, eq, ne, or, asc } = await import('drizzle-orm');
+
+  const days = Math.min(parseInt(c.req.query('days') || '14'), 60);
+  const now = new Date();
+  const future = new Date(now.getTime() + days * 24 * 60 * 60 * 1000);
+
+  const upcomingDates = await db
+    .select({
+      id: dates.id,
+      fecha: dates.fecha,
+      horaSalida: dates.horaSalida,
+      notas: dates.notas,
+      excursionId: excursions.id,
+      excursionTitulo: excursions.titulo,
+      excursionSlug: excursions.slug,
+    })
+    .from(dates)
+    .leftJoin(excursions, eq(dates.excursionId, excursions.id))
+    .where(and(gte(dates.fecha, now), lte(dates.fecha, future), ne(dates.estado, 'cancelado' as any)))
+    .orderBy(asc(dates.fecha));
+
+  const result = await Promise.all(
+    upcomingDates.map(async (d) => {
+      const pendingBookings = await db
+        .select({
+          id: bookings.id,
+          bookingNumber: bookings.bookingNumber,
+          nombreCompleto: bookings.nombreCompleto,
+          email: bookings.email,
+          telefono: bookings.telefono,
+          cantidadPersonas: bookings.cantidadPersonas,
+          precioTotal: bookings.precioTotal,
+          seniaPagada: bookings.seniaPagada,
+          paymentStatus: bookings.paymentStatus,
+        })
+        .from(bookings)
+        .where(
+          and(
+            eq(bookings.dateId, d.id),
+            eq(bookings.status, 'confirmed' as any),
+            or(
+              eq(bookings.paymentStatus, 'partial' as any),
+              eq(bookings.paymentStatus, 'pending' as any)
+            )
+          )
+        );
+
+      return {
+        date: { id: d.id, fecha: d.fecha, horaSalida: d.horaSalida, notas: d.notas },
+        excursion: { id: d.excursionId, titulo: d.excursionTitulo, slug: d.excursionSlug },
+        bookings: pendingBookings,
+      };
+    })
+  );
+
+  const filtered = result.filter((r) => r.bookings.length > 0);
+  return c.json({ success: true, data: filtered });
+});
+
+// ==========================================
 // WEBHOOKS (públicos, validados internamente)
 // ==========================================
 
@@ -492,6 +638,108 @@ app.get('/api/v1/cron/reminders', async (c) => {
       datesFound: upcomingDates.length,
       processed: totalProcessed,
       sent: totalSent,
+      timestamp: new Date().toISOString(),
+    },
+  });
+});
+
+// GET /api/v1/cron/saldo-reminders — Recordatorios de saldo 7 días antes
+app.get('/api/v1/cron/saldo-reminders', async (c) => {
+  const cronSecret = process.env.CRON_SECRET;
+  const authHeader = c.req.header('Authorization');
+
+  if (cronSecret && authHeader !== `Bearer ${cronSecret}`) {
+    return c.json({ error: 'Unauthorized' }, 401);
+  }
+
+  const db = c.get('db');
+  const { dates, excursions, bookings } = await import('./db/schema');
+  const { and, gte, lte, eq, ne, or, asc } = await import('drizzle-orm');
+
+  const now = new Date();
+  // Ventana: fechas entre 6 y 8 días desde ahora (±1 día de margen alrededor de 7 días)
+  const windowStart = new Date(now.getTime() + 6 * 24 * 60 * 60 * 1000);
+  const windowEnd = new Date(now.getTime() + 8 * 24 * 60 * 60 * 1000);
+
+  const upcomingDates = await db
+    .select({
+      id: dates.id,
+      fecha: dates.fecha,
+      horaSalida: dates.horaSalida,
+      excursionTitulo: excursions.titulo,
+    })
+    .from(dates)
+    .leftJoin(excursions, eq(dates.excursionId, excursions.id))
+    .where(
+      and(
+        gte(dates.fecha, windowStart),
+        lte(dates.fecha, windowEnd),
+        ne(dates.estado, 'cancelado' as any)
+      )
+    )
+    .orderBy(asc(dates.fecha));
+
+  let totalSent = 0;
+  let totalProcessed = 0;
+  const errors: string[] = [];
+
+  for (const dateRow of upcomingDates) {
+    const pendingBookings = await db
+      .select({
+        nombreCompleto: bookings.nombreCompleto,
+        email: bookings.email,
+        precioTotal: bookings.precioTotal,
+        seniaPagada: bookings.seniaPagada,
+      })
+      .from(bookings)
+      .where(
+        and(
+          eq(bookings.dateId, dateRow.id),
+          eq(bookings.status, 'confirmed' as any),
+          or(
+            eq(bookings.paymentStatus, 'partial' as any),
+            eq(bookings.paymentStatus, 'pending' as any)
+          )
+        )
+      );
+
+    totalProcessed += pendingBookings.length;
+
+    for (const booking of pendingBookings) {
+      const precioTotal = booking.precioTotal || 0;
+      const seniaPagada = booking.seniaPagada || 0;
+      const saldoPendiente = precioTotal - seniaPagada;
+
+      const html = getBalanceReminderEmailHtml({
+        nombreCliente: booking.nombreCompleto,
+        excursionTitulo: dateRow.excursionTitulo || 'Excursión',
+        fecha: dateRow.fecha.toISOString(),
+        horaSalida: dateRow.horaSalida || undefined,
+        precioTotal,
+        seniaPagada,
+        saldoPendiente,
+      });
+
+      const ok = await sendEmail({
+        to: booking.email,
+        subject: `Recordatorio de pago — ${dateRow.excursionTitulo} - Mallku`,
+        html,
+      });
+
+      if (ok) totalSent++;
+      else errors.push(booking.email);
+    }
+  }
+
+  console.log(`[CRON] Saldo reminders: processed=${totalProcessed}, sent=${totalSent}`);
+
+  return c.json({
+    success: true,
+    data: {
+      datesFound: upcomingDates.length,
+      processed: totalProcessed,
+      sent: totalSent,
+      errors,
       timestamp: new Date().toISOString(),
     },
   });

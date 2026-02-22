@@ -276,6 +276,202 @@ export function getReminderEmailHtml(params: ReminderEmailParams): string {
 }
 
 // ==========================================
+// BALANCE REMINDER EMAIL TEMPLATE
+// ==========================================
+
+interface BalanceReminderEmailParams {
+  nombreCliente: string;
+  excursionTitulo: string;
+  fecha: string;
+  horaSalida?: string;
+  precioTotal: number; // en centavos
+  seniaPagada: number; // en centavos
+  saldoPendiente: number; // en centavos
+}
+
+export function getBalanceReminderEmailHtml(params: BalanceReminderEmailParams): string {
+  const { nombreCliente, excursionTitulo, fecha, horaSalida, precioTotal, seniaPagada, saldoPendiente } = params;
+
+  const fechaFormateada = new Date(fecha).toLocaleDateString('es-AR', {
+    timeZone: 'America/Argentina/Buenos_Aires',
+    weekday: 'long',
+    year: 'numeric',
+    month: 'long',
+    day: 'numeric',
+  });
+
+  const formatARS = (centavos: number) => `$${(centavos / 100).toLocaleString('es-AR')}`;
+
+  return `
+    <!DOCTYPE html>
+    <html>
+    <head>
+      <style>
+        body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; color: #333; }
+        .container { max-width: 600px; margin: 0 auto; padding: 20px; }
+        .header { background: #1a1a2e; color: white; padding: 24px; text-align: center; }
+        .header h1 { margin: 0; font-size: 22px; }
+        .content { background: #f8f9fa; padding: 28px; }
+        .highlight { background: white; border-left: 4px solid #c9a227; padding: 16px 20px; margin: 20px 0; border-radius: 0 4px 4px 0; }
+        .highlight p { margin: 6px 0; font-size: 15px; }
+        .balance-table { width: 100%; border-collapse: collapse; margin: 16px 0; }
+        .balance-table td { padding: 8px 12px; border-bottom: 1px solid #e9ecef; font-size: 15px; }
+        .balance-table td:last-child { text-align: right; font-weight: bold; }
+        .balance-total { background: #fff3cd; }
+        .balance-total td { color: #856404; border-bottom: none; }
+        .footer { text-align: center; padding: 20px; color: #666; font-size: 13px; }
+        .footer a { color: #c9a227; text-decoration: none; }
+        .cta { display: inline-block; background: #c9a227; color: white; padding: 12px 28px;
+               text-decoration: none; font-weight: bold; margin-top: 20px; }
+      </style>
+    </head>
+    <body>
+      <div class="container">
+        <div class="header">
+          <h1>Mallku — Turismo Arqueologico NOA</h1>
+        </div>
+        <div class="content">
+          <p>Hola <strong>${nombreCliente}</strong>,</p>
+          <p>Te recordamos que tenes un saldo pendiente para abonar antes de tu excursion:</p>
+
+          <div class="highlight">
+            <p><strong>${excursionTitulo}</strong></p>
+            <p><span style="font-weight:bold;min-width:130px;display:inline-block;color:#555;">Fecha:</span> ${fechaFormateada}</p>
+            ${horaSalida ? `<p><span style="font-weight:bold;min-width:130px;display:inline-block;color:#555;">Hora de salida:</span> ${horaSalida} hs</p>` : ''}
+          </div>
+
+          <table class="balance-table">
+            <tr>
+              <td>Precio total de la excursion</td>
+              <td>${formatARS(precioTotal)}</td>
+            </tr>
+            <tr>
+              <td>Sena / Pago realizado</td>
+              <td>${formatARS(seniaPagada)}</td>
+            </tr>
+            <tr class="balance-total">
+              <td><strong>Saldo pendiente</strong></td>
+              <td><strong>${formatARS(saldoPendiente)}</strong></td>
+            </tr>
+          </table>
+
+          <p>Para abonar el saldo, podés hacerlo mediante:</p>
+          <ul>
+            <li><strong>Transferencia bancaria</strong> — Consultanos el CBU/Alias por WhatsApp</li>
+            <li><strong>MercadoPago</strong> — Te enviamos el link de pago si lo necesitas</li>
+            <li><strong>Efectivo</strong> — El dia de la excursion al momento del encuentro</li>
+          </ul>
+
+          <p style="margin-top: 24px;">
+            <a href="https://wa.me/5493815825570" class="cta">Consultar por WhatsApp</a>
+          </p>
+
+          <p style="margin-top: 20px;">Gracias por elegirnos, te esperamos pronto!</p>
+          <p><strong>Equipo Mallku</strong></p>
+        </div>
+        <div class="footer">
+          <a href="https://mallku.com.ar">mallku.com.ar</a> &bull;
+          <a href="https://instagram.com/mallku.noa">@mallku.noa</a> &bull;
+          <a href="https://wa.me/5493815825570">WhatsApp</a>
+          <p style="margin-top: 8px; color: #999;">San Miguel de Tucuman, Argentina</p>
+        </div>
+      </div>
+    </body>
+    </html>
+  `;
+}
+
+// ==========================================
+// EXCURSION INFO EMAIL TEMPLATE
+// ==========================================
+
+interface ExcursionInfoEmailParams {
+  nombreCliente: string;
+  excursionTitulo: string;
+  fecha: string;
+  horaSalida?: string;
+  puntoEncuentro?: string;
+  notas?: string;
+}
+
+export function getExcursionInfoEmailHtml(params: ExcursionInfoEmailParams): string {
+  const { nombreCliente, excursionTitulo, fecha, horaSalida, puntoEncuentro, notas } = params;
+
+  const fechaFormateada = new Date(fecha).toLocaleDateString('es-AR', {
+    timeZone: 'America/Argentina/Buenos_Aires',
+    weekday: 'long',
+    year: 'numeric',
+    month: 'long',
+    day: 'numeric',
+  });
+
+  return `
+    <!DOCTYPE html>
+    <html>
+    <head>
+      <style>
+        body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; color: #333; }
+        .container { max-width: 600px; margin: 0 auto; padding: 20px; }
+        .header { background: #1a1a2e; color: white; padding: 24px; text-align: center; }
+        .header h1 { margin: 0; font-size: 22px; }
+        .content { background: #f8f9fa; padding: 28px; }
+        .highlight { background: white; border-left: 4px solid #c9a227; padding: 16px 20px; margin: 20px 0; border-radius: 0 4px 4px 0; }
+        .highlight p { margin: 6px 0; font-size: 15px; }
+        .footer { text-align: center; padding: 20px; color: #666; font-size: 13px; }
+        .footer a { color: #c9a227; text-decoration: none; }
+        .cta { display: inline-block; background: #c9a227; color: white; padding: 12px 28px;
+               text-decoration: none; font-weight: bold; margin-top: 20px; }
+      </style>
+    </head>
+    <body>
+      <div class="container">
+        <div class="header">
+          <h1>Mallku — Turismo Arqueologico NOA</h1>
+        </div>
+        <div class="content">
+          <p>Hola <strong>${nombreCliente}</strong>,</p>
+          <p>Aqui te enviamos toda la informacion para tu excursion. Guardala para el dia de la salida:</p>
+
+          <div class="highlight">
+            <p><strong>${excursionTitulo}</strong></p>
+            <p><span style="font-weight:bold;min-width:130px;display:inline-block;color:#555;">Fecha:</span> ${fechaFormateada}</p>
+            ${horaSalida ? `<p><span style="font-weight:bold;min-width:130px;display:inline-block;color:#555;">Hora de salida:</span> ${horaSalida} hs</p>` : ''}
+            ${puntoEncuentro ? `<p><span style="font-weight:bold;min-width:130px;display:inline-block;color:#555;">Punto de encuentro:</span> ${puntoEncuentro}</p>` : ''}
+            ${notas && notas !== puntoEncuentro ? `<p><span style="font-weight:bold;min-width:130px;display:inline-block;color:#555;">Notas:</span> ${notas}</p>` : ''}
+          </div>
+
+          <p><strong>Que llevar el dia de la excursion:</strong></p>
+          <ul>
+            <li>Ropa comoda y calzado cerrado (recomendamos zapatillas de trekking)</li>
+            <li>Agua (minimo 1.5 litros por persona)</li>
+            <li>Protector solar y gorra</li>
+            <li>Abrigo (las noches en el NOA pueden ser frescas)</li>
+            <li>Snack o vianda para el camino</li>
+            <li>Documento de identidad</li>
+          </ul>
+
+          <p style="margin-top: 16px;"><strong>Importante:</strong> Llegar al punto de encuentro <strong>10 minutos antes</strong> del horario de salida.</p>
+
+          <p style="margin-top: 24px;">
+            <a href="https://wa.me/5493815825570" class="cta">Consultar por WhatsApp</a>
+          </p>
+
+          <p style="margin-top: 20px;">iNos vemos en el camino!</p>
+          <p><strong>Equipo Mallku</strong></p>
+        </div>
+        <div class="footer">
+          <a href="https://mallku.com.ar">mallku.com.ar</a> &bull;
+          <a href="https://instagram.com/mallku.noa">@mallku.noa</a> &bull;
+          <a href="https://wa.me/5493815825570">WhatsApp</a>
+          <p style="margin-top: 8px; color: #999;">San Miguel de Tucuman, Argentina</p>
+        </div>
+      </div>
+    </body>
+    </html>
+  `;
+}
+
+// ==========================================
 // GENERIC EMAIL FUNCTION
 // ==========================================
 

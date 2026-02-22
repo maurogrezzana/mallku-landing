@@ -249,6 +249,37 @@ export interface UpcomingDate {
 }
 
 // ==========================================
+// SALDOS PENDIENTES
+// ==========================================
+
+export interface PendingBalanceBooking {
+  id: string;
+  bookingNumber: string;
+  nombreCompleto: string;
+  email: string;
+  telefono: string;
+  cantidadPersonas: number;
+  precioTotal: number | null;
+  seniaPagada: number;
+  paymentStatus: string;
+}
+
+export interface PendingBalanceDate {
+  date: {
+    id: string;
+    fecha: string;
+    horaSalida: string | null;
+    notas: string | null;
+  };
+  excursion: {
+    id: string | null;
+    titulo: string | null;
+    slug: string | null;
+  };
+  bookings: PendingBalanceBooking[];
+}
+
+// ==========================================
 // STATS
 // ==========================================
 
