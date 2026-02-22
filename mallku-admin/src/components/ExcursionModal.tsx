@@ -553,6 +553,18 @@ export function ExcursionModal({ excursion, isOpen, onClose }: ExcursionModalPro
                         ? 'Subiendo...'
                         : 'Subir archivo'}
                   </Button>
+                  {imagenPrincipal && (
+                    <Button
+                      type="button"
+                      variant="ghost"
+                      size="icon"
+                      onClick={() => setImagenPrincipal('')}
+                      className="shrink-0"
+                      title="Eliminar imagen"
+                    >
+                      ✕
+                    </Button>
+                  )}
                 </div>
                 {imagenPrincipal && (
                   <img
@@ -595,8 +607,11 @@ export function ExcursionModal({ excursion, isOpen, onClose }: ExcursionModalPro
                           type="button"
                           variant="ghost"
                           size="icon"
-                          onClick={() => removeFromList(galeria, setGaleria, idx)}
-                          disabled={galeria.length === 1}
+                          onClick={() =>
+                            galeria.length === 1
+                              ? setGaleria([''])
+                              : removeFromList(galeria, setGaleria, idx)
+                          }
                           className="shrink-0"
                         >
                           ✕
