@@ -20,6 +20,12 @@ export interface Excursion {
   recomendaciones: string[];
   imagenPrincipal: string | null;
   galeria: string[];
+  tag: string | null;
+  salida: string | null;
+  mejorEpoca: string | null;
+  precio: string | null;
+  priceNote: string | null;
+  whatsappLink: string | null;
   isActive: boolean;
   orden: number;
   createdAt: string;
@@ -27,27 +33,35 @@ export interface Excursion {
 }
 
 export interface ItinerarioItem {
-  orden: number;
-  titulo: string;
+  hora: string;
+  actividad: string;
   descripcion: string;
-  imagen?: string;
 }
 
 export interface CreateExcursionInput {
   slug: string;
   titulo: string;
-  subtitulo: string;
+  subtitulo?: string;
   descripcion: string;
-  descripcionLarga: string[];
-  duracion: string;
-  precioBase: number;
+  descripcionLarga?: string[];
+  duracion?: string;
+  precioBase?: number;
   grupoMax: number;
-  dificultad: 'baja' | 'media' | 'alta';
-  highlights: string[];
-  itinerario: ItinerarioItem[];
-  incluye: string[];
-  noIncluye: string[];
-  recomendaciones: string[];
+  dificultad?: 'baja' | 'media' | 'alta';
+  highlights?: string[];
+  itinerario?: ItinerarioItem[];
+  incluye?: string[];
+  noIncluye?: string[];
+  recomendaciones?: string[];
+  imagenPrincipal?: string;
+  galeria?: string[];
+  tag?: string;
+  salida?: string;
+  mejorEpoca?: string;
+  precio?: string;
+  priceNote?: string;
+  whatsappLink?: string;
+  isActive?: boolean;
   orden?: number;
 }
 

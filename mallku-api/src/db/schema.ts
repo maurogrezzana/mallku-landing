@@ -159,10 +159,18 @@ export const excursions = pgTable('excursions', {
 
   // Contenido estructurado
   highlights: jsonb('highlights').$type<string[]>().default([]),
-  itinerario: jsonb('itinerario').$type<{orden: number; titulo: string; descripcion: string; imagen?: string}[]>().default([]),
+  itinerario: jsonb('itinerario').$type<{hora: string; actividad: string; descripcion: string}[]>().default([]),
   incluye: jsonb('incluye').$type<string[]>().default([]),
   noIncluye: jsonb('no_incluye').$type<string[]>().default([]),
   recomendaciones: jsonb('recomendaciones').$type<string[]>().default([]),
+
+  // Campos adicionales del sitio
+  tag: varchar('tag', { length: 100 }),
+  salida: varchar('salida', { length: 100 }),
+  mejorEpoca: varchar('mejor_epoca', { length: 255 }),
+  precio: varchar('precio', { length: 100 }),
+  priceNote: varchar('price_note', { length: 255 }),
+  whatsappLink: varchar('whatsapp_link', { length: 500 }),
 
   // Media
   imagenPrincipal: varchar('imagen_principal', { length: 500 }),

@@ -46,17 +46,16 @@ export type TrackEventInput = z.infer<typeof trackEventSchema>;
 // ==========================================
 
 export const itinerarioItemSchema = z.object({
-  orden: z.number().int(),
-  titulo: z.string().min(1),
+  hora: z.string().min(1),
+  actividad: z.string().min(1),
   descripcion: z.string().min(1),
-  imagen: z.string().optional(),
 });
 
 export const createExcursionSchema = z.object({
   slug: z.string().regex(/^[a-z0-9-]+$/, 'El slug solo puede contener letras minúsculas, números y guiones'),
-  titulo: z.string().min(5, 'El título es muy corto'),
+  titulo: z.string().min(2, 'El título es muy corto'),
   subtitulo: z.string().optional(),
-  descripcion: z.string().min(20, 'La descripción es muy corta'),
+  descripcion: z.string().min(1, 'La descripción es requerida'),
   descripcionLarga: z.array(z.string()).optional().default([]),
   duracion: z.string().optional(),
   precioBase: z.number().int().positive().optional(),
@@ -69,6 +68,12 @@ export const createExcursionSchema = z.object({
   recomendaciones: z.array(z.string()).optional().default([]),
   imagenPrincipal: z.string().optional(),
   galeria: z.array(z.string()).optional().default([]),
+  tag: z.string().max(100).optional(),
+  salida: z.string().max(100).optional(),
+  mejorEpoca: z.string().max(255).optional(),
+  precio: z.string().max(100).optional(),
+  priceNote: z.string().max(255).optional(),
+  whatsappLink: z.union([z.string().url(), z.literal('')]).optional(),
   isActive: z.boolean().optional().default(true),
   orden: z.number().int().optional().default(0),
 });

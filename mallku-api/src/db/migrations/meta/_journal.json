@@ -8,6 +8,13 @@
       "when": 1771381364850,
       "tag": "0000_lying_lucky_pierre",
       "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "7",
+      "when": 1771734712449,
+      "tag": "0001_friendly_dagger",
+      "breakpoints": true
     }
   ]
 }

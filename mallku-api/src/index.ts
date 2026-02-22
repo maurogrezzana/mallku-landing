@@ -508,6 +508,50 @@ app.get('/api/v1/admin/pending-balances', async (c) => {
 });
 
 // ==========================================
+// UPLOAD (admin — protegido por authMiddleware vía /api/v1/admin/*)
+// ==========================================
+
+// POST /api/v1/admin/upload — Subir imagen a Vercel Blob
+app.post('/api/v1/admin/upload', async (c) => {
+  const { put } = await import('@vercel/blob');
+
+  const formData = await c.req.formData();
+  const file = formData.get('file') as File | null;
+
+  if (!file) {
+    return c.json({ success: false, message: 'No se proporcionó ningún archivo' }, 400);
+  }
+
+  // Validar tipo
+  if (!file.type.startsWith('image/')) {
+    return c.json({ success: false, message: 'El archivo debe ser una imagen' }, 400);
+  }
+
+  // Validar tamaño (máx 10MB antes de resize)
+  if (file.size > 10 * 1024 * 1024) {
+    return c.json({ success: false, message: 'El archivo no puede superar 10MB' }, 400);
+  }
+
+  const token = (c.env as any)?.BLOB_READ_WRITE_TOKEN || process.env.BLOB_READ_WRITE_TOKEN;
+  if (!token) {
+    return c.json({ success: false, message: 'BLOB_READ_WRITE_TOKEN no configurado' }, 500);
+  }
+
+  // Generar nombre único
+  const ext = file.name.split('.').pop()?.toLowerCase() || 'jpg';
+  const timestamp = Date.now();
+  const random = Math.random().toString(36).slice(2, 8);
+  const filename = `excursions/${timestamp}-${random}.${ext}`;
+
+  const blob = await put(filename, file, {
+    access: 'public',
+    token,
+  });
+
+  return c.json({ success: true, url: blob.url });
+});
+
+// ==========================================
 // WEBHOOKS (públicos, validados internamente)
 // ==========================================
 

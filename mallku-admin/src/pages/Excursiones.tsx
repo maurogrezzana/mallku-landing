@@ -1,3 +1,4 @@
+import { useState } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
@@ -10,10 +11,24 @@ import {
   TableRow,
 } from '@/components/ui/table';
 import { excursionesApi } from '@/lib/api';
+import { ExcursionModal } from '@/components/ExcursionModal';
 import { Pencil, Trash2, Plus } from 'lucide-react';
+import type { Excursion } from '@/types';
 
 export function ExcursionesPage() {
   const queryClient = useQueryClient();
+  const [selectedExcursion, setSelectedExcursion] = useState<Excursion | null>(null);
+  const [isModalOpen, setIsModalOpen] = useState(false);
+
+  const openCreate = () => {
+    setSelectedExcursion(null);
+    setIsModalOpen(true);
+  };
+
+  const openEdit = (excursion: Excursion) => {
+    setSelectedExcursion(excursion);
+    setIsModalOpen(true);
+  };
 
   // Fetch excursiones
   const { data: excursiones, isLoading } = useQuery({
@@ -39,7 +54,8 @@ export function ExcursionesPage() {
     }
   };
 
-  const formatPrecio = (centavos: number) => {
+  const formatPrecio = (centavos: number | null) => {
+    if (!centavos) return '—';
     return `$${(centavos / 100).toLocaleString('es-AR')}`;
   };
 
@@ -50,7 +66,7 @@ export function ExcursionesPage() {
           <h1 className="text-3xl font-bold tracking-tight">Excursiones</h1>
           <p className="text-muted-foreground">Gestión de excursiones</p>
         </div>
-        <Button>
+        <Button onClick={openCreate}>
           <Plus className="w-4 h-4 mr-2" />
           Nueva Excursión
         </Button>
@@ -88,21 +104,25 @@ export function ExcursionesPage() {
                         <p className="text-sm text-muted-foreground">{excursion.subtitulo}</p>
                       </div>
                     </TableCell>
-                    <TableCell>{excursion.duracion}</TableCell>
+                    <TableCell>{excursion.duracion || '—'}</TableCell>
                     <TableCell>{formatPrecio(excursion.precioBase)}</TableCell>
                     <TableCell>{excursion.grupoMax} pax</TableCell>
                     <TableCell>
-                      <span
-                        className={`inline-flex items-center rounded-full px-2 py-1 text-xs font-medium ${
-                          excursion.dificultad === 'baja'
-                            ? 'bg-green-50 text-green-700 dark:bg-green-900/30 dark:text-green-400'
-                            : excursion.dificultad === 'media'
-                              ? 'bg-yellow-50 text-yellow-700 dark:bg-yellow-900/30 dark:text-yellow-400'
-                              : 'bg-red-50 text-red-700 dark:bg-red-900/30 dark:text-red-400'
-                        }`}
-                      >
-                        {excursion.dificultad}
-                      </span>
+                      {excursion.dificultad ? (
+                        <span
+                          className={`inline-flex items-center rounded-full px-2 py-1 text-xs font-medium ${
+                            excursion.dificultad === 'baja'
+                              ? 'bg-green-50 text-green-700 dark:bg-green-900/30 dark:text-green-400'
+                              : excursion.dificultad === 'media'
+                                ? 'bg-yellow-50 text-yellow-700 dark:bg-yellow-900/30 dark:text-yellow-400'
+                                : 'bg-red-50 text-red-700 dark:bg-red-900/30 dark:text-red-400'
+                          }`}
+                        >
+                          {excursion.dificultad}
+                        </span>
+                      ) : (
+                        <span className="text-muted-foreground text-xs">—</span>
+                      )}
                     </TableCell>
                     <TableCell>
                       <span
@@ -117,7 +137,11 @@ export function ExcursionesPage() {
                     </TableCell>
                     <TableCell className="text-right">
                       <div className="flex justify-end gap-2">
-                        <Button variant="ghost" size="icon">
+                        <Button
+                          variant="ghost"
+                          size="icon"
+                          onClick={() => openEdit(excursion)}
+                        >
                           <Pencil className="w-4 h-4" />
                         </Button>
                         <Button
@@ -139,6 +163,12 @@ export function ExcursionesPage() {
           )}
         </CardContent>
       </Card>
+
+      <ExcursionModal
+        excursion={selectedExcursion}
+        isOpen={isModalOpen}
+        onClose={() => setIsModalOpen(false)}
+      />
     </div>
   );
 }
